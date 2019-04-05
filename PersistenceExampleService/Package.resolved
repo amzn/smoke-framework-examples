@@ -1,0 +1,115 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "LoggerAPI",
+        "repositoryURL": "https://github.com/IBM-Swift/LoggerAPI.git",
+        "state": {
+          "branch": null,
+          "revision": "e29073bb7cecf3673e56bcb16180e8fd0cb091f6",
+          "version": "1.8.1"
+        }
+      },
+      {
+        "package": "SmokeAWS",
+        "repositoryURL": "https://github.com/amzn/smoke-aws.git",
+        "state": {
+          "branch": null,
+          "revision": "c868898a601a2e7484377ba18b18fa215719cef9",
+          "version": "1.19.9"
+        }
+      },
+      {
+        "package": "SmokeAWSCredentials",
+        "repositoryURL": "https://github.com/amzn/smoke-aws-credentials.git",
+        "state": {
+          "branch": null,
+          "revision": "df9e613f85d79a50e1022b8d63fcd52b82f9a7d7",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "SmokeDynamoDB",
+        "repositoryURL": "https://github.com/amzn/smoke-dynamodb.git",
+        "state": {
+          "branch": null,
+          "revision": "52968cd609d6603f1465a26cae00f7c480685d2d",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "SmokeFramework",
+        "repositoryURL": "https://github.com/amzn/smoke-framework.git",
+        "state": {
+          "branch": null,
+          "revision": "524cd60fc864b94f947f5d6d6e6559ae84f07851",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "SmokeHTTP",
+        "repositoryURL": "https://github.com/amzn/smoke-http.git",
+        "state": {
+          "branch": null,
+          "revision": "60bc2c4c88700ff46f2cfd1f766c4ac8319488a9",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "state": {
+          "branch": null,
+          "revision": "29a9f2aca71c8afb07e291336f1789337ce235dd",
+          "version": "1.13.2"
+        }
+      },
+      {
+        "package": "swift-nio-extras",
+        "repositoryURL": "https://github.com/apple/swift-nio-extras.git",
+        "state": {
+          "branch": null,
+          "revision": "0dbd54199d06c80a35b441c39ac2ef1b78778740",
+          "version": "0.1.3"
+        }
+      },
+      {
+        "package": "swift-nio-ssl",
+        "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
+        "state": {
+          "branch": null,
+          "revision": "0f3999f3e3c359cc74480c292644c3419e44a12f",
+          "version": "1.4.0"
+        }
+      },
+      {
+        "package": "swift-nio-ssl-support",
+        "repositoryURL": "https://github.com/apple/swift-nio-ssl-support.git",
+        "state": {
+          "branch": null,
+          "revision": "c02eec4e0e6d351cd092938cf44195a8e669f555",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-nio-zlib-support",
+        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
+        "state": {
+          "branch": null,
+          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "XMLCoding",
+        "repositoryURL": "https://github.com/LiveUI/XMLCoding.git",
+        "state": {
+          "branch": null,
+          "revision": "8c760e960a5e53a5338c2871c4fcdf06b8c5ace4",
+          "version": "0.4.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
