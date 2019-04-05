@@ -15,15 +15,15 @@
 <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2">
 </p>
 
-# SmokeApplicationExamples
+# SmokeFrameworkExamples
 
-Sample applications showing the usage of the [SmokeFramework](https://github.com/amzn/smoke-framework) and related libraries.
+Sample services showing the usage of the [SmokeFramework](https://github.com/amzn/smoke-framework) and related libraries.
 
 ## PersistenceExampleService
 
 An example of a service using [SmokeDynamoDb](https://github.com/amzn/smoke-dynamodb) to store and retrieve data.
 Initially generated using [SmokeFrameworkApplicationGenerate](https://github.com/amzn/smoke-framework-application-generate)
-with a command-
+with the command-
 
 ```bash
 swift run -c release SmokeFrameworkApplicationGenerate \
