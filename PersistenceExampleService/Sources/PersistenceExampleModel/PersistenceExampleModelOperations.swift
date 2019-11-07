@@ -65,7 +65,7 @@ public struct AddCustomerEmailAddressOperationInputPath: Codable, Equatable {
 }
 
 public extension AddCustomerEmailAddressRequest {
-    public func asPersistenceExampleModelAddCustomerEmailAddressOperationInputPath() -> AddCustomerEmailAddressOperationInputPath {
+    func asPersistenceExampleModelAddCustomerEmailAddressOperationInputPath() -> AddCustomerEmailAddressOperationInputPath {
         return AddCustomerEmailAddressOperationInputPath(
             id: id)
     }
@@ -103,7 +103,7 @@ public struct AddCustomerEmailAddressOperationInputBody: Codable, Equatable {
 }
 
 public extension AddCustomerEmailAddressRequest {
-    public func asPersistenceExampleModelAddCustomerEmailAddressOperationInputBody() -> AddCustomerEmailAddressOperationInputBody {
+    func asPersistenceExampleModelAddCustomerEmailAddressOperationInputBody() -> AddCustomerEmailAddressOperationInputBody {
         return AddCustomerEmailAddressOperationInputBody(
             emailAddress: emailAddress,
             isPrimary: isPrimary,
@@ -132,7 +132,7 @@ public struct CreateCustomerPutOperationOutputBody: Codable, Equatable {
 }
 
 public extension CreateCustomerPut200Response {
-    public func asPersistenceExampleModelCreateCustomerPutOperationOutputBody() -> CreateCustomerPutOperationOutputBody {
+    func asPersistenceExampleModelCreateCustomerPutOperationOutputBody() -> CreateCustomerPutOperationOutputBody {
         return CreateCustomerPutOperationOutputBody(
             id: id)
     }
@@ -158,7 +158,7 @@ public struct CreateCustomerPutOperationOutputHeaders: Codable, Equatable {
 }
 
 public extension CreateCustomerPut200Response {
-    public func asPersistenceExampleModelCreateCustomerPutOperationOutputHeaders() -> CreateCustomerPutOperationOutputHeaders {
+    func asPersistenceExampleModelCreateCustomerPutOperationOutputHeaders() -> CreateCustomerPutOperationOutputHeaders {
         return CreateCustomerPutOperationOutputHeaders(
             xRequestID: xRequestID)
     }
@@ -184,7 +184,7 @@ public struct GetCustomerDetailsOperationInputPath: Codable, Equatable {
 }
 
 public extension GetCustomerDetailsRequest {
-    public func asPersistenceExampleModelGetCustomerDetailsOperationInputPath() -> GetCustomerDetailsOperationInputPath {
+    func asPersistenceExampleModelGetCustomerDetailsOperationInputPath() -> GetCustomerDetailsOperationInputPath {
         return GetCustomerDetailsOperationInputPath(
             id: id)
     }
@@ -210,7 +210,7 @@ public struct GetCustomerDetailsOperationInputQuery: Codable, Equatable {
 }
 
 public extension GetCustomerDetailsRequest {
-    public func asPersistenceExampleModelGetCustomerDetailsOperationInputQuery() -> GetCustomerDetailsOperationInputQuery {
+    func asPersistenceExampleModelGetCustomerDetailsOperationInputQuery() -> GetCustomerDetailsOperationInputQuery {
         return GetCustomerDetailsOperationInputQuery(
             includeOnlyPrimaryEmail: includeOnlyPrimaryEmail)
     }
@@ -236,7 +236,7 @@ public struct GetCustomerDetailsOperationInputAdditionalHeaders: Codable, Equata
 }
 
 public extension GetCustomerDetailsRequest {
-    public func asPersistenceExampleModelGetCustomerDetailsOperationInputAdditionalHeaders() -> GetCustomerDetailsOperationInputAdditionalHeaders {
+    func asPersistenceExampleModelGetCustomerDetailsOperationInputAdditionalHeaders() -> GetCustomerDetailsOperationInputAdditionalHeaders {
         return GetCustomerDetailsOperationInputAdditionalHeaders(
             xRequestID: xRequestID)
     }

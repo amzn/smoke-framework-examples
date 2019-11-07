@@ -426,7 +426,7 @@ public extension CustomerAttributesShape {
             // don't need to convert, already can be serialized
             return modelInstance
         } else {
-            let convertedCustomerEmailAddressAttributesList: [PersistenceExampleModel.CustomerEmailAddressAttributes] = emailAddresses.map { entry in
+            let convertedEmailAddresses: [PersistenceExampleModel.CustomerEmailAddressAttributes] = emailAddresses.map { entry in
                 return entry.asPersistenceExampleModelCustomerEmailAddressAttributes()
             }
             let convertedGender: PersistenceExampleModel.Gender?
@@ -441,7 +441,7 @@ public extension CustomerAttributesShape {
                 convertedGender = nil
             }
             return CustomerAttributes(birthYear: birthYear,
-                emailAddresses: convertedCustomerEmailAddressAttributesList,
+                emailAddresses: convertedEmailAddresses,
                 firstName: firstName,
                 gender: convertedGender,
                 lastName: lastName)
@@ -753,8 +753,8 @@ public extension ListCustomersResponseShape {
             // don't need to convert, already can be serialized
             return modelInstance
         } else {
-            let convertedCustomerIDList = customerIDs
-            return ListCustomersResponse(customerIDs: convertedCustomerIDList,
+            let convertedCustomerIDs = customerIDs
+            return ListCustomersResponse(customerIDs: convertedCustomerIDs,
                 nextPageToken: nextPageToken)
         }
     }
