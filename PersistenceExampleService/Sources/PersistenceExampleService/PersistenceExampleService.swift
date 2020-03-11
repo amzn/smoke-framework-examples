@@ -25,7 +25,8 @@ import SmokeAWSCore
 import SmokeDynamoDB
 import NIO
 import SmokeHTTPClient
-import LoggerAPI
+import SmokeAWSHttp
+import Logging
 
 struct EnvironmentVariables {
     static let dynamoEndpointHostName = "DYNAMO_ENDPOINT_HOST_NAME"
@@ -51,11 +52,11 @@ public enum PersistenceExampleServiceError: Error {
     case missingEnvironmentVariable(reason: String)
 }
 
-public func initializeDynamoDBTableFromEnvironment(
+public func initializeDynamoDBTableGeneratorFromEnvironment(
         environment: [String: String],
         credentialsProvider: CredentialsProvider,
         region: AWSRegion,
-        clientEventLoopProvider: HTTPClient.EventLoopProvider) throws -> AWSDynamoDBTable {
+        clientEventLoopProvider: HTTPClient.EventLoopProvider) throws -> AWSDynamoDBTableGenerator {
     guard let dynamoEndpointHostName = environment[EnvironmentVariables.dynamoEndpointHostName] else {
         throw PersistenceExampleServiceError.missingEnvironmentVariable(reason:
             "'\(EnvironmentVariables.dynamoEndpointHostName)' environment variable not specified.")
@@ -66,10 +67,10 @@ public func initializeDynamoDBTableFromEnvironment(
             "\(EnvironmentVariables.dynamoTableName)' environment variable not specified.")
     }
     
-    return AWSDynamoDBTable(credentialsProvider: credentialsProvider,
-                           region: region, endpointHostName: dynamoEndpointHostName,
-                           tableName: dynamoTableName,
-                           eventLoopProvider: clientEventLoopProvider)
+    return AWSDynamoDBTableGenerator(credentialsProvider: credentialsProvider,
+                                     region: region, endpointHostName: dynamoEndpointHostName,
+                                     tableName: dynamoTableName,
+                                     eventLoopProvider: clientEventLoopProvider)
 }
 
 func handleApplication() {
@@ -89,45 +90,51 @@ func handleApplication() {
         return "\(Date().timeIntervalSinceReferenceDate)"
     }
     
+    let logger = Logger(label: "PersistenceExampleService")
+    let awsClientInvocationTraceContext = AWSClientInvocationTraceContext()
+    
     guard let credentialsProvider = AwsContainerRotatingCredentialsProvider.get(
             fromEnvironment: environment,
+            logger: logger,
+            traceContext: awsClientInvocationTraceContext,
             eventLoopProvider: clientEventLoopProvider) else {
-        return Log.error("Unable to obtain credentials from the container environment.")
+        return logger.error("Unable to obtain credentials from the container environment.")
     }
     
     guard let regionString = environment[EnvironmentVariables.region] else {
-        return Log.error("'\(EnvironmentVariables.region)' environment variable not specified.")
+        return logger.error("'\(EnvironmentVariables.region)' environment variable not specified.")
     }
     
     guard let region = AWSRegion(rawValue: regionString) else {
-        return Log.error("Specified '\(EnvironmentVariables.region)' environment variable '\(regionString)' not a valid region.")
+        return logger.error("Specified '\(EnvironmentVariables.region)' environment variable '\(regionString)' not a valid region.")
     }
 
-    let dynamodbTable: AWSDynamoDBTable
+    let dynamodbTableGenerator: AWSDynamoDBTableGenerator
     do {
-        dynamodbTable = try initializeDynamoDBTableFromEnvironment(
+        dynamodbTableGenerator = try initializeDynamoDBTableGeneratorFromEnvironment(
             environment: environment,
             credentialsProvider: credentialsProvider,
             region: region,
             clientEventLoopProvider: clientEventLoopProvider)
     } catch {
-        Log.error("Unable to inialize DynamoDB Table - \(error).")
+        logger.error("Unable to inialize DynamoDB Table - \(error).")
         
         return
     }
 
-    let operationsContext = PersistenceExampleOperationsContext(dynamodbTable: dynamodbTable,
-                                                                idGenerator: idGenerator,
-                                                                timestampGenerator: timestampGenerator)
+    let operationsContextGenerator = PersistenceExampleOperationsContextGenerator(dynamodbTableGenerator: dynamodbTableGenerator,
+                                                                                 idGenerator: idGenerator,
+                                                                                 timestampGenerator: timestampGenerator,
+                                                                                 awsClientInvocationTraceContext: awsClientInvocationTraceContext)
 
     do {
         let smokeHTTP1Server = try SmokeHTTP1Server.startAsOperationServer(
             withHandlerSelector: createHandlerSelector(),
-            andContext: operationsContext)
+            andContextProvider: operationsContextGenerator.get)
         
         try smokeHTTP1Server.waitUntilShutdownAndThen {
-            dynamodbTable.close()
-            dynamodbTable.wait()
+            dynamodbTableGenerator.close()
+            dynamodbTableGenerator.wait()
             
             credentialsProvider.stop()
             credentialsProvider.wait()
@@ -135,10 +142,10 @@ func handleApplication() {
             do {
                 try clientEventLoopGroup.syncShutdownGracefully()
             } catch {
-                Log.error("Unable to shutdown client thread loop: '\(error)'")
+                logger.error("Unable to shutdown client thread loop: '\(error)'")
             }
         }
     } catch {
-        Log.error("Unable to start Operations Server: '\(error)'")
+        logger.error("Unable to start Operations Server: '\(error)'")
     }
 }

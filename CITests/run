@@ -30,3 +30,13 @@ swift test
 if [ "$USE_SWIFT_LINT" == 'yes' ]; then
     swiftlint
 fi
+
+cd $workspaceRoot/package
+
+cd EmptyExampleService
+swift build
+swift test
+
+if [ "$USE_SWIFT_LINT" == 'yes' ]; then
+    swiftlint
+fi

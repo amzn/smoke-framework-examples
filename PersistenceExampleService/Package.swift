@@ -1,10 +1,13 @@
-// swift-tools-version:4.1
+// swift-tools-version:5.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "PersistenceExample",
+    platforms: [
+      .macOS(.v10_12), .iOS(.v10)
+    ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
@@ -24,10 +27,10 @@ let package = Package(
             targets: ["PersistenceExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", .upToNextMajor(from: "1.0.0")),
-        .package(url: "https://github.com/amzn/smoke-dynamodb.git", .upToNextMajor(from: "1.0.0")),
-        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", .upToNextMajor(from: "1.0.0")),
-        .package(url: "https://github.com/amzn/smoke-aws.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/amzn/smoke-framework.git", .branch("1_x_compatible_server")),
+        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", .branch("add_logging_metadata")),
+        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-alpha.4"),
+        .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "2.0.0-alpha.3"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -50,5 +53,6 @@ let package = Package(
         .testTarget(
             name: "PersistenceExampleOperationsTests",
             dependencies: ["PersistenceExampleOperations"]),
-        ]
+        ],
+        swiftLanguageVersions: [.v5]
 )

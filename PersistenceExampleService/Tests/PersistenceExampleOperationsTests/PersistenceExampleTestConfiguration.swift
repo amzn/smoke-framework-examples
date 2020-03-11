@@ -19,15 +19,20 @@ import XCTest
 @testable import PersistenceExampleOperations
 import PersistenceExampleModel
 import SmokeDynamoDB
+import Logging
 
-let STATIC_ID = "53E2BFA1-E55C-42FE-8110-77A68C069EF4"
-let STATIC_ID_GENERATOR = {
-    return STATIC_ID
-}
+struct TestVariables {
+    static let staticId = "53E2BFA1-E55C-42FE-8110-77A68C069EF4"
+    static let staticIdGenerator = {
+        return staticId
+    }
 
-let STATIC_TIMESTAMP = "987654.7654"
-let STATIC_TIMESTAMP_GENERATOR = {
-    return STATIC_TIMESTAMP
+    static let staticTimestamp = "987654.7654"
+    static let staticTimestampGenerator = {
+        return staticTimestamp
+    }
+    
+    static let logger = Logger(label: "PersistenceExampleTestConfiguration")
 }
 
 func createTable() -> InMemoryDynamoDBTable {
@@ -36,6 +41,7 @@ func createTable() -> InMemoryDynamoDBTable {
 
 func createOperationsContext(dynamodbTable: DynamoDBTable = createTable()) -> PersistenceExampleOperationsContext {
     return PersistenceExampleOperationsContext(dynamodbTable: dynamodbTable,
-                                               idGenerator: STATIC_ID_GENERATOR,
-                                               timestampGenerator: STATIC_TIMESTAMP_GENERATOR)
+                                               idGenerator: TestVariables.staticIdGenerator,
+                                               timestampGenerator: TestVariables.staticTimestampGenerator,
+                                               logger: TestVariables.logger)
 }

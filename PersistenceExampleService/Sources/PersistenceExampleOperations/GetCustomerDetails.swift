@@ -20,7 +20,7 @@ import Foundation
 import PersistenceExampleModel
 import SmokeDynamoDB
 import SmokeOperations
-import LoggerAPI
+import Logging
 
 // The possible row types that can be returned in the Customer paritition
 struct CustomerCodableTypes: PossibleItemTypes {
@@ -49,7 +49,7 @@ public func handleGetCustomerDetails(
     let customerKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerIDKeyPostfix]).dynamodbKey
     
     // Query on the customer partition, that will return the customer identity row and any email address rows
-    Log.verbose("Query on customer: \(customerKey)")
+    context.logger.debug("Query on customer: \(customerKey)")
     let queryItems: [StandardPolymorphicDatabaseItem<CustomerCodableTypes>] =
             try context.dynamodbTable.querySync(forPartitionKey: customerKey, sortKeyCondition: nil)
     

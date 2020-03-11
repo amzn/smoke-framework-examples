@@ -20,7 +20,7 @@ import Foundation
 import PersistenceExampleModel
 import SmokeOperations
 import SmokeDynamoDB
-import LoggerAPI
+import Logging
 
 extension PersistenceExampleModel.AddCustomerEmailAddressRequest: PersistenceExampleModel.CustomerEmailAddressAttributesShape { }
 
@@ -112,10 +112,10 @@ public func handleAddCustomerEmailAddress(
     
     // This shouldn't occur as the row identity should be created during updateItemConditionallyAtKey
     guard let rowIdentity = customerEmailAddressRowIdentity else {
-        throw SmokeDynamoDBError.databaseError(reason: "Unexpectedly customer email address row not created.")
+        throw SmokeDynamoDBError.unexpectedResponse(reason: "Unexpectedly customer email address row not created.")
     }
     
-    Log.info("Email Address '\(rowIdentity.emailAddress)' created for customer '\(customerID)'")
+    context.logger.info("Email Address '\(rowIdentity.emailAddress)' created for customer '\(customerID)'")
     return PersistenceExampleModel.CustomerEmailAddressIdentity(id: rowIdentity.emailAddress)
 }
 

@@ -18,6 +18,7 @@
 
 import Foundation
 import SmokeDynamoDB
+import Logging
 
 /**
  The context to be passed to each of the PersistenceExample operations.
@@ -33,11 +34,14 @@ public struct PersistenceExampleOperationsContext {
     public let dynamodbTable: DynamoDBTable
     public let idGenerator: () -> String
     public let timestampGenerator: () -> String
+    public let logger: Logger
     
     public init(dynamodbTable: DynamoDBTable, idGenerator: @escaping () -> String,
-                timestampGenerator: @escaping () -> String) {
+                timestampGenerator: @escaping () -> String,
+                logger: Logger) {
         self.dynamodbTable = dynamodbTable
         self.idGenerator = idGenerator
         self.timestampGenerator = timestampGenerator
+        self.logger = logger
     }
 }
