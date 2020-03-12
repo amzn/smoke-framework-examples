@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "async-http-client",
+        "repositoryURL": "https://github.com/swift-server/async-http-client.git",
+        "state": {
+          "branch": null,
+          "revision": "e2636a4c24e646d3e480fc666da0c090818beb09",
+          "version": "1.1.0"
+        }
+      },
+      {
         "package": "Cryptor",
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
@@ -14,17 +23,17 @@
         "package": "SmokeAWS",
         "repositoryURL": "https://github.com/amzn/smoke-aws.git",
         "state": {
-          "branch": null,
-          "revision": "46d969a9b27fe8ee48035fe615282654125355cf",
-          "version": "2.0.0-alpha.4"
+          "branch": "async-http-client",
+          "revision": "ca9c34df5f3ecd35f228e1a8a5b6419043a9cfe2",
+          "version": null
         }
       },
       {
         "package": "SmokeAWSCredentials",
         "repositoryURL": "https://github.com/amzn/smoke-aws-credentials.git",
         "state": {
-          "branch": "add_logging_metadata",
-          "revision": "93f75a8ca80a249118d03241d1a60261006968c6",
+          "branch": "async-http-client",
+          "revision": "1cfa52ccb89725d4f0aa0fbed93e56b948a9c531",
           "version": null
         }
       },
@@ -32,17 +41,17 @@
         "package": "SmokeDynamoDB",
         "repositoryURL": "https://github.com/amzn/smoke-dynamodb.git",
         "state": {
-          "branch": null,
-          "revision": "0e4beb0cc1dccbbc3f7f127df7fb3e819c370638",
-          "version": "2.0.0-alpha.3"
+          "branch": "async-http-client",
+          "revision": "b162ca837ce276e08defaa5a777e5fcf15d54fd9",
+          "version": null
         }
       },
       {
         "package": "SmokeFramework",
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
-          "branch": "1_x_compatible_server",
-          "revision": "39b549343605743b4b1114eefed795c65f5a7782",
+          "branch": "async-http-client",
+          "revision": "b9cac1b1154e3a6639b3ba29aa4ceca89f1730d8",
           "version": null
         }
       },
@@ -50,9 +59,9 @@
         "package": "SmokeHTTP",
         "repositoryURL": "https://github.com/amzn/smoke-http.git",
         "state": {
-          "branch": null,
-          "revision": "da6596f8602cc293a1d026f0c0dac3bd39e78ab0",
-          "version": "2.0.0-alpha.6"
+          "branch": "async-http-client",
+          "revision": "ed672540abe1b1e2633822765e26b5448434d2fa",
+          "version": null
         }
       },
       {

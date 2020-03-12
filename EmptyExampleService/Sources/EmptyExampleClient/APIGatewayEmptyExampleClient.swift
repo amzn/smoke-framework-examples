@@ -13,6 +13,7 @@ import SmokeHTTPClient
 import SmokeAWSHttp
 import NIO
 import NIOHTTP1
+import AsyncHTTPClient
 
 public enum EmptyExampleClientError: Swift.Error {
     case invalidEndpoint(String)
@@ -40,7 +41,7 @@ private extension Swift.Error {
  API Gateway Client for the EmptyExample service.
  */
 public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: EmptyExampleClientProtocol {
-    let httpClient: HTTPClient
+    let httpClient: HTTPOperationsClient
     let awsRegion: AWSRegion
     let service: String
     let target: String?
@@ -64,17 +65,17 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 target: String? = nil,
                 connectionTimeoutSeconds: Int64 = 10,
                 retryConfiguration: HTTPClientRetryConfiguration = .default,
-                eventLoopProvider: HTTPClient.EventLoopProvider = .spawnNewThreads,
+                eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>() ) {
         let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>()
 
-        self.httpClient = HTTPClient(endpointHostName: endpointHostName,
-                                     endpointPort: endpointPort,
-                                     contentType: contentType,
-                                     clientDelegate: clientDelegate,
-                                     connectionTimeoutSeconds: connectionTimeoutSeconds,
-                                     eventLoopProvider: eventLoopProvider)
+        self.httpClient = HTTPOperationsClient(endpointHostName: endpointHostName,
+                                               endpointPort: endpointPort,
+                                               contentType: contentType,
+                                               clientDelegate: clientDelegate,
+                                               connectionTimeoutSeconds: connectionTimeoutSeconds,
+                                               eventLoopProvider: eventLoopProvider)
         self.awsRegion = awsRegion
         self.service = service
         self.target = target
@@ -89,7 +90,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     
     internal init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 reporting: InvocationReportingType,
-                httpClient: HTTPClient,
+                httpClient: HTTPOperationsClient,
                 stage: String,
                 service: String,
                 target: String?,
@@ -113,16 +114,8 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      Gracefully shuts down this client. This function is idempotent and
      will handle being called multiple times.
      */
-    public func close() {
-        httpClient.close()
-    }
-
-    /**
-     Waits for the client to be closed. If close() is not called,
-     this will block forever.
-     */
-    public func wait() {
-        httpClient.wait()
+    public func close() throws {
+        try httpClient.close()
     }
 
     /**
@@ -138,7 +131,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     public func addCustomerEmailAddressAsync(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest, 
             completion: @escaping (Result<EmptyExampleModel.CustomerEmailAddressIdentity, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -149,7 +142,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.CustomerEmailAddressIdentity, HTTPClientError>) {
+        func innerCompletion(result: Result<EmptyExampleModel.CustomerEmailAddressIdentity, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -183,7 +176,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func addCustomerEmailAddressSync(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) throws -> EmptyExampleModel.CustomerEmailAddressIdentity {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -216,7 +209,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     public func createCustomerPutAsync(
             input: EmptyExampleModel.CreateCustomerRequest, 
             completion: @escaping (Result<EmptyExampleModel.CreateCustomerPut200Response, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -227,7 +220,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.CreateCustomerPut200Response, HTTPClientError>) {
+        func innerCompletion(result: Result<EmptyExampleModel.CreateCustomerPut200Response, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -261,7 +254,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func createCustomerPutSync(
             input: EmptyExampleModel.CreateCustomerRequest) throws -> EmptyExampleModel.CreateCustomerPut200Response {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -294,7 +287,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     public func getCustomerDetailsAsync(
             input: EmptyExampleModel.GetCustomerDetailsRequest, 
             completion: @escaping (Result<EmptyExampleModel.CustomerAttributes, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -305,7 +298,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.CustomerAttributes, HTTPClientError>) {
+        func innerCompletion(result: Result<EmptyExampleModel.CustomerAttributes, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -339,7 +332,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func getCustomerDetailsSync(
             input: EmptyExampleModel.GetCustomerDetailsRequest) throws -> EmptyExampleModel.CustomerAttributes {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -372,7 +365,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     public func listCustomersGetAsync(
             input: EmptyExampleModel.ListCustomersGetRequest, 
             completion: @escaping (Result<EmptyExampleModel.ListCustomersResponse, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -383,7 +376,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.ListCustomersResponse, HTTPClientError>) {
+        func innerCompletion(result: Result<EmptyExampleModel.ListCustomersResponse, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -417,7 +410,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func listCustomersGetSync(
             input: EmptyExampleModel.ListCustomersGetRequest) throws -> EmptyExampleModel.ListCustomersResponse {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,

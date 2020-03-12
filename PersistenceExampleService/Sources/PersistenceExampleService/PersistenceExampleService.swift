@@ -26,6 +26,7 @@ import SmokeDynamoDB
 import NIO
 import SmokeHTTPClient
 import SmokeAWSHttp
+import AsyncHTTPClient
 import Logging
 
 struct EnvironmentVariables {
@@ -56,7 +57,7 @@ public func initializeDynamoDBTableGeneratorFromEnvironment(
         environment: [String: String],
         credentialsProvider: CredentialsProvider,
         region: AWSRegion,
-        clientEventLoopProvider: HTTPClient.EventLoopProvider) throws -> AWSDynamoDBTableGenerator {
+        clientEventLoopProvider: HTTPClient.EventLoopGroupProvider) throws -> AWSDynamoDBTableGenerator {
     guard let dynamoEndpointHostName = environment[EnvironmentVariables.dynamoEndpointHostName] else {
         throw PersistenceExampleServiceError.missingEnvironmentVariable(reason:
             "'\(EnvironmentVariables.dynamoEndpointHostName)' environment variable not specified.")
@@ -80,7 +81,7 @@ func handleApplication() {
     
     let clientEventLoopGroup =
         MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-    let clientEventLoopProvider = HTTPClient.EventLoopProvider.use(clientEventLoopGroup)
+    let clientEventLoopProvider = HTTPClient.EventLoopGroupProvider.shared(clientEventLoopGroup)
     
     let idGenerator = {
         UUID().uuidString
@@ -133,16 +134,13 @@ func handleApplication() {
             andContextProvider: operationsContextGenerator.get)
         
         try smokeHTTP1Server.waitUntilShutdownAndThen {
-            dynamodbTableGenerator.close()
-            dynamodbTableGenerator.wait()
-            
-            credentialsProvider.stop()
-            credentialsProvider.wait()
-            
             do {
+                try dynamodbTableGenerator.close()
+                try credentialsProvider.stop()
+                
                 try clientEventLoopGroup.syncShutdownGracefully()
             } catch {
-                logger.error("Unable to shutdown client thread loop: '\(error)'")
+                logger.error("Unable to shutdown cleanly: '\(error)'")
             }
         }
     } catch {

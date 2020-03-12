@@ -13,6 +13,7 @@ import SmokeHTTPClient
 import SmokeAWSHttp
 import NIO
 import NIOHTTP1
+import AsyncHTTPClient
 
 public enum PersistenceExampleClientError: Swift.Error {
     case invalidEndpoint(String)
@@ -40,7 +41,7 @@ private extension Swift.Error {
  API Gateway Client for the PersistenceExample service.
  */
 public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: PersistenceExampleClientProtocol {
-    let httpClient: HTTPClient
+    let httpClient: HTTPOperationsClient
     let awsRegion: AWSRegion
     let service: String
     let target: String?
@@ -64,17 +65,17 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                 target: String? = nil,
                 connectionTimeoutSeconds: Int64 = 10,
                 retryConfiguration: HTTPClientRetryConfiguration = .default,
-                eventLoopProvider: HTTPClient.EventLoopProvider = .spawnNewThreads,
+                eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>() ) {
         let clientDelegate = JSONAWSHttpClientDelegate<PersistenceExampleError>()
 
-        self.httpClient = HTTPClient(endpointHostName: endpointHostName,
-                                     endpointPort: endpointPort,
-                                     contentType: contentType,
-                                     clientDelegate: clientDelegate,
-                                     connectionTimeoutSeconds: connectionTimeoutSeconds,
-                                     eventLoopProvider: eventLoopProvider)
+        self.httpClient = HTTPOperationsClient(endpointHostName: endpointHostName,
+                                               endpointPort: endpointPort,
+                                               contentType: contentType,
+                                               clientDelegate: clientDelegate,
+                                               connectionTimeoutSeconds: connectionTimeoutSeconds,
+                                               eventLoopProvider: eventLoopProvider)
         self.awsRegion = awsRegion
         self.service = service
         self.target = target
@@ -89,7 +90,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     
     internal init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 reporting: InvocationReportingType,
-                httpClient: HTTPClient,
+                httpClient: HTTPOperationsClient,
                 stage: String,
                 service: String,
                 target: String?,
@@ -113,16 +114,8 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      Gracefully shuts down this client. This function is idempotent and
      will handle being called multiple times.
      */
-    public func close() {
-        httpClient.close()
-    }
-
-    /**
-     Waits for the client to be closed. If close() is not called,
-     this will block forever.
-     */
-    public func wait() {
-        httpClient.wait()
+    public func close() throws {
+        try httpClient.close()
     }
 
     /**
@@ -138,7 +131,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     public func addCustomerEmailAddressAsync(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest, 
             completion: @escaping (Result<PersistenceExampleModel.CustomerEmailAddressIdentity, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -149,7 +142,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.CustomerEmailAddressIdentity, HTTPClientError>) {
+        func innerCompletion(result: Result<PersistenceExampleModel.CustomerEmailAddressIdentity, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -183,7 +176,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func addCustomerEmailAddressSync(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -216,7 +209,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     public func createCustomerPutAsync(
             input: PersistenceExampleModel.CreateCustomerRequest, 
             completion: @escaping (Result<PersistenceExampleModel.CreateCustomerPut200Response, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -227,7 +220,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.CreateCustomerPut200Response, HTTPClientError>) {
+        func innerCompletion(result: Result<PersistenceExampleModel.CreateCustomerPut200Response, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -261,7 +254,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func createCustomerPutSync(
             input: PersistenceExampleModel.CreateCustomerRequest) throws -> PersistenceExampleModel.CreateCustomerPut200Response {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -294,7 +287,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     public func getCustomerDetailsAsync(
             input: PersistenceExampleModel.GetCustomerDetailsRequest, 
             completion: @escaping (Result<PersistenceExampleModel.CustomerAttributes, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -305,7 +298,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.CustomerAttributes, HTTPClientError>) {
+        func innerCompletion(result: Result<PersistenceExampleModel.CustomerAttributes, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -339,7 +332,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func getCustomerDetailsSync(
             input: PersistenceExampleModel.GetCustomerDetailsRequest) throws -> PersistenceExampleModel.CustomerAttributes {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -372,7 +365,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     public func listCustomersGetAsync(
             input: PersistenceExampleModel.ListCustomersGetRequest, 
             completion: @escaping (Result<PersistenceExampleModel.ListCustomersResponse, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
@@ -383,7 +376,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.ListCustomersResponse, HTTPClientError>) {
+        func innerCompletion(result: Result<PersistenceExampleModel.ListCustomersResponse, SmokeHTTPClient.HTTPClientError>) {
             switch result {
             case .success(let payload):
                 completion(.success(payload))
@@ -417,7 +410,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func listCustomersGetSync(
             input: PersistenceExampleModel.ListCustomersGetRequest) throws -> PersistenceExampleModel.ListCustomersResponse {
-        let handlerDelegate = AWSClientChannelInboundHandlerDelegate(
+        let handlerDelegate = AWSClientInvocationDelegate(
                     credentialsProvider: credentialsProvider,
                     awsRegion: awsRegion,
                     service: service,
