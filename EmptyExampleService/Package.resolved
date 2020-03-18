@@ -23,36 +23,36 @@
         "package": "SmokeAWS",
         "repositoryURL": "https://github.com/amzn/smoke-aws.git",
         "state": {
-          "branch": "async-http-client",
-          "revision": "ca9c34df5f3ecd35f228e1a8a5b6419043a9cfe2",
-          "version": null
+          "branch": null,
+          "revision": "bbc082c45f69fb44d190e9b377520737cd16f1f8",
+          "version": "2.0.0-alpha.5"
         }
       },
       {
         "package": "SmokeAWSCredentials",
         "repositoryURL": "https://github.com/amzn/smoke-aws-credentials.git",
         "state": {
-          "branch": "async-http-client",
-          "revision": "1cfa52ccb89725d4f0aa0fbed93e56b948a9c531",
-          "version": null
+          "branch": null,
+          "revision": "34a7fb97388375a6ab46cadce170de7565db52d2",
+          "version": "2.0.0-alpha.3"
         }
       },
       {
         "package": "SmokeFramework",
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
-          "branch": "async-http-client",
-          "revision": "b9cac1b1154e3a6639b3ba29aa4ceca89f1730d8",
-          "version": null
+          "branch": null,
+          "revision": "ac76108df9d3384c0d97ac8da0b9542c130062fc",
+          "version": "2.0.0-alpha.4"
         }
       },
       {
         "package": "SmokeHTTP",
         "repositoryURL": "https://github.com/amzn/smoke-http.git",
         "state": {
-          "branch": "async-http-client",
-          "revision": "ed672540abe1b1e2633822765e26b5448434d2fa",
-          "version": null
+          "branch": null,
+          "revision": "ae8003b3605c0b368925558254055222237b1da4",
+          "version": "2.0.0-alpha.7"
         }
       },
       {

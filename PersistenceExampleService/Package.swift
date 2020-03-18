@@ -27,10 +27,10 @@ let package = Package(
             targets: ["PersistenceExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", .branch("async-http-client")),
-        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", .branch("async-http-client")),
-        .package(url: "https://github.com/amzn/smoke-aws.git", .branch("async-http-client")),
-        .package(url: "https://github.com/amzn/smoke-dynamodb.git", .branch("async-http-client")),
+        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.0.0-alpha.4"),
+        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0-alpha.3"),
+        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-alpha.5"),
+        .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "2.0.0-alpha.4"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
