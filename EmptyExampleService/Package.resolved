@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-aws-credentials.git",
         "state": {
           "branch": null,
-          "revision": "34a7fb97388375a6ab46cadce170de7565db52d2",
-          "version": "2.0.0-alpha.3"
+          "revision": "7164a4c50d8651d5d11b650232837c8be1ccd0ce",
+          "version": "2.0.0-alpha.4"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
           "branch": null,
-          "revision": "ac76108df9d3384c0d97ac8da0b9542c130062fc",
-          "version": "2.0.0-alpha.4"
+          "revision": "205f99d600ba875027406ab1aa73c6eb163b237d",
+          "version": "2.0.0-alpha.5"
         }
       },
       {
@@ -53,6 +53,15 @@
           "branch": null,
           "revision": "ae8003b3605c0b368925558254055222237b1da4",
           "version": "2.0.0-alpha.7"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log",
+        "state": {
+          "branch": null,
+          "revision": "74d7b91ceebc85daf387ebb206003f78813f71aa",
+          "version": "1.2.0"
         }
       },
       {
