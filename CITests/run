@@ -25,7 +25,7 @@ cd $workspaceRoot/package
 
 cd PersistenceExampleService
 swift build -c release
-#swift test
+swift test
 
 if [ "$USE_SWIFT_LINT" == 'yes' ]; then
     swiftlint
@@ -35,7 +35,7 @@ cd $workspaceRoot/package
 
 cd EmptyExampleService
 swift build -c release
-#swift test
+swift test
 
 if [ "$USE_SWIFT_LINT" == 'yes' ]; then
     swiftlint

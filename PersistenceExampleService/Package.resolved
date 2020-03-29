@@ -50,9 +50,9 @@
         "package": "SmokeFramework",
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
-          "branch": null,
-          "revision": "ac76108df9d3384c0d97ac8da0b9542c130062fc",
-          "version": "2.0.0-alpha.4"
+          "branch": "swift_5_2_ci",
+          "revision": "4b229f576e41546eea8f8e61fa81267efaa4badf",
+          "version": null
         }
       },
       {

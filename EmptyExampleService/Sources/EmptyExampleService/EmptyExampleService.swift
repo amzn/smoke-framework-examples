@@ -21,7 +21,7 @@ func handleApplication() {
     do {
         let smokeHTTP1Server = try SmokeHTTP1Server.startAsOperationServer(
             withHandlerSelector: createHandlerSelector(),
-            andContextGenerator: operationsContextGenerator.get)
+            andContextProvider: operationsContextGenerator.get)
 
         try smokeHTTP1Server.waitUntilShutdownAndThen {
             // TODO: Close/shutdown any clients or credentials that are part
