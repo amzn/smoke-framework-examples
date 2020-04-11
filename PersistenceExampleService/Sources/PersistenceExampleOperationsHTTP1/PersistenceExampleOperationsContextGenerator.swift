@@ -20,7 +20,7 @@ import Foundation
 import PersistenceExampleOperations
 import SmokeDynamoDB
 import SmokeOperations
-import SmokeOperationsHTTP1
+import SmokeOperationsHTTP1Server
 import SmokeHTTPClient
 import SmokeAWSHttp
 
