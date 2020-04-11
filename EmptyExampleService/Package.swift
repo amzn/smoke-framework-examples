@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "EmptyExample",
     platforms: [
-      .macOS(.v10_12), .iOS(.v10)
+      .macOS(.v10_15), .iOS(.v10)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -27,31 +27,43 @@ let package = Package(
             targets: ["EmptyExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", .branch("swift_5_2_ci")),
-        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0-alpha.4"),
-        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-alpha.5"),
+        .package(url: "https://github.com/amzn/smoke-framework.git", .branch("5_2_manifest")),
+        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", .branch("use_swift_crypto_under_5_2")),
+        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-alpha.6"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
-            name: "EmptyExampleModel",
-            dependencies: ["SmokeOperations"]),
+            name: "EmptyExampleModel", dependencies: [
+                .product(name: "SmokeOperations", package: "smoke-framework"),
+                .product(name: "Logging", package: "swift-log"),
+            ]),
         .target(
-            name: "EmptyExampleOperations",
-            dependencies: ["EmptyExampleModel"]),
+            name: "EmptyExampleOperations", dependencies: [
+                .target(name: "EmptyExampleModel"),
+            ]),
         .target(
-            name: "EmptyExampleOperationsHTTP1",
-            dependencies: ["EmptyExampleOperations", "SmokeOperationsHTTP1"]),
+            name: "EmptyExampleOperationsHTTP1", dependencies: [
+                .target(name: "EmptyExampleOperations"),
+                .product(name: "SmokeOperationsHTTP1Server", package: "smoke-framework"),
+            ]),
         .target(
-            name: "EmptyExampleClient",
-            dependencies: ["EmptyExampleModel", "SmokeOperationsHTTP1", "SmokeAWSHttp"]),
+            name: "EmptyExampleClient", dependencies: [
+                .target(name: "EmptyExampleModel"),
+                .product(name: "SmokeOperationsHTTP1", package: "smoke-framework"),
+                .product(name: "SmokeAWSHttp", package: "smoke-aws"),
+            ]),
         .target(
-            name: "EmptyExampleService",
-            dependencies: ["EmptyExampleOperationsHTTP1", "SmokeAWSCredentials"]),
+            name: "EmptyExampleService", dependencies: [
+                .target(name: "EmptyExampleOperationsHTTP1"),
+                .product(name: "SmokeAWSCredentials", package: "smoke-aws-credentials"),
+            ]),
         .testTarget(
-            name: "EmptyExampleOperationsTests",
-            dependencies: ["EmptyExampleOperations"]),
+            name: "EmptyExampleOperationsTests", dependencies: [
+                .target(name: "EmptyExampleOperations"),
+            ]),
         ],
         swiftLanguageVersions: [.v5]
 )

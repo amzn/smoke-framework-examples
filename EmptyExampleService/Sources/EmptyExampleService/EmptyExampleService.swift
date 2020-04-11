@@ -7,7 +7,7 @@ import Foundation
 import EmptyExampleOperationsHTTP1
 import EmptyExampleOperations
 import SmokeHTTP1
-import SmokeOperationsHTTP1
+import SmokeOperationsHTTP1Server
 import SmokeAWSCore
 import Logging
 

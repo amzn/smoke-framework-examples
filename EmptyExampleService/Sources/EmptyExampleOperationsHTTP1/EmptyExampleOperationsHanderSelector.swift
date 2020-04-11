@@ -8,6 +8,7 @@
 
 import Foundation
 import SmokeOperationsHTTP1
+import SmokeOperationsHTTP1Server
 import EmptyExampleModel
 import EmptyExampleOperations
 import SmokeOperations

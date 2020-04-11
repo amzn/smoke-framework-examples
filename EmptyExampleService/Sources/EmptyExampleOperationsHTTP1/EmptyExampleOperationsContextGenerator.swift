@@ -6,7 +6,7 @@
 import Foundation
 import EmptyExampleOperations
 import SmokeOperations
-import SmokeOperationsHTTP1
+import SmokeOperationsHTTP1Server
 import Logging
 
 /**
