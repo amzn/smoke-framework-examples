@@ -21,6 +21,7 @@ if [ "$USE_SWIFT_LINT" == 'yes' ]; then
     cp .build/native/release/swiftlint /usr/bin
 fi
 
+## PersistenceExampleService
 cd $workspaceRoot/package
 
 cd PersistenceExampleService
@@ -31,6 +32,7 @@ if [ "$USE_SWIFT_LINT" == 'yes' ]; then
     swiftlint
 fi
 
+# EmptyExampleService
 cd $workspaceRoot/package
 
 cd EmptyExampleService
