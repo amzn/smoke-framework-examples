@@ -14,7 +14,7 @@ import EmptyExampleModel
      - context: The context provided for this operation.
  - Returns: The CustomerEmailAddressIdentity object to be passed back from the caller of this operation.
      Will be validated before being returned to caller.
- - Throws: unknownResource, concurrency, customerEmailAddressLimitExceeded, customerEmailAddressAlreadyExists.
+ - Throws: unknownResource, customerEmailAddressLimitExceeded, customerEmailAddressAlreadyExists, concurrency.
  */
 public func handleAddCustomerEmailAddress(
         input: EmptyExampleModel.AddCustomerEmailAddressRequest,

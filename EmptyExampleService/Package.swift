@@ -27,7 +27,7 @@ let package = Package(
             targets: ["EmptyExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", .branch("5_2_manifest")),
+        .package(url: "https://github.com/amzn/smoke-framework.git", .branch("initializers")),
         .package(url: "https://github.com/amzn/smoke-aws-credentials.git", .branch("use_swift_crypto_under_5_2")),
         .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-alpha.6"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
@@ -47,7 +47,7 @@ let package = Package(
         .target(
             name: "EmptyExampleOperationsHTTP1", dependencies: [
                 .target(name: "EmptyExampleOperations"),
-                .product(name: "SmokeOperationsHTTP1Server", package: "smoke-framework"),
+                .product(name: "SmokeOperationsHTTP1", package: "smoke-framework"),
             ]),
         .target(
             name: "EmptyExampleClient", dependencies: [
@@ -59,6 +59,7 @@ let package = Package(
             name: "EmptyExampleService", dependencies: [
                 .target(name: "EmptyExampleOperationsHTTP1"),
                 .product(name: "SmokeAWSCredentials", package: "smoke-aws-credentials"),
+                .product(name: "SmokeOperationsHTTP1Server", package: "smoke-framework"),
             ]),
         .testTarget(
             name: "EmptyExampleOperationsTests", dependencies: [

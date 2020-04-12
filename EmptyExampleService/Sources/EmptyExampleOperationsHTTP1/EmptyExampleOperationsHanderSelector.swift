@@ -7,35 +7,30 @@
 //
 
 import Foundation
-import SmokeOperationsHTTP1
-import SmokeOperationsHTTP1Server
 import EmptyExampleModel
 import EmptyExampleOperations
 import SmokeOperations
+import SmokeOperationsHTTP1
 
 extension EmptyExampleModelOperations: OperationIdentity {}
 
-public typealias HandlerSelectorType =
-    StandardSmokeHTTP1HandlerSelector<EmptyExampleOperationsContext, EmptyExampleOperationDelegate,
-                                      EmptyExampleModelOperations>
-
-public func createHandlerSelector() -> HandlerSelectorType {
-    var newHandler = HandlerSelectorType(defaultOperationDelegate: JSONPayloadHTTP1OperationDelegate())
+public func addOperations<SelectorType: SmokeHTTP1HandlerSelector>(selector: inout SelectorType)
+    where SelectorType.ContextType == EmptyExampleOperationsContext,
+    SelectorType.OperationIdentifer == EmptyExampleModelOperations {
     
-    newHandler.addHandlerForOperation(.addCustomerEmailAddress, httpMethod: .PUT,
-                                      operation: handleAddCustomerEmailAddress,
-                                      allowedErrors: [(EmptyExampleErrorTypes.customerEmailAddressLimitExceeded, 400), (EmptyExampleErrorTypes.customerEmailAddressAlreadyExists, 400), (EmptyExampleErrorTypes.unknownResource, 404), (EmptyExampleErrorTypes.concurrency, 409)])
+    selector.addHandlerForOperation(.addCustomerEmailAddress, httpMethod: .PUT,
+                                    operation: handleAddCustomerEmailAddress,
+                                    allowedErrors: [(EmptyExampleErrorTypes.customerEmailAddressLimitExceeded, 400), (EmptyExampleErrorTypes.customerEmailAddressAlreadyExists, 400), (EmptyExampleErrorTypes.unknownResource, 404), (EmptyExampleErrorTypes.concurrency, 409)])
     
-    newHandler.addHandlerForOperation(.createCustomerPut, httpMethod: .PUT,
-                                      operation: handleCreateCustomerPut,
-                                      allowedErrors: [(EmptyExampleErrorTypes.unknownResource, 404)])
+    selector.addHandlerForOperation(.createCustomerPut, httpMethod: .PUT,
+                                    operation: handleCreateCustomerPut,
+                                    allowedErrors: [(EmptyExampleErrorTypes.unknownResource, 404)])
     
-    newHandler.addHandlerForOperation(.getCustomerDetails, httpMethod: .GET,
-                                      operation: handleGetCustomerDetails,
-                                      allowedErrors: [(EmptyExampleErrorTypes.unknownResource, 404)])
+    selector.addHandlerForOperation(.getCustomerDetails, httpMethod: .GET,
+                                    operation: handleGetCustomerDetails,
+                                    allowedErrors: [(EmptyExampleErrorTypes.unknownResource, 404)])
     
-    newHandler.addHandlerForOperation(.listCustomersGet, httpMethod: .GET,
-                                      operation: handleListCustomersGet,
-                                      allowedErrors: [(EmptyExampleErrorTypes.unknownResource, 404)])
-    return newHandler
+    selector.addHandlerForOperation(.listCustomersGet, httpMethod: .GET,
+                                    operation: handleListCustomersGet,
+                                    allowedErrors: [(EmptyExampleErrorTypes.unknownResource, 404)])
 }
