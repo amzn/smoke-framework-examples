@@ -7,35 +7,30 @@
 //
 
 import Foundation
-import SmokeOperationsHTTP1
-import SmokeOperationsHTTP1Server
 import PersistenceExampleModel
 import PersistenceExampleOperations
 import SmokeOperations
+import SmokeOperationsHTTP1
 
 extension PersistenceExampleModelOperations: OperationIdentity {}
 
-public typealias HandlerSelectorType =
-    StandardSmokeHTTP1HandlerSelector<PersistenceExampleOperationsContext, PersistenceExampleOperationDelegate,
-                                      PersistenceExampleModelOperations>
-
-public func createHandlerSelector() -> HandlerSelectorType {
-    var newHandler = HandlerSelectorType(defaultOperationDelegate: JSONPayloadHTTP1OperationDelegate())
+public func addOperations<SelectorType: SmokeHTTP1HandlerSelector>(selector: inout SelectorType)
+    where SelectorType.ContextType == PersistenceExampleOperationsContext,
+    SelectorType.OperationIdentifer == PersistenceExampleModelOperations {
     
-    newHandler.addHandlerForOperation(.addCustomerEmailAddress, httpMethod: .PUT,
-                                      operation: handleAddCustomerEmailAddress,
-                                      allowedErrors: [(PersistenceExampleErrorTypes.customerEmailAddressLimitExceeded, 400), (PersistenceExampleErrorTypes.customerEmailAddressAlreadyExists, 400), (PersistenceExampleErrorTypes.unknownResource, 404), (PersistenceExampleErrorTypes.concurrency, 409)])
+    selector.addHandlerForOperation(.addCustomerEmailAddress, httpMethod: .PUT,
+                                    operation: handleAddCustomerEmailAddress,
+                                    allowedErrors: [(PersistenceExampleErrorTypes.customerEmailAddressLimitExceeded, 400), (PersistenceExampleErrorTypes.customerEmailAddressAlreadyExists, 400), (PersistenceExampleErrorTypes.unknownResource, 404), (PersistenceExampleErrorTypes.concurrency, 409)])
     
-    newHandler.addHandlerForOperation(.createCustomerPut, httpMethod: .PUT,
-                                      operation: handleCreateCustomerPut,
-                                      allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
+    selector.addHandlerForOperation(.createCustomerPut, httpMethod: .PUT,
+                                    operation: handleCreateCustomerPut,
+                                    allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
     
-    newHandler.addHandlerForOperation(.getCustomerDetails, httpMethod: .GET,
-                                      operation: handleGetCustomerDetails,
-                                      allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
+    selector.addHandlerForOperation(.getCustomerDetails, httpMethod: .GET,
+                                    operation: handleGetCustomerDetails,
+                                    allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
     
-    newHandler.addHandlerForOperation(.listCustomersGet, httpMethod: .GET,
-                                      operation: handleListCustomersGet,
-                                      allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
-    return newHandler
+    selector.addHandlerForOperation(.listCustomersGet, httpMethod: .GET,
+                                    operation: handleListCustomersGet,
+                                    allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
 }

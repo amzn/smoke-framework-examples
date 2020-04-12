@@ -14,6 +14,7 @@ import SmokeAWSHttp
 import NIO
 import NIOHTTP1
 import AsyncHTTPClient
+import Logging
 
 public enum PersistenceExampleClientError: Swift.Error {
     case invalidEndpoint(String)

@@ -32,7 +32,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
 
         XCTAssertEqual(try handleAddCustomerEmailAddress(input: input, context: operationsContext), expected)
 
-        let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBTable
+        let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBCompositePrimaryKeyTable
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
@@ -153,7 +153,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
     func testAddCustomerEmailAddressAcceptableConcurrency() throws {
         let input = AddCustomerEmailAddressRequest.__default
         let dynamodbTable = createTable()
-        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBTable(
+        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
             simulateConcurrencyModifications: 5,
             simulateOnInsertItem: false) // simulate 5 concurrent attempts
@@ -186,7 +186,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
     func testAddCustomerEmailAddressUnacceptableConcurrency() throws {
         let input = AddCustomerEmailAddressRequest.__default
         let dynamodbTable = createTable()
-        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBTable(
+        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
             simulateConcurrencyModifications: 100,
             simulateOnInsertItem: false)

@@ -35,11 +35,11 @@ struct TestVariables {
     static let logger = Logger(label: "PersistenceExampleTestConfiguration")
 }
 
-func createTable() -> InMemoryDynamoDBTable {
-    return InMemoryDynamoDBTable()
+func createTable() -> InMemoryDynamoDBCompositePrimaryKeyTable {
+    return InMemoryDynamoDBCompositePrimaryKeyTable()
 }
 
-func createOperationsContext(dynamodbTable: DynamoDBTable = createTable()) -> PersistenceExampleOperationsContext {
+func createOperationsContext(dynamodbTable: DynamoDBCompositePrimaryKeyTable = createTable()) -> PersistenceExampleOperationsContext {
     return PersistenceExampleOperationsContext(dynamodbTable: dynamodbTable,
                                                idGenerator: TestVariables.staticIdGenerator,
                                                timestampGenerator: TestVariables.staticTimestampGenerator,
