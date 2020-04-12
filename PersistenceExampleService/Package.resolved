@@ -41,9 +41,9 @@
         "package": "smoke-framework",
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
-          "branch": "initializers",
-          "revision": "993e25d5362bb1cc187b66b62ffa2496e104af38",
-          "version": null
+          "branch": null,
+          "revision": "c14cc9366557aaa42e22ca8c261710cb0beace37",
+          "version": "2.0.0-alpha.7"
         }
       },
       {
