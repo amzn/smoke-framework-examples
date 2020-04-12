@@ -1,0 +1,346 @@
+---
+swagger: "2.0"
+info:
+  version: "2018-12-19"
+  title: "PersistenceExampleService"
+schemes:
+- "https"
+paths:
+  /customer:
+    put:
+      operationId: "CreateCustomer"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "CreateCustomerRequest"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateCustomerRequest"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+          headers:
+            X-Request-ID:
+              type: string
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/UnknownResourceFault"
+      security:
+      - sigv4: []
+      x-amazon-apigateway-integration:
+        responses:
+          '200':
+            statusCode: "200"
+          '400':
+            statusCode: "400"
+        uri: http://${stageVariables.LoadBalancerDNSName}:8080/customer
+        passthroughBehavior: "when_no_templates"
+        connectionType: "VPC_LINK"
+        connectionId: "${stageVariables.VpcLinkId}"
+        httpMethod: "PUT"
+        type: "http"
+    get:
+      operationId: "ListCustomers"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: maximumPageSize
+        required: false
+        type: integer
+      - in: query
+        name: nextPageToken
+        required: false
+        type: string
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ListCustomersResponse"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/UnknownResourceFault"
+      security:
+      - sigv4: []
+      x-amazon-apigateway-integration:
+        responses:
+          '200':
+            statusCode: "200"
+          '400':
+            statusCode: "400"
+        uri: http://${stageVariables.LoadBalancerDNSName}:8080/customer
+        passthroughBehavior: "when_no_templates"
+        connectionType: "VPC_LINK"
+        connectionId: "${stageVariables.VpcLinkId}"
+        httpMethod: "GET"
+        type: "http"
+  /customer/{id}:
+    get:
+      operationId: "GetCustomerDetails"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      - in: query
+        name: includeOnlyPrimaryEmail
+        required: false
+        type: string
+      - in: header
+        name: X-Request-ID
+        required: false
+        type: string
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/CustomerAttributes"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/UnknownResourceFault"
+      security:
+      - sigv4: []
+      x-amazon-apigateway-integration:
+        responses:
+          '200':
+            statusCode: "200"
+          '400':
+            statusCode: "400"
+        uri: http://${stageVariables.LoadBalancerDNSName}:8080/customer/{id}
+        passthroughBehavior: "when_no_templates"
+        connectionType: "VPC_LINK"
+        connectionId: "${stageVariables.VpcLinkId}"
+        httpMethod: "GET"
+        type: "http"
+  /customer/{id}/email:
+    put:
+      operationId: "AddCustomerEmailAddress"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: addDetails
+        schema:
+          type: object
+          required:
+            - emailAddress
+            - notifyOnImportantAction
+            - notifyOnAllActions
+          properties:
+              emailAddress:
+                type: string
+              isPrimary:
+                type: boolean
+              notifyOnImportantAction:
+                type: boolean
+              notifyOnAllActions:
+                type: boolean
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/CustomerEmailAddressIdentity"
+        400:
+          description: "400 response"
+          schema:
+            oneOf:
+              - $ref: "#/definitions/CustomerEmailAddressLimitExceededFault"
+              - $ref: "#/definitions/CustomerEmailAddressAlreadyExistsFault"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/UnknownResourceFault"
+        409:
+          description: "409 response"
+          schema:
+            $ref: "#/definitions/ConcurrencyFault"
+      security:
+      - sigv4: []
+      x-amazon-apigateway-integration:
+        responses:
+          '200':
+            statusCode: "200"
+          '400':
+            statusCode: "400"
+        uri: http://${stageVariables.LoadBalancerDNSName}:8080/customer/{id}/email
+        passthroughBehavior: "when_no_templates"
+        connectionType: "VPC_LINK"
+        connectionId: "${stageVariables.VpcLinkId}"
+        httpMethod: "PUT"
+        type: "http"
+securityDefinitions:
+  sigv4:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    x-amazon-apigateway-authtype: "awsSigv4"
+definitions:
+  BirthYear:
+    type: "integer"
+  ConcurrencyFault:
+    type: "object"
+    properties:
+      message:
+        $ref: "#/definitions/ErrorMessage"
+  CoreCustomerAttributes:
+    type: "object"
+    required:
+    - "firstName"
+    - "lastName"
+    - "birthYear"
+    properties:
+      firstName:
+        $ref: "#/definitions/FirstName"
+      lastName:
+        $ref: "#/definitions/LastName"
+      birthYear:
+        $ref: "#/definitions/BirthYear"
+      gender:
+        $ref: "#/definitions/Gender"
+  CreateCustomerRequest:
+    type: "object"
+    required:
+    - "firstName"
+    - "lastName"
+    - "birthYear"
+    properties:
+      firstName:
+        $ref: "#/definitions/FirstName"
+      lastName:
+        $ref: "#/definitions/LastName"
+      birthYear:
+        $ref: "#/definitions/BirthYear"
+      gender:
+        $ref: "#/definitions/Gender"
+  CustomerAttributes:
+    type: "object"
+    required:
+    - "firstName"
+    - "lastName"
+    - "birthYear"
+    - "emailAddresses"
+    properties:
+      firstName:
+        $ref: "#/definitions/FirstName"
+      lastName:
+        $ref: "#/definitions/LastName"
+      birthYear:
+        $ref: "#/definitions/BirthYear"
+      gender:
+        $ref: "#/definitions/Gender"
+      emailAddresses:
+        $ref: "#/definitions/CustomerEmailAddressAttributesList"
+  CustomerEmailAddressAttributes:
+    type: "object"
+    required:
+    - "emailAddress"
+    - "notifyOnImportantAction"
+    - "notifyOnAllActions"
+    properties:
+      emailAddress:
+        $ref: "#/definitions/CustomerEmailAddress"
+      notifyOnImportantAction:
+        $ref: "#/definitions/NotifyOnImportantAction"
+      notifyOnAllActions:
+        $ref: "#/definitions/NotifyOnAllActions"
+  CustomerEmailAddressAttributesList:
+    type: "array"
+    items:
+      $ref: "#/definitions/CustomerEmailAddressAttributes"
+  CustomerEmailAddressIdentity:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        $ref: "#/definitions/CustomerEmailAddress"
+  CustomerEmailAddressAlreadyExistsFault:
+    type: "object"
+    properties:
+      message:
+        $ref: "#/definitions/ErrorMessage"
+  CustomerEmailAddressLimitExceededFault:
+    type: "object"
+    properties:
+      message:
+        $ref: "#/definitions/ErrorMessage"
+  CustomerEmailAddress:
+    type: "string"
+    maxLength: 254
+    minLength: 1
+  CustomerID:
+    type: "string"
+    maxLength: 150
+    minLength: 1
+  CustomerIDList:
+    type: "array"
+    items:
+      $ref: "#/definitions/CustomerID"
+  CustomerIdentity:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        $ref: "#/definitions/CustomerID"
+  ErrorMessage:
+    type: "string"
+  FirstName:
+    type: "string"
+    maxLength: 300
+    minLength: 1
+  Gender:
+    type: "string"
+    enum:
+    - "FEMALE"
+    - "MALE"
+    - "OTHER"
+  LastName:
+    type: "string"
+    maxLength: 300
+    minLength: 1
+  ListCustomersResponse:
+    type: "object"
+    required:
+    - "customerIDs"
+    properties:
+      customerIDs:
+        $ref: "#/definitions/CustomerIDList"
+      nextPageToken:
+        $ref: "#/definitions/NextPageToken"
+  NextPageToken:
+    type: "string"
+    maxLength: 2048
+    minLength: 1
+  NotifyOnAllActions:
+    type: "boolean"
+  NotifyOnImportantAction:
+    type: "boolean"
+  UnknownResourceFault:
+    type: "object"
+    properties:
+      message:
+        $ref: "#/definitions/ErrorMessage"

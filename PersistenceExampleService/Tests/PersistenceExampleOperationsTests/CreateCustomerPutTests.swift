@@ -27,9 +27,9 @@ class CreateCustomerPutTests: XCTestCase {
         let dynamodbTable = createTable()
         let operationsContext = createOperationsContext(dynamodbTable: dynamodbTable)
         
-        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [STATIC_ID]).dynamodbKey
-        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [STATIC_ID]).dynamodbKey
-        let expected = CreateCustomerPut200Response(xRequestID: STATIC_ID,
+        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
+        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
+        let expected = CreateCustomerPut200Response(xRequestID: TestVariables.staticId,
                                                     id: externalCustomerId)
     
         // verify the operation returns what is expected
@@ -42,7 +42,7 @@ class CreateCustomerPutTests: XCTestCase {
         let customerIdentityRow = customerPartition[internalCustomerId] as! StandardTypedDatabaseItem<CustomerIdentityRow>
         let expectedCustomerEmailAddressSummary = CustomerEmailAddressSummary(emailAddresses: [], maximum: 5)
         let expectedCustomerIdentityRow = CustomerIdentityRow(customerEmailAddressSummary: expectedCustomerEmailAddressSummary,
-                                                              customerID: STATIC_ID,
+                                                              customerID: TestVariables.staticId,
                                                               coreAttributes: CoreCustomerAttributes.__default,
                                                               primaryEmailAddress: nil)
         
