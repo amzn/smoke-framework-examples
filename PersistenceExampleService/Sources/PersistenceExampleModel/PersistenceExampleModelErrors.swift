@@ -2,25 +2,22 @@
 // swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment
 // -- Generated Code; do not edit --
 //
-// Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License").
-// You may not use this file except in compliance with the License.
-// A copy of the License is located at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// or in the "license" file accompanying this file. This file is distributed
-// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-// express or implied. See the License for the specific language governing
-// permissions and limitations under the License.
-//
 // PersistenceExampleModelErrors.swift
 // PersistenceExampleModel
 //
 
 import Foundation
-import LoggerAPI
+import Logging
+
+public typealias PersistenceExampleErrorResult<SuccessPayload> = Result<SuccessPayload, PersistenceExampleError>
+
+public extension Swift.Error {
+    func asUnrecognizedPersistenceExampleError() -> PersistenceExampleError {
+        let errorType = String(describing: type(of: self))
+        let errorDescription = String(describing: self)
+        return .unrecognizedError(errorType, errorDescription)
+    }
+}
 import SmokeOperations
 
 private let validationErrorIdentityBuiltIn = "ValidationError"
@@ -29,20 +26,22 @@ private let concurrencyIdentity = "ConcurrencyFault"
 private let customerEmailAddressAlreadyExistsIdentity = "CustomerEmailAddressAlreadyExistsFault"
 private let customerEmailAddressLimitExceededIdentity = "CustomerEmailAddressLimitExceededFault"
 private let unknownResourceIdentity = "UnknownResourceFault"
-
-public enum PersistenceExampleCodingError: Swift.Error {
-    case unknownError
-    case unrecognizedError(String, String?)
-}
+private let __validationErrorIdentity = "ValidationError"
+private let __unrecognizedErrorIdentity = "UnrecognizedError"
+private let __unknownErrorIdentity = "UnknownError"
 
 public enum PersistenceExampleError: Swift.Error, Decodable {
     case concurrency(ConcurrencyFault)
     case customerEmailAddressAlreadyExists(CustomerEmailAddressAlreadyExistsFault)
     case customerEmailAddressLimitExceeded(CustomerEmailAddressLimitExceededFault)
     case unknownResource(UnknownResourceFault)
+    case validationError(reason: String)
+    case unrecognizedError(String, String?)
+    case unknownError
 
     enum CodingKeys: String, CodingKey {
         case type = "__type"
+        case unrecognizedType = "__unrecognizedType"
         case errorMessage = "message"
     }
 
@@ -52,7 +51,7 @@ public enum PersistenceExampleError: Swift.Error, Decodable {
         let errorMessage = try values.decodeIfPresent(String.self, forKey: .errorMessage)
         
         guard let errorReason = type else {
-            throw PersistenceExampleCodingError.unknownError
+            throw PersistenceExampleError.unknownError
         }
 
         switch errorReason {
@@ -72,7 +71,7 @@ public enum PersistenceExampleError: Swift.Error, Decodable {
             let errorMessage = try values.decodeIfPresent(String.self, forKey: .errorMessage) ?? ""
             throw SmokeOperationsError.validationError(reason: errorMessage)
         default:
-            throw PersistenceExampleCodingError.unrecognizedError(errorReason, errorMessage)
+            self = PersistenceExampleError.unrecognizedError(errorReason, errorMessage)
         }
     }
     
@@ -89,6 +88,12 @@ extension PersistenceExampleError: CustomStringConvertible {
             return customerEmailAddressLimitExceededIdentity
         case .unknownResource:
             return unknownResourceIdentity
+        case .validationError:
+            return __validationErrorIdentity
+        case .unrecognizedError:
+            return __unrecognizedErrorIdentity
+        case .unknownError:
+            return __unknownErrorIdentity
         }
     }
 }
@@ -104,6 +109,15 @@ extension PersistenceExampleError: Encodable {
             try details.encode(to: encoder)
         case .unknownResource(let details):
             try details.encode(to: encoder)
+        case .validationError(reason: let reason):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(reason, forKey: .errorMessage)
+        case .unrecognizedError(let errorReason, let errorMessage):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(errorReason, forKey: .unrecognizedType)
+            try container.encode(errorMessage, forKey: .errorMessage)
+        case .unknownError:
+            break
         }
     }
 }

@@ -18,6 +18,7 @@
 
 import Foundation
 import SmokeDynamoDB
+import Logging
 
 /**
  The context to be passed to each of the PersistenceExample operations.
@@ -30,14 +31,17 @@ public struct PersistenceExampleOperationsContext {
     
     public static let defaultCustomerEmailAddressLimit = 5
     
-    public let dynamodbTable: DynamoDBTable
+    public let dynamodbTable: DynamoDBCompositePrimaryKeyTable
     public let idGenerator: () -> String
     public let timestampGenerator: () -> String
+    public let logger: Logger
     
-    public init(dynamodbTable: DynamoDBTable, idGenerator: @escaping () -> String,
-                timestampGenerator: @escaping () -> String) {
+    public init(dynamodbTable: DynamoDBCompositePrimaryKeyTable, idGenerator: @escaping () -> String,
+                timestampGenerator: @escaping () -> String,
+                logger: Logger) {
         self.dynamodbTable = dynamodbTable
         self.idGenerator = idGenerator
         self.timestampGenerator = timestampGenerator
+        self.logger = logger
     }
 }

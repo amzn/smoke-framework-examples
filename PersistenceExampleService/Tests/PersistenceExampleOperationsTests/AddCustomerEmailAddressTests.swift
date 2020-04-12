@@ -32,9 +32,9 @@ class AddCustomerEmailAddressTests: XCTestCase {
 
         XCTAssertEqual(try handleAddCustomerEmailAddress(input: input, context: operationsContext), expected)
 
-        let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBTable
+        let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBCompositePrimaryKeyTable
 
-        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [STATIC_ID]).dynamodbKey
+        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(2, customerPartition.count) // the email address row plus the customer row
@@ -50,18 +50,19 @@ class AddCustomerEmailAddressTests: XCTestCase {
     func testAddCustomerEmailAddressUpToLimit() throws {
         let dynamodbTable = createTable()
         
-        // create a customer with STATIC_ID as its customer ID
+        // create a customer with TestVariables.staticId as its customer ID
         _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
                                         context: createOperationsContext(dynamodbTable: dynamodbTable))
         
         let idGenerator = {
             UUID().uuidString
         }
-        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [STATIC_ID]).dynamodbKey
+        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
         let operationsContext = PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
             idGenerator: idGenerator,
-            timestampGenerator: STATIC_TIMESTAMP_GENERATOR)
+            timestampGenerator: TestVariables.staticTimestampGenerator,
+            logger: TestVariables.logger)
 
         var emailAddresses: [String] = []
         for index in 0..<5 {
@@ -77,7 +78,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
             }
         }
 
-        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [STATIC_ID]).dynamodbKey
+        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(6, customerPartition.count) // all email address rows plus the customer row
@@ -93,14 +94,15 @@ class AddCustomerEmailAddressTests: XCTestCase {
         let idGenerator = {
             UUID().uuidString
         }
-        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [STATIC_ID]).dynamodbKey
+        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
         let dynamodbTable = createTable()
         let operationsContext = PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
             idGenerator: idGenerator,
-            timestampGenerator: STATIC_TIMESTAMP_GENERATOR)
+            timestampGenerator: TestVariables.staticTimestampGenerator,
+            logger: TestVariables.logger)
         
-        // create a customer with STATIC_ID as its customer ID
+        // create a customer with TestVariables.staticId as its customer ID
         _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
                                         context: createOperationsContext(dynamodbTable: dynamodbTable))
 
@@ -135,7 +137,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
             XCTFail("Expected error not thrown. Instead \(error).")
         }
 
-        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [STATIC_ID]).dynamodbKey
+        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(6, customerPartition.count) // maximum email address rows plus the customer row
@@ -151,23 +153,24 @@ class AddCustomerEmailAddressTests: XCTestCase {
     func testAddCustomerEmailAddressAcceptableConcurrency() throws {
         let input = AddCustomerEmailAddressRequest.__default
         let dynamodbTable = createTable()
-        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBTable(
+        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
             simulateConcurrencyModifications: 5,
             simulateOnInsertItem: false) // simulate 5 concurrent attempts
         let operationsContext = PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTableWrapper,
-            idGenerator: STATIC_ID_GENERATOR,
-            timestampGenerator: STATIC_TIMESTAMP_GENERATOR)
+            idGenerator: TestVariables.staticIdGenerator,
+            timestampGenerator: TestVariables.staticTimestampGenerator,
+            logger: TestVariables.logger)
         
-        // create a customer with STATIC_ID as its customer ID
+        // create a customer with TestVariables.staticId as its customer ID
         _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
                                         context: createOperationsContext(dynamodbTable: dynamodbTable))
 
         let expected = CustomerEmailAddressIdentity(id: AddCustomerEmailAddressRequest.__default.emailAddress)
         XCTAssertEqual(try handleAddCustomerEmailAddress(input: input, context: operationsContext), expected)
 
-        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [STATIC_ID]).dynamodbKey
+        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(2, customerPartition.count) // the email address row plus the customer row
@@ -183,16 +186,17 @@ class AddCustomerEmailAddressTests: XCTestCase {
     func testAddCustomerEmailAddressUnacceptableConcurrency() throws {
         let input = AddCustomerEmailAddressRequest.__default
         let dynamodbTable = createTable()
-        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBTable(
+        let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
             simulateConcurrencyModifications: 100,
             simulateOnInsertItem: false)
         let operationsContext = PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTableWrapper,
-            idGenerator: STATIC_ID_GENERATOR,
-            timestampGenerator: STATIC_TIMESTAMP_GENERATOR)
+            idGenerator: TestVariables.staticIdGenerator,
+            timestampGenerator: TestVariables.staticTimestampGenerator,
+            logger: TestVariables.logger)
         
-        // create a customer with STATIC_ID as its customer ID
+        // create a customer with TestVariables.staticId as its customer ID
         _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
                                         context: createOperationsContext(dynamodbTable: dynamodbTable))
 
@@ -206,7 +210,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
             XCTFail("Expected error not thrown. Instead \(error).")
         }
 
-        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [STATIC_ID]).dynamodbKey
+        let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(1, customerPartition.count) // just the customer row, no email address rows added

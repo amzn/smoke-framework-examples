@@ -2,54 +2,42 @@
 // swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment type_body_length
 // -- Generated Code; do not edit --
 //
-// Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License").
-// You may not use this file except in compliance with the License.
-// A copy of the License is located at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// or in the "license" file accompanying this file. This file is distributed
-// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-// express or implied. See the License for the specific language governing
-// permissions and limitations under the License.
-//
 // ThrowingPersistenceExampleClient.swift
 // PersistenceExampleClient
 //
 
 import Foundation
 import PersistenceExampleModel
+import SmokeAWSCore
 import SmokeHTTPClient
 
 /**
  Mock Client for the PersistenceExample service that by default always throws from its methods.
  */
 public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol {
-    let error: Swift.Error
-    let addCustomerEmailAddressAsyncOverride: PersistenceExampleClientProtocol.AddCustomerEmailAddressAsyncType?
-    let addCustomerEmailAddressSyncOverride: PersistenceExampleClientProtocol.AddCustomerEmailAddressSyncType?
-    let createCustomerPutAsyncOverride: PersistenceExampleClientProtocol.CreateCustomerPutAsyncType?
-    let createCustomerPutSyncOverride: PersistenceExampleClientProtocol.CreateCustomerPutSyncType?
-    let getCustomerDetailsAsyncOverride: PersistenceExampleClientProtocol.GetCustomerDetailsAsyncType?
-    let getCustomerDetailsSyncOverride: PersistenceExampleClientProtocol.GetCustomerDetailsSyncType?
-    let listCustomersGetAsyncOverride: PersistenceExampleClientProtocol.ListCustomersGetAsyncType?
-    let listCustomersGetSyncOverride: PersistenceExampleClientProtocol.ListCustomersGetSyncType?
+    let error: PersistenceExampleError
+    let addCustomerEmailAddressAsyncOverride: AddCustomerEmailAddressAsyncType?
+    let addCustomerEmailAddressSyncOverride: AddCustomerEmailAddressSyncType?
+    let createCustomerPutAsyncOverride: CreateCustomerPutAsyncType?
+    let createCustomerPutSyncOverride: CreateCustomerPutSyncType?
+    let getCustomerDetailsAsyncOverride: GetCustomerDetailsAsyncType?
+    let getCustomerDetailsSyncOverride: GetCustomerDetailsSyncType?
+    let listCustomersGetAsyncOverride: ListCustomersGetAsyncType?
+    let listCustomersGetSyncOverride: ListCustomersGetSyncType?
 
     /**
      Initializer that creates an instance of this clients. The behavior of individual
      functions can be overridden by passing them to this initializer.
      */
-    public init(error: Swift.Error,
-            addCustomerEmailAddressAsync: PersistenceExampleClientProtocol.AddCustomerEmailAddressAsyncType? = nil,
-            addCustomerEmailAddressSync: PersistenceExampleClientProtocol.AddCustomerEmailAddressSyncType? = nil,
-            createCustomerPutAsync: PersistenceExampleClientProtocol.CreateCustomerPutAsyncType? = nil,
-            createCustomerPutSync: PersistenceExampleClientProtocol.CreateCustomerPutSyncType? = nil,
-            getCustomerDetailsAsync: PersistenceExampleClientProtocol.GetCustomerDetailsAsyncType? = nil,
-            getCustomerDetailsSync: PersistenceExampleClientProtocol.GetCustomerDetailsSyncType? = nil,
-            listCustomersGetAsync: PersistenceExampleClientProtocol.ListCustomersGetAsyncType? = nil,
-            listCustomersGetSync: PersistenceExampleClientProtocol.ListCustomersGetSyncType? = nil) {
+    public init(error: PersistenceExampleError,
+            addCustomerEmailAddressAsync: AddCustomerEmailAddressAsyncType? = nil,
+            addCustomerEmailAddressSync: AddCustomerEmailAddressSyncType? = nil,
+            createCustomerPutAsync: CreateCustomerPutAsyncType? = nil,
+            createCustomerPutSync: CreateCustomerPutSyncType? = nil,
+            getCustomerDetailsAsync: GetCustomerDetailsAsyncType? = nil,
+            getCustomerDetailsSync: GetCustomerDetailsSyncType? = nil,
+            listCustomersGetAsync: ListCustomersGetAsyncType? = nil,
+            listCustomersGetSync: ListCustomersGetSyncType? = nil) {
         self.error = error
         self.addCustomerEmailAddressAsyncOverride = addCustomerEmailAddressAsync
         self.addCustomerEmailAddressSyncOverride = addCustomerEmailAddressSync
@@ -71,12 +59,14 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
            object will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    public func addCustomerEmailAddressAsync(input: PersistenceExampleModel.AddCustomerEmailAddressRequest, completion: @escaping (HTTPResult<PersistenceExampleModel.CustomerEmailAddressIdentity>) -> ()) throws {
+    public func addCustomerEmailAddressAsync(
+            input: PersistenceExampleModel.AddCustomerEmailAddressRequest, 
+            completion: @escaping (Result<PersistenceExampleModel.CustomerEmailAddressIdentity, PersistenceExampleError>) -> ()) throws {
         if let addCustomerEmailAddressAsyncOverride = addCustomerEmailAddressAsyncOverride {
             return try addCustomerEmailAddressAsyncOverride(input, completion)
         }
 
-        completion(.error(error))
+        completion(.failure(error))
     }
 
     /**
@@ -88,7 +78,8 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
          Will be validated before being returned to caller.
      - Throws: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    public func addCustomerEmailAddressSync(input: PersistenceExampleModel.AddCustomerEmailAddressRequest) throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
+    public func addCustomerEmailAddressSync(
+            input: PersistenceExampleModel.AddCustomerEmailAddressRequest) throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
         if let addCustomerEmailAddressSyncOverride = addCustomerEmailAddressSyncOverride {
             return try addCustomerEmailAddressSyncOverride(input)
         }
@@ -106,12 +97,14 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
            object will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func createCustomerPutAsync(input: PersistenceExampleModel.CreateCustomerRequest, completion: @escaping (HTTPResult<PersistenceExampleModel.CreateCustomerPut200Response>) -> ()) throws {
+    public func createCustomerPutAsync(
+            input: PersistenceExampleModel.CreateCustomerRequest, 
+            completion: @escaping (Result<PersistenceExampleModel.CreateCustomerPut200Response, PersistenceExampleError>) -> ()) throws {
         if let createCustomerPutAsyncOverride = createCustomerPutAsyncOverride {
             return try createCustomerPutAsyncOverride(input, completion)
         }
 
-        completion(.error(error))
+        completion(.failure(error))
     }
 
     /**
@@ -123,7 +116,8 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
          Will be validated before being returned to caller.
      - Throws: unknownResource.
      */
-    public func createCustomerPutSync(input: PersistenceExampleModel.CreateCustomerRequest) throws -> PersistenceExampleModel.CreateCustomerPut200Response {
+    public func createCustomerPutSync(
+            input: PersistenceExampleModel.CreateCustomerRequest) throws -> PersistenceExampleModel.CreateCustomerPut200Response {
         if let createCustomerPutSyncOverride = createCustomerPutSyncOverride {
             return try createCustomerPutSyncOverride(input)
         }
@@ -141,12 +135,14 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
            object will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func getCustomerDetailsAsync(input: PersistenceExampleModel.GetCustomerDetailsRequest, completion: @escaping (HTTPResult<PersistenceExampleModel.CustomerAttributes>) -> ()) throws {
+    public func getCustomerDetailsAsync(
+            input: PersistenceExampleModel.GetCustomerDetailsRequest, 
+            completion: @escaping (Result<PersistenceExampleModel.CustomerAttributes, PersistenceExampleError>) -> ()) throws {
         if let getCustomerDetailsAsyncOverride = getCustomerDetailsAsyncOverride {
             return try getCustomerDetailsAsyncOverride(input, completion)
         }
 
-        completion(.error(error))
+        completion(.failure(error))
     }
 
     /**
@@ -158,7 +154,8 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
          Will be validated before being returned to caller.
      - Throws: unknownResource.
      */
-    public func getCustomerDetailsSync(input: PersistenceExampleModel.GetCustomerDetailsRequest) throws -> PersistenceExampleModel.CustomerAttributes {
+    public func getCustomerDetailsSync(
+            input: PersistenceExampleModel.GetCustomerDetailsRequest) throws -> PersistenceExampleModel.CustomerAttributes {
         if let getCustomerDetailsSyncOverride = getCustomerDetailsSyncOverride {
             return try getCustomerDetailsSyncOverride(input)
         }
@@ -176,12 +173,14 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
            object will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func listCustomersGetAsync(input: PersistenceExampleModel.ListCustomersGetRequest, completion: @escaping (HTTPResult<PersistenceExampleModel.ListCustomersResponse>) -> ()) throws {
+    public func listCustomersGetAsync(
+            input: PersistenceExampleModel.ListCustomersGetRequest, 
+            completion: @escaping (Result<PersistenceExampleModel.ListCustomersResponse, PersistenceExampleError>) -> ()) throws {
         if let listCustomersGetAsyncOverride = listCustomersGetAsyncOverride {
             return try listCustomersGetAsyncOverride(input, completion)
         }
 
-        completion(.error(error))
+        completion(.failure(error))
     }
 
     /**
@@ -193,7 +192,8 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
          Will be validated before being returned to caller.
      - Throws: unknownResource.
      */
-    public func listCustomersGetSync(input: PersistenceExampleModel.ListCustomersGetRequest) throws -> PersistenceExampleModel.ListCustomersResponse {
+    public func listCustomersGetSync(
+            input: PersistenceExampleModel.ListCustomersGetRequest) throws -> PersistenceExampleModel.ListCustomersResponse {
         if let listCustomersGetSyncOverride = listCustomersGetSyncOverride {
             return try listCustomersGetSyncOverride(input)
         }

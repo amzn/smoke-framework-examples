@@ -21,10 +21,22 @@ if [ "$USE_SWIFT_LINT" == 'yes' ]; then
     cp .build/native/release/swiftlint /usr/bin
 fi
 
+## PersistenceExampleService Build
 cd $workspaceRoot/package
 
 cd PersistenceExampleService
-swift build
+swift build -c release
+swift test
+
+if [ "$USE_SWIFT_LINT" == 'yes' ]; then
+    swiftlint
+fi
+
+# EmptyExampleService Build
+cd $workspaceRoot/package
+
+cd EmptyExampleService
+swift build -c release
 swift test
 
 if [ "$USE_SWIFT_LINT" == 'yes' ]; then

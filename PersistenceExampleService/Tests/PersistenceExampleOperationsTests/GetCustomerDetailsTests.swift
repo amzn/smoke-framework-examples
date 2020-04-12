@@ -34,7 +34,7 @@ class GetCustomerDetailsTests: XCTestCase {
     func testGetCustomerDetailsWithEmailAddresses() throws {
         let input = GetCustomerDetailsRequest.__default
         let operationsContext = createOperationsContext()
-        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [STATIC_ID]).dynamodbKey
+        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
         
         _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default, context: operationsContext)
         
