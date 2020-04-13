@@ -23,18 +23,18 @@
         "package": "smoke-aws-credentials",
         "repositoryURL": "https://github.com/amzn/smoke-aws-credentials.git",
         "state": {
-          "branch": "use_swift_crypto_under_5_2",
-          "revision": "895b1bcc0a348a5925885c9d95d522961838e943",
-          "version": null
+          "branch": null,
+          "revision": "51949e880e76f3a4d2b648735688dd3a05ab6fa2",
+          "version": "2.0.0-beta.1"
         }
       },
       {
         "package": "smoke-dynamodb",
         "repositoryURL": "https://github.com/amzn/smoke-dynamodb.git",
         "state": {
-          "branch": "use_swift_crypto_under_5_2",
-          "revision": "7b05381f2a3ef94710e88111f0eda191e0bca9f5",
-          "version": null
+          "branch": null,
+          "revision": "654a6f448affcb77b22f827c2d766729b977d49f",
+          "version": "2.0.0-beta.1"
         }
       },
       {
