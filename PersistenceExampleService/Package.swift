@@ -28,9 +28,9 @@ let package = Package(
         ],
     dependencies: [
         .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.0.0-beta.1"),
-        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", .branch("use_swift_crypto_under_5_2")),
+        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0-beta.1"),
         .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-beta.1"),
-        .package(url: "https://github.com/amzn/smoke-dynamodb.git", .branch("use_swift_crypto_under_5_2")),
+        .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "2.0.0-beta.1"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
