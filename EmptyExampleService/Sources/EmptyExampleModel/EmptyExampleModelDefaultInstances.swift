@@ -8,14 +8,22 @@
 
 import Foundation
 
+private struct DefaultValues {
+    static let birthYear = 1985
+    static let emailAddress = "me@example.com"
+    static let firstName = "John"
+    static let id = "com.mycompany.pe.customer.53E2BFA1-E55C-42FE-8110-77A68C069EF4"
+    static let lastName = "Smith"
+}
+
 public extension AddCustomerEmailAddressRequest {
     /**
      Default instance of the AddCustomerEmailAddressRequest structure.
      */
     static let __default: EmptyExampleModel.AddCustomerEmailAddressRequest = {
         let defaultInstance = EmptyExampleModel.AddCustomerEmailAddressRequest(
-            emailAddress: "value",
-            id: "value",
+            emailAddress: DefaultValues.emailAddress,
+            id: DefaultValues.id,
             isPrimary: nil,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
@@ -30,7 +38,7 @@ public extension AddCustomerEmailAddressRequestBody {
      */
     static let __default: EmptyExampleModel.AddCustomerEmailAddressRequestBody = {
         let defaultInstance = EmptyExampleModel.AddCustomerEmailAddressRequestBody(
-            emailAddress: "value",
+            emailAddress: DefaultValues.emailAddress,
             isPrimary: nil,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
@@ -57,10 +65,10 @@ public extension CoreCustomerAttributes {
      */
     static let __default: EmptyExampleModel.CoreCustomerAttributes = {
         let defaultInstance = EmptyExampleModel.CoreCustomerAttributes(
-            birthYear: 0,
-            firstName: "0",
+            birthYear: DefaultValues.birthYear,
+            firstName: DefaultValues.firstName,
             gender: nil,
-            lastName: "0")
+            lastName: DefaultValues.lastName)
 
         return defaultInstance
     }()
@@ -97,10 +105,10 @@ public extension CreateCustomerRequest {
      */
     static let __default: EmptyExampleModel.CreateCustomerRequest = {
         let defaultInstance = EmptyExampleModel.CreateCustomerRequest(
-            birthYear: 0,
-            firstName: "0",
+            birthYear: DefaultValues.birthYear,
+            firstName: DefaultValues.firstName,
             gender: nil,
-            lastName: "0")
+            lastName: DefaultValues.lastName)
 
         return defaultInstance
     }()
@@ -112,11 +120,11 @@ public extension CustomerAttributes {
      */
     static let __default: EmptyExampleModel.CustomerAttributes = {
         let defaultInstance = EmptyExampleModel.CustomerAttributes(
-            birthYear: 0,
+            birthYear: DefaultValues.birthYear,
             emailAddresses: [],
-            firstName: "0",
+            firstName: DefaultValues.firstName,
             gender: nil,
-            lastName: "0")
+            lastName: DefaultValues.lastName)
 
         return defaultInstance
     }()
@@ -140,7 +148,7 @@ public extension CustomerEmailAddressAttributes {
      */
     static let __default: EmptyExampleModel.CustomerEmailAddressAttributes = {
         let defaultInstance = EmptyExampleModel.CustomerEmailAddressAttributes(
-            emailAddress: "0",
+            emailAddress: DefaultValues.emailAddress,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
 
@@ -154,7 +162,7 @@ public extension CustomerEmailAddressIdentity {
      */
     static let __default: EmptyExampleModel.CustomerEmailAddressIdentity = {
         let defaultInstance = EmptyExampleModel.CustomerEmailAddressIdentity(
-            id: "0")
+            id: DefaultValues.id)
 
         return defaultInstance
     }()
@@ -178,7 +186,7 @@ public extension CustomerIdentity {
      */
     static let __default: EmptyExampleModel.CustomerIdentity = {
         let defaultInstance = EmptyExampleModel.CustomerIdentity(
-            id: "0")
+            id: DefaultValues.id)
 
         return defaultInstance
     }()
@@ -191,7 +199,7 @@ public extension GetCustomerDetailsRequest {
     static let __default: EmptyExampleModel.GetCustomerDetailsRequest = {
         let defaultInstance = EmptyExampleModel.GetCustomerDetailsRequest(
             xRequestID: nil,
-            id: "value",
+            id: DefaultValues.id,
             includeOnlyPrimaryEmail: nil)
 
         return defaultInstance
