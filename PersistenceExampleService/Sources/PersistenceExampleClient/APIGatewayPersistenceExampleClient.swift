@@ -22,7 +22,11 @@ public enum PersistenceExampleClientError: Swift.Error {
     case unknownError(String?)
 }
 
-internal extension PersistenceExampleError {
+ extension PersistenceExampleError: ConvertableError {
+    public static func asUnrecognizedError(error: Swift.Error) -> PersistenceExampleError {
+        return error.asUnrecognizedPersistenceExampleError()
+    }
+
     func isRetriable() -> Bool {
         return false
     }
@@ -61,6 +65,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                 endpointHostName: String,
                 stage: String,
                 endpointPort: Int = 443,
+                requiresTLS: Bool? = nil,
                 service: String = "execute-api",
                 contentType: String = "application/json",
                 target: String? = nil,
@@ -69,7 +74,8 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>() ) {
-        let clientDelegate = JSONAWSHttpClientDelegate<PersistenceExampleError>()
+        let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
+        let clientDelegate = JSONAWSHttpClientDelegate<PersistenceExampleError>(requiresTLS: useTLS)
 
         self.httpClient = HTTPOperationsClient(endpointHostName: endpointHostName,
                                                endpointPort: endpointPort,
@@ -143,24 +149,11 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.CustomerEmailAddressIdentity, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? PersistenceExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedPersistenceExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
             httpMethod: .PUT,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -188,13 +181,18 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
+                httpMethod: .PUT,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: PersistenceExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 
     /**
@@ -221,24 +219,11 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.CreateCustomerPut200Response, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? PersistenceExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedPersistenceExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
             httpMethod: .PUT,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -266,13 +251,18 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
+                httpMethod: .PUT,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: PersistenceExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 
     /**
@@ -299,24 +289,11 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.CustomerAttributes, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? PersistenceExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedPersistenceExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
             httpMethod: .GET,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -344,13 +321,18 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
+                httpMethod: .GET,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: PersistenceExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 
     /**
@@ -377,24 +359,11 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<PersistenceExampleModel.ListCustomersResponse, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? PersistenceExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedPersistenceExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
             httpMethod: .GET,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -422,12 +391,17 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                                                             handlerDelegate: handlerDelegate)
         let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
+                httpMethod: .GET,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: PersistenceExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 }

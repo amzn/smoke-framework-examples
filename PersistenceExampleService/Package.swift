@@ -27,9 +27,9 @@ let package = Package(
             targets: ["PersistenceExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.0.0-beta.1"),
-        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0-beta.1"),
-        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-beta.1"),
+        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.0.0-rc.1"),
+        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0-rc.1"),
+        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0-rc.1"),
         .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "2.0.0-beta.1"),
         ],
     targets: [

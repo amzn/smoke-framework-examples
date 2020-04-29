@@ -45,6 +45,7 @@ public struct APIGatewayPersistenceExampleClientGenerator {
                 endpointHostName: String,
                 stage: String,
                 endpointPort: Int = 443,
+                requiresTLS: Bool? = nil,
                 service: String = "execute-api",
                 contentType: String = "application/json",
                 target: String? = nil,
@@ -53,7 +54,8 @@ public struct APIGatewayPersistenceExampleClientGenerator {
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>() ) {
-        let clientDelegate = JSONAWSHttpClientDelegate<PersistenceExampleError>()
+        let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
+        let clientDelegate = JSONAWSHttpClientDelegate<PersistenceExampleError>(requiresTLS: useTLS)
 
         self.httpClient = HTTPOperationsClient(endpointHostName: endpointHostName,
                                                endpointPort: endpointPort,

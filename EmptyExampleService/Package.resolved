@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-aws.git",
         "state": {
           "branch": null,
-          "revision": "160eb9f262bedaef44713eabb9d6c24cbc334d84",
-          "version": "2.0.0-beta.1"
+          "revision": "879264a34304f5ff79557615519b6d9130acb3f0",
+          "version": "2.0.0-rc.1"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-aws-credentials.git",
         "state": {
           "branch": null,
-          "revision": "51949e880e76f3a4d2b648735688dd3a05ab6fa2",
-          "version": "2.0.0-beta.1"
+          "revision": "d160303413e6f8db5a5f37b2b4517e65ccecf2fd",
+          "version": "2.0.0-rc.1"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
           "branch": null,
-          "revision": "d914a0e1fc7c816806f93021c47866816f615fee",
-          "version": "2.0.0-beta.1"
+          "revision": "aae8c289faf8d5f1b3d83d7de2e0b151be5f233c",
+          "version": "2.0.0-rc.1"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-http.git",
         "state": {
           "branch": null,
-          "revision": "a3fd185135fe2fc40ef609983071d44dafce36f1",
-          "version": "2.0.0-beta.1"
+          "revision": "c2ce7ef13ad62ad5b8ea76db5c3cfc9b32816cb0",
+          "version": "2.0.0-rc.1"
         }
       },
       {
