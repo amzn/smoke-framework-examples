@@ -22,7 +22,11 @@ public enum EmptyExampleClientError: Swift.Error {
     case unknownError(String?)
 }
 
-internal extension EmptyExampleError {
+ extension EmptyExampleError: ConvertableError {
+    public static func asUnrecognizedError(error: Swift.Error) -> EmptyExampleError {
+        return error.asUnrecognizedEmptyExampleError()
+    }
+
     func isRetriable() -> Bool {
         return false
     }
@@ -43,6 +47,7 @@ private extension Swift.Error {
  */
 public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: EmptyExampleClientProtocol {
     let httpClient: HTTPOperationsClient
+    let ownsHttpClients: Bool
     let awsRegion: AWSRegion
     let service: String
     let target: String?
@@ -61,6 +66,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 endpointHostName: String,
                 stage: String,
                 endpointPort: Int = 443,
+                requiresTLS: Bool? = nil,
                 service: String = "execute-api",
                 contentType: String = "application/json",
                 target: String? = nil,
@@ -69,14 +75,17 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>() ) {
-        let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>()
+        let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
+        let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>(requiresTLS: useTLS)
 
-        self.httpClient = HTTPOperationsClient(endpointHostName: endpointHostName,
-                                               endpointPort: endpointPort,
-                                               contentType: contentType,
-                                               clientDelegate: clientDelegate,
-                                               connectionTimeoutSeconds: connectionTimeoutSeconds,
-                                               eventLoopProvider: eventLoopProvider)
+        self.httpClient = HTTPOperationsClient(
+            endpointHostName: endpointHostName,
+            endpointPort: endpointPort,
+            contentType: contentType,
+            clientDelegate: clientDelegate,
+            connectionTimeoutSeconds: connectionTimeoutSeconds,
+            eventLoopProvider: eventLoopProvider)
+        self.ownsHttpClients = true
         self.awsRegion = awsRegion
         self.service = service
         self.target = target
@@ -99,6 +108,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 retryConfiguration: HTTPClientRetryConfiguration,
                 operationsReporting: EmptyExampleOperationsReporting) {
         self.httpClient = httpClient
+        self.ownsHttpClients = false
         self.awsRegion = awsRegion
         self.service = service
         self.target = target
@@ -116,7 +126,9 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      will handle being called multiple times.
      */
     public func close() throws {
-        try httpClient.close()
+        if self.ownsHttpClients {
+            try httpClient.close()
+        }
     }
 
     /**
@@ -143,24 +155,11 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.CustomerEmailAddressIdentity, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? EmptyExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedEmptyExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
             httpMethod: .PUT,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -188,13 +187,18 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
+                httpMethod: .PUT,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: EmptyExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 
     /**
@@ -221,24 +225,11 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.CreateCustomerPut200Response, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? EmptyExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedEmptyExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
             httpMethod: .PUT,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -266,13 +257,18 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
+                httpMethod: .PUT,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: EmptyExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 
     /**
@@ -299,24 +295,11 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.CustomerAttributes, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? EmptyExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedEmptyExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
             httpMethod: .GET,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -344,13 +327,18 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
+                httpMethod: .GET,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: EmptyExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 
     /**
@@ -377,24 +365,11 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
 
-        func innerCompletion(result: Result<EmptyExampleModel.ListCustomersResponse, SmokeHTTPClient.HTTPClientError>) {
-            switch result {
-            case .success(let payload):
-                completion(.success(payload))
-            case .failure(let error):
-                if let typedError = error.cause as? EmptyExampleError {
-                    completion(.failure(typedError))
-                } else {
-                    completion(.failure(error.cause.asUnrecognizedEmptyExampleError()))
-                }
-            }
-        }
-        
-        _ = try httpClient.executeAsyncRetriableWithOutput(
+        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
             endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
             httpMethod: .GET,
             input: requestInput,
-            completion: innerCompletion,
+            completion: completion,
             invocationContext: invocationContext,
             retryConfiguration: retryConfiguration,
             retryOnError: retryOnErrorProvider)
@@ -422,12 +397,17 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                                                             handlerDelegate: handlerDelegate)
         let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
 
-        return try httpClient.executeSyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+        do {
+            return try httpClient.executeSyncRetriableWithOutput(
+                endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
+                httpMethod: .GET,
+                input: requestInput,
+                invocationContext: invocationContext,
+                retryConfiguration: retryConfiguration,
+                retryOnError: retryOnErrorProvider)
+        } catch {
+            let typedError: EmptyExampleError = error.asTypedError()
+            throw typedError
+        }
     }
 }

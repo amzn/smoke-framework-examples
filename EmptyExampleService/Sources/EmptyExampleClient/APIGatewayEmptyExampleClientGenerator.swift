@@ -45,6 +45,7 @@ public struct APIGatewayEmptyExampleClientGenerator {
                 endpointHostName: String,
                 stage: String,
                 endpointPort: Int = 443,
+                requiresTLS: Bool? = nil,
                 service: String = "execute-api",
                 contentType: String = "application/json",
                 target: String? = nil,
@@ -53,14 +54,16 @@ public struct APIGatewayEmptyExampleClientGenerator {
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>() ) {
-        let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>()
+        let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
+        let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>(requiresTLS: useTLS)
 
-        self.httpClient = HTTPOperationsClient(endpointHostName: endpointHostName,
-                                               endpointPort: endpointPort,
-                                               contentType: contentType,
-                                               clientDelegate: clientDelegate,
-                                               connectionTimeoutSeconds: connectionTimeoutSeconds,
-                                               eventLoopProvider: eventLoopProvider)
+        self.httpClient = HTTPOperationsClient(
+            endpointHostName: endpointHostName,
+            endpointPort: endpointPort,
+            contentType: contentType,
+            clientDelegate: clientDelegate,
+            connectionTimeoutSeconds: connectionTimeoutSeconds,
+            eventLoopProvider: eventLoopProvider)
         self.awsRegion = awsRegion
         self.service = service
         self.target = target
