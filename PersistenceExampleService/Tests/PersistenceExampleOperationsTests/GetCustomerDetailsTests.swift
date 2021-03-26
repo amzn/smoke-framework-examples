@@ -19,24 +19,24 @@ import XCTest
 @testable import PersistenceExampleOperations
 import PersistenceExampleModel
 
-class GetCustomerDetailsTests: XCTestCase {
+class GetCustomerDetailsTests: EventLoopAwareTestCase {
 
     func testGetCustomerDetails() throws {
         let input = GetCustomerDetailsRequest.__default
-        let operationsContext = createOperationsContext()
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default, context: operationsContext)
+        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
     
-        XCTAssertEqual(try handleGetCustomerDetails(input: input, context: operationsContext),
+        XCTAssertEqual(try operationsContext.handleGetCustomerDetails(input: input),
             CustomerAttributes.__default)
     }
     
     func testGetCustomerDetailsWithEmailAddresses() throws {
         let input = GetCustomerDetailsRequest.__default
-        let operationsContext = createOperationsContext()
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
         
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default, context: operationsContext)
+        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
         let input1 = PersistenceExampleModel.AddCustomerEmailAddressRequest(
             emailAddress: "me1@example.com",
@@ -44,7 +44,7 @@ class GetCustomerDetailsTests: XCTestCase {
             isPrimary: false,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
-        _ = try handleAddCustomerEmailAddress(input: input1, context: operationsContext)
+        _ = try operationsContext.handleAddCustomerEmailAddress(input: input1)
         
         let input2 = PersistenceExampleModel.AddCustomerEmailAddressRequest(
             emailAddress: "me2@example.com",
@@ -52,7 +52,7 @@ class GetCustomerDetailsTests: XCTestCase {
             isPrimary: false,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
-        _ = try handleAddCustomerEmailAddress(input: input2, context: operationsContext)
+        _ = try operationsContext.handleAddCustomerEmailAddress(input: input2)
         
         let customerEmailAddressAttributes1 = CustomerEmailAddressAttributes(
             emailAddress: "me1@example.com",
@@ -68,7 +68,7 @@ class GetCustomerDetailsTests: XCTestCase {
                                           gender: CreateCustomerRequest.__default.gender,
                                           lastName: CreateCustomerRequest.__default.lastName)
     
-        XCTAssertEqual(try handleGetCustomerDetails(input: input, context: operationsContext), expected)
+        XCTAssertEqual(try operationsContext.handleGetCustomerDetails(input: input), expected)
     }
 
     static var allTests = [

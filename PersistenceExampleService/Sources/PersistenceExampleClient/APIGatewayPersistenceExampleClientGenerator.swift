@@ -1,5 +1,6 @@
 // swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment type_body_length
+// swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment
+// swiftlint:disable type_body_length function_body_length generic_type_name cyclomatic_complexity
 // -- Generated Code; do not edit --
 //
 // APIGatewayPersistenceExampleClientGenerator.swift
@@ -15,16 +16,7 @@ import NIO
 import NIOHTTP1
 import AsyncHTTPClient
 import Logging
-
-private extension Swift.Error {
-    func isRetriable() -> Bool {
-        if let typedError = self as? PersistenceExampleError {
-            return typedError.isRetriable()
-        } else {
-            return true
-        }
-    }
-}
+import SmokeOperationsHTTP1
 
 /**
  API Gateway Client Generator for the PersistenceExample service.
@@ -35,7 +27,7 @@ public struct APIGatewayPersistenceExampleClientGenerator {
     let service: String
     let target: String?
     let retryConfiguration: HTTPClientRetryConfiguration
-    let retryOnErrorProvider: (Swift.Error) -> Bool
+    let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
     let credentialsProvider: CredentialsProvider
     let stage: String
 
@@ -111,11 +103,11 @@ public struct APIGatewayPersistenceExampleClientGenerator {
     
     public func with(
             logger: Logging.Logger,
-            internalRequestId: String = "none") -> APIGatewayPersistenceExampleClient<StandardHTTPClientCoreInvocationReporting<AWSClientInvocationTraceContext>> {
+            internalRequestId: String = "none") -> APIGatewayPersistenceExampleClient<StandardHTTPClientCoreInvocationReporting<SmokeInvocationTraceContext>> {
         let reporting = StandardHTTPClientCoreInvocationReporting(
             logger: logger,
             internalRequestId: internalRequestId,
-            traceContext: AWSClientInvocationTraceContext())
+            traceContext: SmokeInvocationTraceContext())
         
         return with(reporting: reporting)
     }

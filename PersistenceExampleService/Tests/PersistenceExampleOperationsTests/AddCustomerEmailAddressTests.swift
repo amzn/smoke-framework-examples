@@ -20,17 +20,17 @@ import XCTest
 import PersistenceExampleModel
 import SmokeDynamoDB
 
-class AddCustomerEmailAddressTests: XCTestCase {
+class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
 
     func testAddCustomerEmailAddress() throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let operationsContext = createOperationsContext()
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default, context: operationsContext)
+        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
         let expected = CustomerEmailAddressIdentity(id: AddCustomerEmailAddressRequest.__default.emailAddress)
 
-        XCTAssertEqual(try handleAddCustomerEmailAddress(input: input, context: operationsContext), expected)
+        XCTAssertEqual(try operationsContext.handleAddCustomerEmailAddress(input: input), expected)
 
         let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBCompositePrimaryKeyTable
 
@@ -48,11 +48,11 @@ class AddCustomerEmailAddressTests: XCTestCase {
     }
 
     func testAddCustomerEmailAddressUpToLimit() throws {
-        let dynamodbTable = createTable()
+        let dynamodbTable = createTable(eventLoop: self.eventLoop)
+        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
         
         // create a customer with TestVariables.staticId as its customer ID
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
-                                        context: createOperationsContext(dynamodbTable: dynamodbTable))
+        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
         let idGenerator = {
             UUID().uuidString
@@ -73,7 +73,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
                 notifyOnAllActions: false,
                 notifyOnImportantAction: false)
             
-            if let output = try? handleAddCustomerEmailAddress(input: input, context: operationsContext) {
+            if let output = try? operationsContext.handleAddCustomerEmailAddress(input: input) {
                 emailAddresses.append(output.id)
             }
         }
@@ -95,7 +95,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
             UUID().uuidString
         }
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
-        let dynamodbTable = createTable()
+        let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let operationsContext = PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
             idGenerator: idGenerator,
@@ -103,8 +103,8 @@ class AddCustomerEmailAddressTests: XCTestCase {
             logger: TestVariables.logger)
         
         // create a customer with TestVariables.staticId as its customer ID
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
-                                        context: createOperationsContext(dynamodbTable: dynamodbTable))
+        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         var emailAddresses: [String] = []
         for index in 0..<20 {
@@ -115,7 +115,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
                 notifyOnAllActions: false,
                 notifyOnImportantAction: false)
             
-            if let output = try? handleAddCustomerEmailAddress(input: input, context: operationsContext) {
+            if let output = try? operationsContext.handleAddCustomerEmailAddress(input: input) {
                 emailAddresses.append(output.id)
             }
         }
@@ -128,7 +128,7 @@ class AddCustomerEmailAddressTests: XCTestCase {
                 notifyOnAllActions: false,
                 notifyOnImportantAction: false)
             
-            let _ = try handleAddCustomerEmailAddress(input: input, context: operationsContext)
+            let _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.customerEmailAddressLimitExceeded(_) {
@@ -152,9 +152,10 @@ class AddCustomerEmailAddressTests: XCTestCase {
 
     func testAddCustomerEmailAddressAcceptableConcurrency() throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let dynamodbTable = createTable()
+        let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
+            eventLoop: self.eventLoop,
             simulateConcurrencyModifications: 5,
             simulateOnInsertItem: false) // simulate 5 concurrent attempts
         let operationsContext = PersistenceExampleOperationsContext(
@@ -164,11 +165,11 @@ class AddCustomerEmailAddressTests: XCTestCase {
             logger: TestVariables.logger)
         
         // create a customer with TestVariables.staticId as its customer ID
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
-                                        context: createOperationsContext(dynamodbTable: dynamodbTable))
+        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         let expected = CustomerEmailAddressIdentity(id: AddCustomerEmailAddressRequest.__default.emailAddress)
-        XCTAssertEqual(try handleAddCustomerEmailAddress(input: input, context: operationsContext), expected)
+        XCTAssertEqual(try operationsContext.handleAddCustomerEmailAddress(input: input), expected)
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
@@ -185,9 +186,10 @@ class AddCustomerEmailAddressTests: XCTestCase {
 
     func testAddCustomerEmailAddressUnacceptableConcurrency() throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let dynamodbTable = createTable()
+        let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
+            eventLoop: self.eventLoop,
             simulateConcurrencyModifications: 100,
             simulateOnInsertItem: false)
         let operationsContext = PersistenceExampleOperationsContext(
@@ -197,11 +199,11 @@ class AddCustomerEmailAddressTests: XCTestCase {
             logger: TestVariables.logger)
         
         // create a customer with TestVariables.staticId as its customer ID
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default,
-                                        context: createOperationsContext(dynamodbTable: dynamodbTable))
+        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         do {
-            _ = try handleAddCustomerEmailAddress(input: input, context: operationsContext)
+            _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.concurrency(_) {
@@ -225,10 +227,10 @@ class AddCustomerEmailAddressTests: XCTestCase {
 
     func testAddCustomerEmailAddressUnknownCustomer() throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let operationsContext = createOperationsContext()
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
 
         do {
-            _ = try handleAddCustomerEmailAddress(input: input, context: operationsContext)
+            _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.unknownResource {
@@ -240,14 +242,14 @@ class AddCustomerEmailAddressTests: XCTestCase {
     
     func testAddCustomerEmailAddressAlreadyRegistered() throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let operationsContext = createOperationsContext()
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         
-        _ = try handleCreateCustomerPut(input: CreateCustomerRequest.__default, context: operationsContext)
+        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
-        _ = try handleAddCustomerEmailAddress(input: input, context: operationsContext)
+        _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
         
         do {
-            _ = try handleAddCustomerEmailAddress(input: input, context: operationsContext)
+            _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.customerEmailAddressAlreadyExists {

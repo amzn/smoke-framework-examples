@@ -20,6 +20,27 @@ import XCTest
 import PersistenceExampleModel
 import SmokeDynamoDB
 import Logging
+import NIO
+
+class EventLoopAwareTestCase: XCTestCase {
+    var eventLoopGroup: EventLoopGroup?
+    var eventLoop: EventLoop!
+    
+    override func setUp() {
+        super.setUp()
+        
+        let newEventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+        eventLoop = newEventLoopGroup.next()
+        eventLoopGroup = newEventLoopGroup
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        
+        try? eventLoopGroup?.syncShutdownGracefully()
+        eventLoop = nil
+    }
+}
 
 struct TestVariables {
     static let staticId = "53E2BFA1-E55C-42FE-8110-77A68C069EF4"
@@ -35,11 +56,14 @@ struct TestVariables {
     static let logger = Logger(label: "PersistenceExampleTestConfiguration")
 }
 
-func createTable() -> InMemoryDynamoDBCompositePrimaryKeyTable {
-    return InMemoryDynamoDBCompositePrimaryKeyTable()
+func createTable(eventLoop: EventLoop) -> InMemoryDynamoDBCompositePrimaryKeyTable {
+    return InMemoryDynamoDBCompositePrimaryKeyTable(eventLoop: eventLoop)
 }
 
-func createOperationsContext(dynamodbTable: DynamoDBCompositePrimaryKeyTable = createTable()) -> PersistenceExampleOperationsContext {
+func createOperationsContext(eventLoop: EventLoop,
+                             dynamodbTable dynamodbTableOptional: DynamoDBCompositePrimaryKeyTable? = nil) -> PersistenceExampleOperationsContext {
+    let dynamodbTable = dynamodbTableOptional ?? createTable(eventLoop: eventLoop)
+    
     return PersistenceExampleOperationsContext(dynamodbTable: dynamodbTable,
                                                idGenerator: TestVariables.staticIdGenerator,
                                                timestampGenerator: TestVariables.staticTimestampGenerator,

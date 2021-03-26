@@ -29,9 +29,10 @@ import PersistenceExampleModel
      Will be validated before being returned to caller.
  - Throws: unknownResource.
  */
-public func handleListCustomersGet(
-        input: PersistenceExampleModel.ListCustomersGetRequest,
-        context: PersistenceExampleOperationsContext) throws -> PersistenceExampleModel.ListCustomersResponse {
-    // TODO: Implement secondary index to handle listing customers.
-    return ListCustomersResponse.__default
+extension PersistenceExampleOperationsContext {
+    public func handleListCustomersGet(input: PersistenceExampleModel.ListCustomersGetRequest) throws
+    -> PersistenceExampleModel.ListCustomersResponse {
+        // TODO: Implement secondary index to handle listing customers.
+        return ListCustomersResponse.__default
+    }
 }

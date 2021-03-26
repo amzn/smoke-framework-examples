@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "smoke-framework",
+        "repositoryURL": "https://github.com/amzn/smoke-framework.git",
+        "state": {
+          "branch": "selector_operation_provider",
+          "revision": "53b1e82775a2e04e1048ba1a2e437fba7108c93c",
+          "version": null
+        }
+      },
+      {
         "package": "smoke-http",
         "repositoryURL": "https://github.com/amzn/smoke-http.git",
         "state": {
