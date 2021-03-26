@@ -28,7 +28,7 @@ struct EmptyExamplePerInvocationContextInitializer: SmokeServerPerInvocationCont
     /**
      On application startup.
      */
-    init(eventLoop: EventLoop) throws {
+    init(eventLoopGroup: EventLoopGroup) throws {
         CloudwatchStandardErrorLogger.enableLogging()
 
         var selector = SelectorType(defaultOperationDelegate: JSONPayloadHTTP1OperationDelegate())

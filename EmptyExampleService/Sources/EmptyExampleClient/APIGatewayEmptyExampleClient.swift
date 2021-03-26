@@ -1,5 +1,6 @@
 // swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment type_body_length
+// swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment
+// swiftlint:disable type_body_length function_body_length generic_type_name cyclomatic_complexity
 // -- Generated Code; do not edit --
 //
 // APIGatewayEmptyExampleClient.swift
@@ -26,20 +27,6 @@ public enum EmptyExampleClientError: Swift.Error {
     public static func asUnrecognizedError(error: Swift.Error) -> EmptyExampleError {
         return error.asUnrecognizedEmptyExampleError()
     }
-
-    func isRetriable() -> Bool {
-        return false
-    }
-}
-
-private extension Swift.Error {
-    func isRetriable() -> Bool {
-        if let typedError = self as? EmptyExampleError {
-            return typedError.isRetriable()
-        } else {
-            return true
-        }
-    }
 }
 
 /**
@@ -52,7 +39,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     let service: String
     let target: String?
     let retryConfiguration: HTTPClientRetryConfiguration
-    let retryOnErrorProvider: (Swift.Error) -> Bool
+    let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
     let credentialsProvider: CredentialsProvider
     
     public let reporting: InvocationReportingType
@@ -104,7 +91,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 stage: String,
                 service: String,
                 target: String?,
-                retryOnErrorProvider: @escaping (Swift.Error) -> Bool,
+                retryOnErrorProvider: @escaping (SmokeHTTPClient.HTTPClientError) -> Bool,
                 retryConfiguration: HTTPClientRetryConfiguration,
                 operationsReporting: EmptyExampleOperationsReporting) {
         self.httpClient = httpClient

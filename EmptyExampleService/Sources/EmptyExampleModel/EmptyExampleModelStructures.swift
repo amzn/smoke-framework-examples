@@ -1,5 +1,6 @@
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment
+// swiftlint:disable type_body_length function_body_length generic_type_name cyclomatic_complexity
 // -- Generated Code; do not edit --
 //
 // EmptyExampleModelStructures.swift
@@ -21,7 +22,7 @@ public struct AddCustomerEmailAddressRequest: Codable, Validatable, Equatable, A
 
     public init(emailAddress: AddCustomerEmailAddressRequestBodyEmailAddress,
                 id: AddCustomerEmailAddressRequestId,
-                isPrimary: AddCustomerEmailAddressRequestBodyIsPrimary?,
+                isPrimary: AddCustomerEmailAddressRequestBodyIsPrimary? = nil,
                 notifyOnAllActions: AddCustomerEmailAddressRequestBodyNotifyOnAllActions,
                 notifyOnImportantAction: AddCustomerEmailAddressRequestBodyNotifyOnImportantAction) {
         self.emailAddress = emailAddress
@@ -76,7 +77,7 @@ public struct AddCustomerEmailAddressRequestBody: Codable, Validatable, Equatabl
     public var notifyOnImportantAction: AddCustomerEmailAddressRequestBodyNotifyOnImportantAction
 
     public init(emailAddress: AddCustomerEmailAddressRequestBodyEmailAddress,
-                isPrimary: AddCustomerEmailAddressRequestBodyIsPrimary?,
+                isPrimary: AddCustomerEmailAddressRequestBodyIsPrimary? = nil,
                 notifyOnAllActions: AddCustomerEmailAddressRequestBodyNotifyOnAllActions,
                 notifyOnImportantAction: AddCustomerEmailAddressRequestBodyNotifyOnImportantAction) {
         self.emailAddress = emailAddress
@@ -123,7 +124,7 @@ public extension AddCustomerEmailAddressRequestBodyShape {
 public struct ConcurrencyFault: Codable, Validatable, Equatable, ConcurrencyFaultShape {
     public var message: ErrorMessage?
 
-    public init(message: ErrorMessage?) {
+    public init(message: ErrorMessage? = nil) {
         self.message = message
     }
 
@@ -161,7 +162,7 @@ public struct CoreCustomerAttributes: Codable, Validatable, Equatable, CoreCusto
 
     public init(birthYear: BirthYear,
                 firstName: FirstName,
-                gender: Gender?,
+                gender: Gender? = nil,
                 lastName: LastName) {
         self.birthYear = birthYear
         self.firstName = firstName
@@ -226,8 +227,8 @@ public struct CreateCustomerPut200Response: Codable, Validatable, Equatable, Cre
     public var xRequestID: CreateCustomerPutXRequestIDHeader?
     public var id: CreateCustomerPut200ResponseBodyId?
 
-    public init(xRequestID: CreateCustomerPutXRequestIDHeader?,
-                id: CreateCustomerPut200ResponseBodyId?) {
+    public init(xRequestID: CreateCustomerPutXRequestIDHeader? = nil,
+                id: CreateCustomerPut200ResponseBodyId? = nil) {
         self.xRequestID = xRequestID
         self.id = id
     }
@@ -264,7 +265,7 @@ public extension CreateCustomerPut200ResponseShape {
 public struct CreateCustomerPut200ResponseBody: Codable, Validatable, Equatable, CreateCustomerPut200ResponseBodyShape {
     public var id: CreateCustomerPut200ResponseBodyId?
 
-    public init(id: CreateCustomerPut200ResponseBodyId?) {
+    public init(id: CreateCustomerPut200ResponseBodyId? = nil) {
         self.id = id
     }
 
@@ -302,7 +303,7 @@ public struct CreateCustomerRequest: Codable, Validatable, Equatable, CreateCust
 
     public init(birthYear: BirthYear,
                 firstName: FirstName,
-                gender: Gender?,
+                gender: Gender? = nil,
                 lastName: LastName) {
         self.birthYear = birthYear
         self.firstName = firstName
@@ -370,7 +371,7 @@ public struct CustomerAttributes: Codable, Validatable, Equatable, CustomerAttri
     public init(birthYear: BirthYear,
                 emailAddresses: CustomerEmailAddressAttributesList,
                 firstName: FirstName,
-                gender: Gender?,
+                gender: Gender? = nil,
                 lastName: LastName) {
         self.birthYear = birthYear
         self.emailAddresses = emailAddresses
@@ -439,7 +440,7 @@ public extension CustomerAttributesShape {
 public struct CustomerEmailAddressAlreadyExistsFault: Codable, Validatable, Equatable, CustomerEmailAddressAlreadyExistsFaultShape {
     public var message: ErrorMessage?
 
-    public init(message: ErrorMessage?) {
+    public init(message: ErrorMessage? = nil) {
         self.message = message
     }
 
@@ -552,7 +553,7 @@ public extension CustomerEmailAddressIdentityShape {
 public struct CustomerEmailAddressLimitExceededFault: Codable, Validatable, Equatable, CustomerEmailAddressLimitExceededFaultShape {
     public var message: ErrorMessage?
 
-    public init(message: ErrorMessage?) {
+    public init(message: ErrorMessage? = nil) {
         self.message = message
     }
 
@@ -624,9 +625,9 @@ public struct GetCustomerDetailsRequest: Codable, Validatable, Equatable, GetCus
     public var id: GetCustomerDetailsRequestId
     public var includeOnlyPrimaryEmail: GetCustomerDetailsRequestIncludeOnlyPrimaryEmail?
 
-    public init(xRequestID: GetCustomerDetailsRequestXRequestID?,
+    public init(xRequestID: GetCustomerDetailsRequestXRequestID? = nil,
                 id: GetCustomerDetailsRequestId,
-                includeOnlyPrimaryEmail: GetCustomerDetailsRequestIncludeOnlyPrimaryEmail?) {
+                includeOnlyPrimaryEmail: GetCustomerDetailsRequestIncludeOnlyPrimaryEmail? = nil) {
         self.xRequestID = xRequestID
         self.id = id
         self.includeOnlyPrimaryEmail = includeOnlyPrimaryEmail
@@ -671,8 +672,8 @@ public struct ListCustomersGetRequest: Codable, Validatable, Equatable, ListCust
     public var maximumPageSize: ListCustomersGetRequestMaximumPageSize?
     public var nextPageToken: ListCustomersGetRequestNextPageToken?
 
-    public init(maximumPageSize: ListCustomersGetRequestMaximumPageSize?,
-                nextPageToken: ListCustomersGetRequestNextPageToken?) {
+    public init(maximumPageSize: ListCustomersGetRequestMaximumPageSize? = nil,
+                nextPageToken: ListCustomersGetRequestNextPageToken? = nil) {
         self.maximumPageSize = maximumPageSize
         self.nextPageToken = nextPageToken
     }
@@ -711,7 +712,7 @@ public struct ListCustomersResponse: Codable, Validatable, Equatable, ListCustom
     public var nextPageToken: NextPageToken?
 
     public init(customerIDs: CustomerIDList,
-                nextPageToken: NextPageToken?) {
+                nextPageToken: NextPageToken? = nil) {
         self.customerIDs = customerIDs
         self.nextPageToken = nextPageToken
     }
@@ -750,7 +751,7 @@ public extension ListCustomersResponseShape {
 public struct UnknownResourceFault: Codable, Validatable, Equatable, UnknownResourceFaultShape {
     public var message: ErrorMessage?
 
-    public init(message: ErrorMessage?) {
+    public init(message: ErrorMessage? = nil) {
         self.message = message
     }
 

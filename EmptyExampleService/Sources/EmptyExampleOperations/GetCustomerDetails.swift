@@ -16,8 +16,9 @@ import EmptyExampleModel
      Will be validated before being returned to caller.
  - Throws: unknownResource.
  */
-public func handleGetCustomerDetails(
-        input: EmptyExampleModel.GetCustomerDetailsRequest,
-        context: EmptyExampleOperationsContext) throws -> EmptyExampleModel.CustomerAttributes {
-    return CustomerAttributes.__default
+extension EmptyExampleOperationsContext {
+    public func handleGetCustomerDetails(input: EmptyExampleModel.GetCustomerDetailsRequest) throws
+    -> EmptyExampleModel.CustomerAttributes {
+        return CustomerAttributes.__default
+    }
 }

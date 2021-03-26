@@ -27,10 +27,11 @@ let package = Package(
             targets: ["EmptyExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.0.0"),
+        //.package(url: "https://github.com/amzn/smoke-framework.git", from: "2.0.0"),
         .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0"),
         .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
+        .package(path: "/Users/simonpi/Packages/smoke-framework"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

@@ -16,8 +16,9 @@ import EmptyExampleModel
      Will be validated before being returned to caller.
  - Throws: unknownResource.
  */
-public func handleCreateCustomerPut(
-        input: EmptyExampleModel.CreateCustomerRequest,
-        context: EmptyExampleOperationsContext) throws -> EmptyExampleModel.CreateCustomerPut200Response {
-    return CreateCustomerPut200Response.__default
+extension EmptyExampleOperationsContext {
+    public func handleCreateCustomerPut(input: EmptyExampleModel.CreateCustomerRequest) throws
+    -> EmptyExampleModel.CreateCustomerPut200Response {
+        return CreateCustomerPut200Response.__default
+    }
 }
