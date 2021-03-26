@@ -9,7 +9,23 @@ if [ "$USE_APT_GET" == 'yes' ]; then
     apt-get -y install libssl-dev libz-dev
 fi
 
+## PersistenceExampleService Build
 cd /package
+
+cd PersistenceExampleService
+
+if [ "$ONLY_RUN_SWIFT_LINT" == 'yes' ]; then
+    ls
+    swiftlint
+else
+    swift build -c release
+    swift test
+fi
+
+## EmptyExampleService Build
+cd /package
+
+cd EmptyExampleService
 
 if [ "$ONLY_RUN_SWIFT_LINT" == 'yes' ]; then
     ls
