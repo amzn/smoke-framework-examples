@@ -16,6 +16,16 @@
 
 Sample services showing the usage of the [SmokeFramework](https://github.com/amzn/smoke-framework) and related libraries.
 
+## EmptyExampleService
+
+An example of a service as it is generated using [SmokeFrameworkApplicationGenerate](https://github.com/amzn/smoke-framework-application-generate)
+with the command-
+
+```bash
+swift run -c release SmokeFrameworkApplicationGenerate \
+  --base-file-path ${workspaceRoot}/smoke-framework-examples/PersistenceExampleService
+```
+
 ## PersistenceExampleService
 
 An example of a service using [SmokeDynamoDb](https://github.com/amzn/smoke-dynamodb) to store and retrieve data.
@@ -24,11 +34,7 @@ with the command-
 
 ```bash
 swift run -c release SmokeFrameworkApplicationGenerate \
-  --base-file-path /Volumes/Workspace/smoke-framework-examples/PersistenceExampleService \
-  --base-name PersistenceExample \
-  --model-path /Volumes/Workspace/smoke-framework-examples/PersistenceExampleService/Swagger.yaml \
-  --generation-type server \
-  --model-override-path /Volumes/Workspace/smoke-framework-examples/PersistenceExampleService/modelOverride.json
+  --base-file-path ${workspaceRoot}/smoke-framework-examples/PersistenceExampleService \
 ```
 
 ## License
