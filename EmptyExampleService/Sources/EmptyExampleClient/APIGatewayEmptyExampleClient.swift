@@ -11,6 +11,7 @@ import Foundation
 import EmptyExampleModel
 import SmokeAWSCore
 import SmokeHTTPClient
+import NIO
 import SmokeAWSHttp
 import NIO
 import NIOHTTP1
@@ -32,16 +33,17 @@ public enum EmptyExampleClientError: Swift.Error {
 /**
  API Gateway Client for the EmptyExample service.
  */
-public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: EmptyExampleClientProtocol {
+public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: EmptyExampleClientProtocol, AWSClientProtocol {
     let httpClient: HTTPOperationsClient
     let ownsHttpClients: Bool
-    let awsRegion: AWSRegion
-    let service: String
-    let target: String?
-    let retryConfiguration: HTTPClientRetryConfiguration
-    let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
-    let credentialsProvider: CredentialsProvider
+    public let awsRegion: AWSRegion
+    public let service: String
+    public let target: String?
+    public let retryConfiguration: HTTPClientRetryConfiguration
+    public let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
+    public let credentialsProvider: CredentialsProvider
     
+    public let eventLoopGroup: EventLoopGroup
     public let reporting: InvocationReportingType
     let stage: String
 
@@ -62,6 +64,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>() ) {
+        self.eventLoopGroup = AWSClientHelper.getEventLoop(eventLoopGroupProvider: eventLoopProvider)
         let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
         let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>(requiresTLS: useTLS)
 
@@ -71,7 +74,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
             contentType: contentType,
             clientDelegate: clientDelegate,
             connectionTimeoutSeconds: connectionTimeoutSeconds,
-            eventLoopProvider: eventLoopProvider)
+            eventLoopProvider: .shared(self.eventLoopGroup))
         self.ownsHttpClients = true
         self.awsRegion = awsRegion
         self.service = service
@@ -91,9 +94,11 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
                 stage: String,
                 service: String,
                 target: String?,
+                eventLoopGroup: EventLoopGroup,
                 retryOnErrorProvider: @escaping (SmokeHTTPClient.HTTPClientError) -> Bool,
                 retryConfiguration: HTTPClientRetryConfiguration,
                 operationsReporting: EmptyExampleOperationsReporting) {
+        self.eventLoopGroup = eventLoopGroup
         self.httpClient = httpClient
         self.ownsHttpClients = false
         self.awsRegion = awsRegion
@@ -119,282 +124,82 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation returning immediately and passing the response to a callback.
+     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
-         - completion: The CustomerEmailAddressIdentity object or an error will be passed to this 
-           callback when the operation is complete. The CustomerEmailAddressIdentity
-           object will be validated before being returned to caller.
+     - Returns: A future to the CustomerEmailAddressIdentity object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    public func addCustomerEmailAddressAsync(
-            input: EmptyExampleModel.AddCustomerEmailAddressRequest, 
-            completion: @escaping (Result<EmptyExampleModel.CustomerEmailAddressIdentity, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.addCustomerEmailAddress,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+    public func addCustomerEmailAddress(
+            input: EmptyExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<EmptyExampleModel.CustomerEmailAddressIdentity> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
+                                 httpMethod: .PUT,
+                                 requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
+                                 operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
+                                 reporting: self.invocationsReporting.addCustomerEmailAddress,
+                                 errorType: EmptyExampleError.self)
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
-     - Returns: The CustomerEmailAddressIdentity object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
-     */
-    public func addCustomerEmailAddressSync(
-            input: EmptyExampleModel.AddCustomerEmailAddressRequest) throws -> EmptyExampleModel.CustomerEmailAddressIdentity {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.addCustomerEmailAddress,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
-                httpMethod: .PUT,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: EmptyExampleError = error.asTypedError()
-            throw typedError
-        }
-    }
-
-    /**
-     Invokes the CreateCustomerPut operation returning immediately and passing the response to a callback.
+     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
-         - completion: The CreateCustomerPut200Response object or an error will be passed to this 
-           callback when the operation is complete. The CreateCustomerPut200Response
-           object will be validated before being returned to caller.
+     - Returns: A future to the CreateCustomerPut200Response object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func createCustomerPutAsync(
-            input: EmptyExampleModel.CreateCustomerRequest, 
-            completion: @escaping (Result<EmptyExampleModel.CreateCustomerPut200Response, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.createCustomerPut,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+    public func createCustomerPut(
+            input: EmptyExampleModel.CreateCustomerRequest) -> EventLoopFuture<EmptyExampleModel.CreateCustomerPut200Response> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
+                                 httpMethod: .PUT,
+                                 requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
+                                 operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
+                                 reporting: self.invocationsReporting.createCustomerPut,
+                                 errorType: EmptyExampleError.self)
     }
 
     /**
-     Invokes the CreateCustomerPut operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated CreateCustomerRequest object being passed to this operation.
-     - Returns: The CreateCustomerPut200Response object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: unknownResource.
-     */
-    public func createCustomerPutSync(
-            input: EmptyExampleModel.CreateCustomerRequest) throws -> EmptyExampleModel.CreateCustomerPut200Response {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.createCustomerPut,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
-                httpMethod: .PUT,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: EmptyExampleError = error.asTypedError()
-            throw typedError
-        }
-    }
-
-    /**
-     Invokes the GetCustomerDetails operation returning immediately and passing the response to a callback.
+     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
-         - completion: The CustomerAttributes object or an error will be passed to this 
-           callback when the operation is complete. The CustomerAttributes
-           object will be validated before being returned to caller.
+     - Returns: A future to the CustomerAttributes object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func getCustomerDetailsAsync(
-            input: EmptyExampleModel.GetCustomerDetailsRequest, 
-            completion: @escaping (Result<EmptyExampleModel.CustomerAttributes, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.getCustomerDetails,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+    public func getCustomerDetails(
+            input: EmptyExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<EmptyExampleModel.CustomerAttributes> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
+                                 httpMethod: .GET,
+                                 requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
+                                 operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
+                                 reporting: self.invocationsReporting.getCustomerDetails,
+                                 errorType: EmptyExampleError.self)
     }
 
     /**
-     Invokes the GetCustomerDetails operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated GetCustomerDetailsRequest object being passed to this operation.
-     - Returns: The CustomerAttributes object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: unknownResource.
-     */
-    public func getCustomerDetailsSync(
-            input: EmptyExampleModel.GetCustomerDetailsRequest) throws -> EmptyExampleModel.CustomerAttributes {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.getCustomerDetails,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
-                httpMethod: .GET,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: EmptyExampleError = error.asTypedError()
-            throw typedError
-        }
-    }
-
-    /**
-     Invokes the ListCustomersGet operation returning immediately and passing the response to a callback.
+     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.
-         - completion: The ListCustomersResponse object or an error will be passed to this 
-           callback when the operation is complete. The ListCustomersResponse
-           object will be validated before being returned to caller.
+     - Returns: A future to the ListCustomersResponse object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func listCustomersGetAsync(
-            input: EmptyExampleModel.ListCustomersGetRequest, 
-            completion: @escaping (Result<EmptyExampleModel.ListCustomersResponse, EmptyExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.listCustomersGet,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
-    }
-
-    /**
-     Invokes the ListCustomersGet operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated ListCustomersGetRequest object being passed to this operation.
-     - Returns: The ListCustomersResponse object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: unknownResource.
-     */
-    public func listCustomersGetSync(
-            input: EmptyExampleModel.ListCustomersGetRequest) throws -> EmptyExampleModel.ListCustomersResponse {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.listCustomersGet,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
-                httpMethod: .GET,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: EmptyExampleError = error.asTypedError()
-            throw typedError
-        }
+    public func listCustomersGet(
+            input: EmptyExampleModel.ListCustomersGetRequest) -> EventLoopFuture<EmptyExampleModel.ListCustomersResponse> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
+                                 httpMethod: .GET,
+                                 requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
+                                 operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
+                                 reporting: self.invocationsReporting.listCustomersGet,
+                                 errorType: EmptyExampleError.self)
     }
 }

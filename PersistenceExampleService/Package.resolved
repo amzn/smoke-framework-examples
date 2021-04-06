@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-aws.git",
         "state": {
           "branch": null,
-          "revision": "77c6219dbc2cd1b1ea1882217770375565649720",
-          "version": "2.37.29"
+          "revision": "9081a636648f7be05e933ba7a85f3df7384de03d",
+          "version": "2.38.5"
         }
       },
       {
@@ -33,17 +33,17 @@
         "repositoryURL": "https://github.com/amzn/smoke-dynamodb.git",
         "state": {
           "branch": null,
-          "revision": "5f35688729111dd5b57540eac87b908049c889ce",
-          "version": "3.0.0-alpha.6"
+          "revision": "40d0b7341a14df67c5bc85c9c1e097966912550e",
+          "version": "3.0.0-alpha.7"
         }
       },
       {
         "package": "smoke-framework",
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
-          "branch": "selector_operation_provider",
-          "revision": "53b1e82775a2e04e1048ba1a2e437fba7108c93c",
-          "version": null
+          "branch": null,
+          "revision": "e2c64dab31a425f18835279cb064c04b91ed1515",
+          "version": "2.7.0"
         }
       },
       {

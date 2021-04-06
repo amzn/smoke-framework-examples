@@ -11,6 +11,7 @@ import Foundation
 import PersistenceExampleModel
 import SmokeAWSCore
 import SmokeHTTPClient
+import NIO
 import SmokeAWSHttp
 import NIO
 import NIOHTTP1
@@ -32,16 +33,17 @@ public enum PersistenceExampleClientError: Swift.Error {
 /**
  API Gateway Client for the PersistenceExample service.
  */
-public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: PersistenceExampleClientProtocol {
+public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPClientCoreInvocationReporting>: PersistenceExampleClientProtocol, AWSClientProtocol {
     let httpClient: HTTPOperationsClient
     let ownsHttpClients: Bool
-    let awsRegion: AWSRegion
-    let service: String
-    let target: String?
-    let retryConfiguration: HTTPClientRetryConfiguration
-    let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
-    let credentialsProvider: CredentialsProvider
+    public let awsRegion: AWSRegion
+    public let service: String
+    public let target: String?
+    public let retryConfiguration: HTTPClientRetryConfiguration
+    public let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
+    public let credentialsProvider: CredentialsProvider
     
+    public let eventLoopGroup: EventLoopGroup
     public let reporting: InvocationReportingType
     let stage: String
 
@@ -62,6 +64,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<PersistenceExampleModelOperations>() ) {
+        self.eventLoopGroup = AWSClientHelper.getEventLoop(eventLoopGroupProvider: eventLoopProvider)
         let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
         let clientDelegate = JSONAWSHttpClientDelegate<PersistenceExampleError>(requiresTLS: useTLS)
 
@@ -71,7 +74,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
             contentType: contentType,
             clientDelegate: clientDelegate,
             connectionTimeoutSeconds: connectionTimeoutSeconds,
-            eventLoopProvider: eventLoopProvider)
+            eventLoopProvider: .shared(self.eventLoopGroup))
         self.ownsHttpClients = true
         self.awsRegion = awsRegion
         self.service = service
@@ -91,9 +94,11 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
                 stage: String,
                 service: String,
                 target: String?,
+                eventLoopGroup: EventLoopGroup,
                 retryOnErrorProvider: @escaping (SmokeHTTPClient.HTTPClientError) -> Bool,
                 retryConfiguration: HTTPClientRetryConfiguration,
                 operationsReporting: PersistenceExampleOperationsReporting) {
+        self.eventLoopGroup = eventLoopGroup
         self.httpClient = httpClient
         self.ownsHttpClients = false
         self.awsRegion = awsRegion
@@ -119,282 +124,82 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation returning immediately and passing the response to a callback.
+     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
-         - completion: The CustomerEmailAddressIdentity object or an error will be passed to this 
-           callback when the operation is complete. The CustomerEmailAddressIdentity
-           object will be validated before being returned to caller.
+     - Returns: A future to the CustomerEmailAddressIdentity object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    public func addCustomerEmailAddressAsync(
-            input: PersistenceExampleModel.AddCustomerEmailAddressRequest, 
-            completion: @escaping (Result<PersistenceExampleModel.CustomerEmailAddressIdentity, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.addCustomerEmailAddress,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+    public func addCustomerEmailAddress(
+            input: PersistenceExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerEmailAddressIdentity> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
+                                 httpMethod: .PUT,
+                                 requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
+                                 operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
+                                 reporting: self.invocationsReporting.addCustomerEmailAddress,
+                                 errorType: PersistenceExampleError.self)
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
-     - Returns: The CustomerEmailAddressIdentity object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
-     */
-    public func addCustomerEmailAddressSync(
-            input: PersistenceExampleModel.AddCustomerEmailAddressRequest) throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.addCustomerEmailAddress,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
-                httpMethod: .PUT,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: PersistenceExampleError = error.asTypedError()
-            throw typedError
-        }
-    }
-
-    /**
-     Invokes the CreateCustomerPut operation returning immediately and passing the response to a callback.
+     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
-         - completion: The CreateCustomerPut200Response object or an error will be passed to this 
-           callback when the operation is complete. The CreateCustomerPut200Response
-           object will be validated before being returned to caller.
+     - Returns: A future to the CreateCustomerPut200Response object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func createCustomerPutAsync(
-            input: PersistenceExampleModel.CreateCustomerRequest, 
-            completion: @escaping (Result<PersistenceExampleModel.CreateCustomerPut200Response, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.createCustomerPut,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
-            httpMethod: .PUT,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+    public func createCustomerPut(
+            input: PersistenceExampleModel.CreateCustomerRequest) -> EventLoopFuture<PersistenceExampleModel.CreateCustomerPut200Response> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
+                                 httpMethod: .PUT,
+                                 requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
+                                 operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
+                                 reporting: self.invocationsReporting.createCustomerPut,
+                                 errorType: PersistenceExampleError.self)
     }
 
     /**
-     Invokes the CreateCustomerPut operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated CreateCustomerRequest object being passed to this operation.
-     - Returns: The CreateCustomerPut200Response object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: unknownResource.
-     */
-    public func createCustomerPutSync(
-            input: PersistenceExampleModel.CreateCustomerRequest) throws -> PersistenceExampleModel.CreateCustomerPut200Response {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.createCustomerPut,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = CreateCustomerPutOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
-                httpMethod: .PUT,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: PersistenceExampleError = error.asTypedError()
-            throw typedError
-        }
-    }
-
-    /**
-     Invokes the GetCustomerDetails operation returning immediately and passing the response to a callback.
+     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
-         - completion: The CustomerAttributes object or an error will be passed to this 
-           callback when the operation is complete. The CustomerAttributes
-           object will be validated before being returned to caller.
+     - Returns: A future to the CustomerAttributes object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func getCustomerDetailsAsync(
-            input: PersistenceExampleModel.GetCustomerDetailsRequest, 
-            completion: @escaping (Result<PersistenceExampleModel.CustomerAttributes, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.getCustomerDetails,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
+    public func getCustomerDetails(
+            input: PersistenceExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerAttributes> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
+                                 httpMethod: .GET,
+                                 requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
+                                 operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
+                                 reporting: self.invocationsReporting.getCustomerDetails,
+                                 errorType: PersistenceExampleError.self)
     }
 
     /**
-     Invokes the GetCustomerDetails operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated GetCustomerDetailsRequest object being passed to this operation.
-     - Returns: The CustomerAttributes object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: unknownResource.
-     */
-    public func getCustomerDetailsSync(
-            input: PersistenceExampleModel.GetCustomerDetailsRequest) throws -> PersistenceExampleModel.CustomerAttributes {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.getCustomerDetails,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = GetCustomerDetailsOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
-                httpMethod: .GET,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: PersistenceExampleError = error.asTypedError()
-            throw typedError
-        }
-    }
-
-    /**
-     Invokes the ListCustomersGet operation returning immediately and passing the response to a callback.
+     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.
-         - completion: The ListCustomersResponse object or an error will be passed to this 
-           callback when the operation is complete. The ListCustomersResponse
-           object will be validated before being returned to caller.
+     - Returns: A future to the ListCustomersResponse object to be passed back from the caller of this operation.
+         Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    public func listCustomersGetAsync(
-            input: PersistenceExampleModel.ListCustomersGetRequest, 
-            completion: @escaping (Result<PersistenceExampleModel.ListCustomersResponse, PersistenceExampleError>) -> ()) throws {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.listCustomersGet,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
-
-        _ = try httpClient.executeOperationAsyncRetriableWithOutput(
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
-            httpMethod: .GET,
-            input: requestInput,
-            completion: completion,
-            invocationContext: invocationContext,
-            retryConfiguration: retryConfiguration,
-            retryOnError: retryOnErrorProvider)
-    }
-
-    /**
-     Invokes the ListCustomersGet operation waiting for the response before returning.
-
-     - Parameters:
-         - input: The validated ListCustomersGetRequest object being passed to this operation.
-     - Returns: The ListCustomersResponse object to be passed back from the caller of this operation.
-         Will be validated before being returned to caller.
-     - Throws: unknownResource.
-     */
-    public func listCustomersGetSync(
-            input: PersistenceExampleModel.ListCustomersGetRequest) throws -> PersistenceExampleModel.ListCustomersResponse {
-        let handlerDelegate = AWSClientInvocationDelegate(
-                    credentialsProvider: credentialsProvider,
-                    awsRegion: awsRegion,
-                    service: service,
-                    operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
-                    target: target)
-        
-        let invocationContext = HTTPClientInvocationContext(reporting: self.invocationsReporting.listCustomersGet,
-                                                            handlerDelegate: handlerDelegate)
-        let requestInput = ListCustomersGetOperationHTTPRequestInput(encodable: input)
-
-        do {
-            return try httpClient.executeSyncRetriableWithOutput(
-                endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
-                httpMethod: .GET,
-                input: requestInput,
-                invocationContext: invocationContext,
-                retryConfiguration: retryConfiguration,
-                retryOnError: retryOnErrorProvider)
-        } catch {
-            let typedError: PersistenceExampleError = error.asTypedError()
-            throw typedError
-        }
+    public func listCustomersGet(
+            input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse> {
+        return executeWithOutput(httpClient: httpClient,
+                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
+                                 httpMethod: .GET,
+                                 requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
+                                 operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
+                                 reporting: self.invocationsReporting.listCustomersGet,
+                                 errorType: PersistenceExampleError.self)
     }
 }

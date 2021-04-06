@@ -29,6 +29,8 @@ public struct APIGatewayEmptyExampleClientGenerator {
     let retryConfiguration: HTTPClientRetryConfiguration
     let retryOnErrorProvider: (SmokeHTTPClient.HTTPClientError) -> Bool
     let credentialsProvider: CredentialsProvider
+    
+    public let eventLoopGroup: EventLoopGroup
     let stage: String
 
     let operationsReporting: EmptyExampleOperationsReporting
@@ -46,6 +48,7 @@ public struct APIGatewayEmptyExampleClientGenerator {
                 eventLoopProvider: HTTPClient.EventLoopGroupProvider = .createNew,
                 reportingConfiguration: SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>
                     = SmokeAWSClientReportingConfiguration<EmptyExampleModelOperations>() ) {
+        self.eventLoopGroup = AWSClientHelper.getEventLoop(eventLoopGroupProvider: eventLoopProvider)
         let useTLS = requiresTLS ?? AWSHTTPClientDelegate.requiresTLS(forEndpointPort: endpointPort)
         let clientDelegate = JSONAWSHttpClientDelegate<EmptyExampleError>(requiresTLS: useTLS)
 
@@ -55,7 +58,7 @@ public struct APIGatewayEmptyExampleClientGenerator {
             contentType: contentType,
             clientDelegate: clientDelegate,
             connectionTimeoutSeconds: connectionTimeoutSeconds,
-            eventLoopProvider: eventLoopProvider)
+            eventLoopProvider: .shared(self.eventLoopGroup))
         self.awsRegion = awsRegion
         self.service = service
         self.target = target
@@ -84,6 +87,7 @@ public struct APIGatewayEmptyExampleClientGenerator {
             stage: self.stage,
             service: self.service,
             target: self.target,
+            eventLoopGroup: self.eventLoopGroup,
             retryOnErrorProvider: self.retryOnErrorProvider,
             retryConfiguration: self.retryConfiguration,
             operationsReporting: self.operationsReporting)
@@ -92,22 +96,26 @@ public struct APIGatewayEmptyExampleClientGenerator {
     public func with<NewTraceContextType: InvocationTraceContext>(
             logger: Logging.Logger,
             internalRequestId: String = "none",
-            traceContext: NewTraceContextType) -> APIGatewayEmptyExampleClient<StandardHTTPClientCoreInvocationReporting<NewTraceContextType>> {
+            traceContext: NewTraceContextType,
+            eventLoop: EventLoop? = nil) -> APIGatewayEmptyExampleClient<StandardHTTPClientCoreInvocationReporting<NewTraceContextType>> {
         let reporting = StandardHTTPClientCoreInvocationReporting(
             logger: logger,
             internalRequestId: internalRequestId,
-            traceContext: traceContext)
+            traceContext: traceContext,
+            eventLoop: eventLoop)
         
         return with(reporting: reporting)
     }
     
     public func with(
             logger: Logging.Logger,
-            internalRequestId: String = "none") -> APIGatewayEmptyExampleClient<StandardHTTPClientCoreInvocationReporting<SmokeInvocationTraceContext>> {
+            internalRequestId: String = "none",
+            eventLoop: EventLoop? = nil) -> APIGatewayEmptyExampleClient<StandardHTTPClientCoreInvocationReporting<SmokeInvocationTraceContext>> {
         let reporting = StandardHTTPClientCoreInvocationReporting(
             logger: logger,
             internalRequestId: internalRequestId,
-            traceContext: SmokeInvocationTraceContext())
+            traceContext: SmokeInvocationTraceContext(),
+            eventLoop: eventLoop)
         
         return with(reporting: reporting)
     }
