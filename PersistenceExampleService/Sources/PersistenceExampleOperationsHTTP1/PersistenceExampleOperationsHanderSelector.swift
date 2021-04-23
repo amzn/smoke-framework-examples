@@ -1,5 +1,6 @@
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment
+// swiftlint:disable type_body_length function_body_length generic_type_name cyclomatic_complexity
 // -- Generated Code; do not edit --
 //
 // PersistenceExampleOperationsHanderSelector.swift
@@ -18,19 +19,23 @@ public func addOperations<SelectorType: SmokeHTTP1HandlerSelector>(selector: ino
     where SelectorType.ContextType == PersistenceExampleOperationsContext,
     SelectorType.OperationIdentifer == PersistenceExampleModelOperations {
     
-    selector.addHandlerForOperation(.addCustomerEmailAddress, httpMethod: .PUT,
-                                    operation: handleAddCustomerEmailAddress,
-                                    allowedErrors: [(PersistenceExampleErrorTypes.customerEmailAddressLimitExceeded, 400), (PersistenceExampleErrorTypes.customerEmailAddressAlreadyExists, 400), (PersistenceExampleErrorTypes.unknownResource, 404), (PersistenceExampleErrorTypes.concurrency, 409)])
+    let allowedErrorsForAddCustomerEmailAddress: [(PersistenceExampleErrorTypes, Int)] = [(.customerEmailAddressLimitExceeded, 400), (.customerEmailAddressAlreadyExists, 400), (.unknownResource, 404), (.concurrency, 409)]
+    selector.addHandlerForOperationProvider(.addCustomerEmailAddress, httpMethod: .PUT,
+                                            operationProvider: PersistenceExampleOperationsContext.handleAddCustomerEmailAddress,
+                                            allowedErrors: allowedErrorsForAddCustomerEmailAddress)
     
-    selector.addHandlerForOperation(.createCustomerPut, httpMethod: .PUT,
-                                    operation: handleCreateCustomerPut,
-                                    allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
+    let allowedErrorsForCreateCustomerPut: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
+    selector.addHandlerForOperationProvider(.createCustomerPut, httpMethod: .PUT,
+                                            operationProvider: PersistenceExampleOperationsContext.handleCreateCustomerPut,
+                                            allowedErrors: allowedErrorsForCreateCustomerPut)
     
-    selector.addHandlerForOperation(.getCustomerDetails, httpMethod: .GET,
-                                    operation: handleGetCustomerDetails,
-                                    allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
+    let allowedErrorsForGetCustomerDetails: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
+    selector.addHandlerForOperationProvider(.getCustomerDetails, httpMethod: .GET,
+                                            operationProvider: PersistenceExampleOperationsContext.handleGetCustomerDetails,
+                                            allowedErrors: allowedErrorsForGetCustomerDetails)
     
-    selector.addHandlerForOperation(.listCustomersGet, httpMethod: .GET,
-                                    operation: handleListCustomersGet,
-                                    allowedErrors: [(PersistenceExampleErrorTypes.unknownResource, 404)])
+    let allowedErrorsForListCustomersGet: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
+    selector.addHandlerForOperationProvider(.listCustomersGet, httpMethod: .GET,
+                                            operationProvider: PersistenceExampleOperationsContext.handleListCustomersGet,
+                                            allowedErrors: allowedErrorsForListCustomersGet)
 }

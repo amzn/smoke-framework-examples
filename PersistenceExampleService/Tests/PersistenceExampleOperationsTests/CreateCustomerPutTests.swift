@@ -20,12 +20,12 @@ import XCTest
 import PersistenceExampleModel
 import SmokeDynamoDB
 
-class CreateCustomerPutTests: XCTestCase {
+class CreateCustomerPutTests: EventLoopAwareTestCase {
 
     func testCreateCustomerPut() {
         let input = CreateCustomerRequest.__default
-        let dynamodbTable = createTable()
-        let operationsContext = createOperationsContext(dynamodbTable: dynamodbTable)
+        let dynamodbTable = createTable(eventLoop: self.eventLoop)
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
         
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
@@ -33,7 +33,7 @@ class CreateCustomerPutTests: XCTestCase {
                                                     id: externalCustomerId)
     
         // verify the operation returns what is expected
-        XCTAssertEqual(try handleCreateCustomerPut(input: input, context: operationsContext), expected)
+        XCTAssertEqual(try operationsContext.handleCreateCustomerPut(input: input), expected)
         
         // get the customer partition from the in memory dynamodb table
         let customerPartition = dynamodbTable.store[internalCustomerId]!

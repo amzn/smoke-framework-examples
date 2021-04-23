@@ -21,11 +21,12 @@ import PersistenceExampleModel
 import SmokeOperations
 import SmokeDynamoDB
 import Logging
+import NIO
 
 extension PersistenceExampleModel.AddCustomerEmailAddressRequest: PersistenceExampleModel.CustomerEmailAddressAttributesShape { }
 
 private typealias CustomerEmailAddressRowIdentity = (emailAddress: String, rowKey: StandardCompositePrimaryKey)
-private typealias UpdatedPayloadProviderType = (CustomerIdentityRow) throws -> (CustomerIdentityRow)
+private typealias UpdatedPayloadProviderType = (CustomerIdentityRow) -> EventLoopFuture<CustomerIdentityRow>
 
 /**
  Handler for the AddCustomerEmailAddress operation.
@@ -37,112 +38,123 @@ private typealias UpdatedPayloadProviderType = (CustomerIdentityRow) throws -> (
      Will be validated before being returned to caller.
  - Throws: unknownResource, concurrency, customerEmailAddressLimitExceeded.
  */
-public func handleAddCustomerEmailAddress(
-        input: PersistenceExampleModel.AddCustomerEmailAddressRequest,
-        context: PersistenceExampleOperationsContext) throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
-    guard let customerID = PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
-        throw SmokeOperationsError.validationError(reason: "Invalid input customer ID '\(input.id)")
-    }
-    
-    let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerID]).dynamodbKey
-    let customerKey = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
-    var customerEmailAddressRowIdentity: CustomerEmailAddressRowIdentity?
-    
-    // Create a function that provides an updated payload
-    // This is called for each attempt to update the customer row.
-    // Captures customerEmailAddressRowIdentity and stores the row identity there
-    let updatedPayloadProvider: UpdatedPayloadProviderType = { payload in
-        let maximum = payload.customerEmailAddressSummary.maximum
-
-        // fail if there are too many email addresses for this customer
-        guard payload.customerEmailAddressSummary.emailAddresses.count < maximum else {
-            let message = "Maximum number of email addresses - \(maximum) - reached."
-            throw PersistenceExampleModel.PersistenceExampleError.customerEmailAddressLimitExceeded(
-                CustomerEmailAddressLimitExceededFault(message: message))
+extension PersistenceExampleOperationsContext {
+    public func handleAddCustomerEmailAddress(input: PersistenceExampleModel.AddCustomerEmailAddressRequest) throws
+    -> PersistenceExampleModel.CustomerEmailAddressIdentity {
+        guard let customerID = PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
+            throw SmokeOperationsError.validationError(reason: "Invalid input customer ID '\(input.id)")
         }
-
-        // if the row has already been created
-        let currentEmailAddress: String
-        if let existingRowIdentity = customerEmailAddressRowIdentity {
-            currentEmailAddress = existingRowIdentity.emailAddress
-        } else {
-            // otherwise can proceed with creating the email address row
-            currentEmailAddress = input.emailAddress
-            customerEmailAddressRowIdentity = try addCustomerEmailAddressRowToDatabase(
-                currentEmailAddress: currentEmailAddress,
-                customerKey: customerKey,
-                input: input,
-                context: context)
-        }
-
-        // create the updated payload
-        var updatedPayload = payload
-        updatedPayload.customerEmailAddressSummary.emailAddresses.append(currentEmailAddress)
         
-        // if this customer doesn't have a primary email address or
-        // it is requested that this is primary, this is now primary
-        if updatedPayload.primaryEmailAddress == nil || input.isPrimary ?? false {
-            updatedPayload.primaryEmailAddress = currentEmailAddress
+        let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerID]).dynamodbKey
+        let customerKey = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
+        var customerEmailAddressRowIdentity: CustomerEmailAddressRowIdentity?
+        
+        // Create a function that provides an updated payload
+        // This is called for each attempt to update the customer row.
+        // Captures customerEmailAddressRowIdentity and stores the row identity there
+        let updatedPayloadProvider: UpdatedPayloadProviderType = { payload in
+            let maximum = payload.customerEmailAddressSummary.maximum
+
+            // fail if there are too many email addresses for this customer
+            guard payload.customerEmailAddressSummary.emailAddresses.count < maximum else {
+                let promise = self.dynamodbTable.eventLoop.makePromise(of: CustomerIdentityRow.self)
+                let message = "Maximum number of email addresses - \(maximum) - reached."
+                let error = PersistenceExampleModel.PersistenceExampleError.customerEmailAddressLimitExceeded(
+                    CustomerEmailAddressLimitExceededFault(message: message))
+                promise.fail(error)
+                return promise.futureResult
+            }
+
+            // if the row has already been created
+            let currentEmailAddressFuture: EventLoopFuture<String>
+            if let existingRowIdentity = customerEmailAddressRowIdentity {
+                let promise = self.dynamodbTable.eventLoop.makePromise(of: String.self)
+                promise.succeed(existingRowIdentity.emailAddress)
+                currentEmailAddressFuture = promise.futureResult
+            } else {
+                // otherwise can proceed with creating the email address row
+                let currentEmailAddress = input.emailAddress
+                currentEmailAddressFuture = addCustomerEmailAddressRowToDatabase(
+                    currentEmailAddress: currentEmailAddress,
+                    customerKey: customerKey,
+                    input: input) .map { returnedIdentity in
+                        customerEmailAddressRowIdentity = returnedIdentity
+                        return currentEmailAddress
+                    }
+            }
+
+            return currentEmailAddressFuture.map { currentEmailAddress in
+                // create the updated payload
+                var updatedPayload = payload
+                updatedPayload.customerEmailAddressSummary.emailAddresses.append(currentEmailAddress)
+                
+                // if this customer doesn't have a primary email address or
+                // it is requested that this is primary, this is now primary
+                if updatedPayload.primaryEmailAddress == nil || input.isPrimary ?? false {
+                    updatedPayload.primaryEmailAddress = currentEmailAddress
+                }
+
+                return updatedPayload
+            }
         }
+        
+        do {
+            try self.dynamodbTable.conditionallyUpdateItem(
+                forKey: customerKey,
+                updatedPayloadProvider: updatedPayloadProvider).wait()
+        } catch SmokeDynamoDBError.concurrencyError {
+            // if the row exists, make sure it is deleted
+            if let rowIdentity = customerEmailAddressRowIdentity {
+                try self.dynamodbTable.deleteItem(forKey: rowIdentity.rowKey).wait()
+            }
 
-        return updatedPayload
-    }
-    
-    do {
-        try context.dynamodbTable.conditionallyUpdateItemSync(
-            forKey: customerKey,
-            updatedPayloadProvider: updatedPayloadProvider)
-    } catch SmokeDynamoDBError.concurrencyError {
-        // if the row exists, make sure it is deleted
-        if let rowIdentity = customerEmailAddressRowIdentity {
-            try context.dynamodbTable.deleteItemSync(forKey: rowIdentity.rowKey)
+            let concurrencyFault = ConcurrencyFault(message: "Attempt to add email address failed due to concurrent database access.")
+            throw PersistenceExampleError.concurrency(concurrencyFault)
+        } catch SmokeDynamoDBError.conditionalCheckFailed {
+            // if the row exists, make sure it is deleted
+            if let rowIdentity = customerEmailAddressRowIdentity {
+                try self.dynamodbTable.deleteItem(forKey: rowIdentity.rowKey).wait()
+            }
+
+            let unknownResourceFault = UnknownResourceFault(message: "Attempt to add email address failed due to unknown customer.")
+            throw PersistenceExampleError.unknownResource(unknownResourceFault)
         }
-
-        let concurrencyFault = ConcurrencyFault(message: "Attempt to add email address failed due to concurrent database access.")
-        throw PersistenceExampleError.concurrency(concurrencyFault)
-    } catch SmokeDynamoDBError.conditionalCheckFailed {
-        // if the row exists, make sure it is deleted
-        if let rowIdentity = customerEmailAddressRowIdentity {
-            try context.dynamodbTable.deleteItemSync(forKey: rowIdentity.rowKey)
+        
+        // This shouldn't occur as the row identity should be created during updateItemConditionallyAtKey
+        guard let rowIdentity = customerEmailAddressRowIdentity else {
+            throw SmokeDynamoDBError.unexpectedResponse(reason: "Unexpectedly customer email address row not created.")
         }
-
-        let unknownResourceFault = UnknownResourceFault(message: "Attempt to add email address failed due to unknown customer.")
-        throw PersistenceExampleError.unknownResource(unknownResourceFault)
-    }
-    
-    // This shouldn't occur as the row identity should be created during updateItemConditionallyAtKey
-    guard let rowIdentity = customerEmailAddressRowIdentity else {
-        throw SmokeDynamoDBError.unexpectedResponse(reason: "Unexpectedly customer email address row not created.")
-    }
-    
-    context.logger.info("Email Address '\(rowIdentity.emailAddress)' created for customer '\(customerID)'")
-    return PersistenceExampleModel.CustomerEmailAddressIdentity(id: rowIdentity.emailAddress)
-}
-
-private func addCustomerEmailAddressRowToDatabase(
-        currentEmailAddress: String,
-        customerKey: StandardCompositePrimaryKey,
-        input: PersistenceExampleModel.AddCustomerEmailAddressRequest,
-        context: PersistenceExampleOperationsContext) throws -> CustomerEmailAddressRowIdentity {
-    let customerEmailAddressID = (PersistenceExampleOperationsContext.customerEmailAddressPrefix + [currentEmailAddress]).dynamodbKey
-
-    let customerEmailAddressKey = StandardCompositePrimaryKey(partitionKey: customerKey.partitionKey,
-                                                                   sortKey: customerEmailAddressID)
-    // store the row identity so future attempts to update the customer row can use this row
-    // rather than creating another row
-    let notificationTargetRowIdentity = (currentEmailAddress, customerEmailAddressKey)
-    let row = CustomerEmailAddressRow(attributes: input.asPersistenceExampleModelCustomerEmailAddressAttributes(),
-                                      emailAddress: currentEmailAddress)
-
-    let newDatabaseRow = TypedDatabaseItem.newItem(withKey: customerEmailAddressKey, andValue: row)
-
-    do {
-        try context.dynamodbTable.insertItemSync(newDatabaseRow)
-    } catch SmokeDynamoDBError.conditionalCheckFailed {
-        let customerEmailAddressAlreadyExistsFault = CustomerEmailAddressAlreadyExistsFault(message:
-            "Attempt to add email address failed as email address already registered.")
-        throw PersistenceExampleError.customerEmailAddressAlreadyExists(customerEmailAddressAlreadyExistsFault)
+        
+        self.logger.info("Email Address '\(rowIdentity.emailAddress)' created for customer '\(customerID)'")
+        return PersistenceExampleModel.CustomerEmailAddressIdentity(id: rowIdentity.emailAddress)
     }
 
-    return notificationTargetRowIdentity
+    private func addCustomerEmailAddressRowToDatabase(
+            currentEmailAddress: String,
+            customerKey: StandardCompositePrimaryKey,
+            input: PersistenceExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<CustomerEmailAddressRowIdentity> {
+        let customerEmailAddressID = (PersistenceExampleOperationsContext.customerEmailAddressPrefix + [currentEmailAddress]).dynamodbKey
+
+        let customerEmailAddressKey = StandardCompositePrimaryKey(partitionKey: customerKey.partitionKey,
+                                                                       sortKey: customerEmailAddressID)
+        // store the row identity so future attempts to update the customer row can use this row
+        // rather than creating another row
+        let notificationTargetRowIdentity = (currentEmailAddress, customerEmailAddressKey)
+        let row = CustomerEmailAddressRow(attributes: input.asPersistenceExampleModelCustomerEmailAddressAttributes(),
+                                          emailAddress: currentEmailAddress)
+
+        let newDatabaseRow = TypedDatabaseItem.newItem(withKey: customerEmailAddressKey, andValue: row)
+
+        return self.dynamodbTable.insertItem(newDatabaseRow).map { _ in
+            return notificationTargetRowIdentity
+        } .flatMapErrorThrowing { error in
+            if case SmokeDynamoDBError.conditionalCheckFailed = error {
+                let customerEmailAddressAlreadyExistsFault = CustomerEmailAddressAlreadyExistsFault(message:
+                            "Attempt to add email address failed as email address already registered.")
+                        throw PersistenceExampleError.customerEmailAddressAlreadyExists(customerEmailAddressAlreadyExistsFault)
+            }
+            
+            throw error
+        }
+    }
 }

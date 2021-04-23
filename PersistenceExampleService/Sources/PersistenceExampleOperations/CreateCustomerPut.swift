@@ -32,32 +32,33 @@ extension PersistenceExampleModel.CreateCustomerRequest: PersistenceExampleModel
      Will be validated before being returned to caller.
  - Throws: unknownResource.
  */
-public func handleCreateCustomerPut(
-        input: PersistenceExampleModel.CreateCustomerRequest,
-        context: PersistenceExampleOperationsContext) throws -> PersistenceExampleModel.CreateCustomerPut200Response {
-    // create a new customer id
-    let customerId = context.idGenerator()
-    let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerId]).dynamodbKey
-    
-    let customerEmailAddressSummary = CustomerEmailAddressSummary(
-        emailAddresses: [],
-        maximum: PersistenceExampleOperationsContext.defaultCustomerEmailAddressLimit)
-    let newCustomerIdentityRow = CustomerIdentityRow(
-        customerEmailAddressSummary: customerEmailAddressSummary,
-        customerID: customerId,
-        coreAttributes: try input.asPersistenceExampleModelCoreCustomerAttributes(),
-        primaryEmailAddress: nil)
-    
-    // put the customer row under the partition identity row
-    let key = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
-    let newDatabaseItem = StandardTypedDatabaseItem.newItem(withKey: key, andValue: newCustomerIdentityRow)
-    
-    try context.dynamodbTable.insertItemSync(newDatabaseItem)
-    
-    let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [customerId]).dynamodbKey
-    
-    let response = CreateCustomerPut200Response(xRequestID: context.idGenerator(),
-                                                id: externalCustomerId)
-    
-    return response
+extension PersistenceExampleOperationsContext {
+    public func handleCreateCustomerPut(input: PersistenceExampleModel.CreateCustomerRequest) throws
+    -> PersistenceExampleModel.CreateCustomerPut200Response {
+        // create a new customer id
+        let customerId = self.idGenerator()
+        let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerId]).dynamodbKey
+        
+        let customerEmailAddressSummary = CustomerEmailAddressSummary(
+            emailAddresses: [],
+            maximum: PersistenceExampleOperationsContext.defaultCustomerEmailAddressLimit)
+        let newCustomerIdentityRow = CustomerIdentityRow(
+            customerEmailAddressSummary: customerEmailAddressSummary,
+            customerID: customerId,
+            coreAttributes: try input.asPersistenceExampleModelCoreCustomerAttributes(),
+            primaryEmailAddress: nil)
+        
+        // put the customer row under the partition identity row
+        let key = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
+        let newDatabaseItem = StandardTypedDatabaseItem.newItem(withKey: key, andValue: newCustomerIdentityRow)
+        
+        try self.dynamodbTable.insertItem(newDatabaseItem).wait()
+        
+        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [customerId]).dynamodbKey
+        
+        let response = CreateCustomerPut200Response(xRequestID: self.idGenerator(),
+                                                    id: externalCustomerId)
+        
+        return response
+    }
 }

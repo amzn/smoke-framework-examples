@@ -10,11 +10,10 @@ import EmptyExampleModel
 class CreateCustomerPutTests: XCTestCase {
 
     func testCreateCustomerPut() {
-    let input = CreateCustomerRequest.__default
-    let operationsContext = createOperationsContext()
+        let input = CreateCustomerRequest.__default
+        let operationsContext = createOperationsContext()
     
-    XCTAssertEqual(try handleCreateCustomerPut(input: input, context: operationsContext),
-    CreateCustomerPut200Response.__default)
+        XCTAssertEqual(try operationsContext.handleCreateCustomerPut(input: input), CreateCustomerPut200Response.__default)
     }
 
     static var allTests = [

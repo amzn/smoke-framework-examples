@@ -1,5 +1,6 @@
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable file_length line_length identifier_name type_name vertical_parameter_alignment
+// swiftlint:disable type_body_length function_body_length generic_type_name cyclomatic_complexity
 // -- Generated Code; do not edit --
 //
 // EmptyExampleModelOperations.swift
@@ -73,7 +74,7 @@ public struct AddCustomerEmailAddressOperationInputBody: Codable, Equatable {
     public var notifyOnImportantAction: AddCustomerEmailAddressRequestBodyNotifyOnImportantAction
 
     public init(emailAddress: AddCustomerEmailAddressRequestBodyEmailAddress,
-                isPrimary: AddCustomerEmailAddressRequestBodyIsPrimary?,
+                isPrimary: AddCustomerEmailAddressRequestBodyIsPrimary? = nil,
                 notifyOnAllActions: AddCustomerEmailAddressRequestBodyNotifyOnAllActions,
                 notifyOnImportantAction: AddCustomerEmailAddressRequestBodyNotifyOnImportantAction) {
         self.emailAddress = emailAddress
@@ -110,7 +111,7 @@ public extension AddCustomerEmailAddressRequest {
 public struct CreateCustomerPutOperationOutputBody: Codable, Equatable {
     public var id: CreateCustomerPut200ResponseBodyId?
 
-    public init(id: CreateCustomerPut200ResponseBodyId?) {
+    public init(id: CreateCustomerPut200ResponseBodyId? = nil) {
         self.id = id
     }
 
@@ -136,7 +137,7 @@ public extension CreateCustomerPut200Response {
 public struct CreateCustomerPutOperationOutputHeaders: Codable, Equatable {
     public var xRequestID: CreateCustomerPutXRequestIDHeader?
 
-    public init(xRequestID: CreateCustomerPutXRequestIDHeader?) {
+    public init(xRequestID: CreateCustomerPutXRequestIDHeader? = nil) {
         self.xRequestID = xRequestID
     }
 
@@ -188,7 +189,7 @@ public extension GetCustomerDetailsRequest {
 public struct GetCustomerDetailsOperationInputQuery: Codable, Equatable {
     public var includeOnlyPrimaryEmail: GetCustomerDetailsRequestIncludeOnlyPrimaryEmail?
 
-    public init(includeOnlyPrimaryEmail: GetCustomerDetailsRequestIncludeOnlyPrimaryEmail?) {
+    public init(includeOnlyPrimaryEmail: GetCustomerDetailsRequestIncludeOnlyPrimaryEmail? = nil) {
         self.includeOnlyPrimaryEmail = includeOnlyPrimaryEmail
     }
 
@@ -214,7 +215,7 @@ public extension GetCustomerDetailsRequest {
 public struct GetCustomerDetailsOperationInputAdditionalHeaders: Codable, Equatable {
     public var xRequestID: GetCustomerDetailsRequestXRequestID?
 
-    public init(xRequestID: GetCustomerDetailsRequestXRequestID?) {
+    public init(xRequestID: GetCustomerDetailsRequestXRequestID? = nil) {
         self.xRequestID = xRequestID
     }
 

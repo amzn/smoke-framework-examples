@@ -23,9 +23,16 @@ import SmokeOperations
 import Logging
 
 // The possible row types that can be returned in the Customer paritition
-struct CustomerCodableTypes: PossibleItemTypes {
-    public static var types: [Codable.Type] = [CustomerIdentityRow.self,
-                                               CustomerEmailAddressRow.self]
+enum CustomerQueryableTypes: PolymorphicOperationReturnType {
+    typealias AttributesType = StandardPrimaryKeyAttributes
+    
+    static var types: [(Codable.Type, PolymorphicOperationReturnOption<StandardPrimaryKeyAttributes, Self>)] = [
+        (CustomerIdentityRow.self, .init( {.customerIdentity($0)} )),
+        (CustomerEmailAddressRow.self, .init( {.customerEmailAddressRow($0)} )),
+        ]
+    
+    case customerIdentity(StandardTypedDatabaseItem<CustomerIdentityRow>)
+    case customerEmailAddressRow(StandardTypedDatabaseItem<CustomerEmailAddressRow>)
 }
 
 /**
@@ -38,48 +45,50 @@ struct CustomerCodableTypes: PossibleItemTypes {
      Will be validated before being returned to caller.
  - Throws: unknownResource.
  */
-public func handleGetCustomerDetails(
-        input: PersistenceExampleModel.GetCustomerDetailsRequest,
-        context: PersistenceExampleOperationsContext) throws -> PersistenceExampleModel.CustomerAttributes {
-    guard let customerIDKeyPostfix =
-        PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
-            throw SmokeOperationsError.validationError(reason: "Invalid customer ID '\(input.id)")
-    }
-    
-    let customerKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerIDKeyPostfix]).dynamodbKey
-    
-    // Query on the customer partition, that will return the customer identity row and any email address rows
-    context.logger.debug("Query on customer: \(customerKey)")
-    let queryItems: [StandardPolymorphicDatabaseItem<CustomerCodableTypes>] =
-            try context.dynamodbTable.querySync(forPartitionKey: customerKey, sortKeyCondition: nil)
-    
-    // iterate through each item returned
-    var coreCustomerAttributes: CoreCustomerAttributes?
-    var customerEmailAddressAttributesList: [CustomerEmailAddressAttributes] = []
-    
-    // iterate through each item returned
-    for item in queryItems {
-        if let customerIdentityRow = item.rowValue as? CustomerIdentityRow {
-            coreCustomerAttributes = customerIdentityRow.coreAttributes
-        } else if let customerEmailAddressRow = item.rowValue as? CustomerEmailAddressRow {
-            customerEmailAddressAttributesList.append(customerEmailAddressRow.attributes)
+extension PersistenceExampleOperationsContext {
+    public func handleGetCustomerDetails(input: PersistenceExampleModel.GetCustomerDetailsRequest) throws
+    -> PersistenceExampleModel.CustomerAttributes {
+        guard let customerIDKeyPostfix =
+            PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
+                throw SmokeOperationsError.validationError(reason: "Invalid customer ID '\(input.id)")
         }
+        
+        let customerKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerIDKeyPostfix]).dynamodbKey
+        
+        // Query on the customer partition, that will return the customer identity row and any email address rows
+        self.logger.debug("Query on customer: \(customerKey)")
+        let queryItems: [CustomerQueryableTypes] =
+            try self.dynamodbTable.query(forPartitionKey: customerKey, sortKeyCondition: nil).wait()
+        
+        // iterate through each item returned
+        var coreCustomerAttributes: CoreCustomerAttributes?
+        var customerEmailAddressAttributesList: [CustomerEmailAddressAttributes] = []
+        
+        // iterate through each item returned
+        for item in queryItems {
+            switch item {
+            case .customerIdentity(let databaseItem):
+                coreCustomerAttributes = databaseItem.rowValue.coreAttributes
+            case .customerEmailAddressRow(let databaseItem):
+                customerEmailAddressAttributesList.append(databaseItem.rowValue.attributes)
+            }
+        }
+        
+        // ensure all rows are present
+        guard let theCoreCustomerAttributes = coreCustomerAttributes else {
+            let unknownResourceFault = UnknownResourceFault(message: "Attempt to retrieve customer details failed due to unknown customer.")
+            throw PersistenceExampleError.unknownResource(unknownResourceFault)
+        }
+        
+        // sort the returned email addresses
+        customerEmailAddressAttributesList.sort { (left, right) in
+            left.emailAddress < right.emailAddress
+        }
+        
+        return CustomerAttributes(birthYear: theCoreCustomerAttributes.birthYear,
+                                  emailAddresses: customerEmailAddressAttributesList,
+                                  firstName: theCoreCustomerAttributes.firstName,
+                                  gender: theCoreCustomerAttributes.gender,
+                                  lastName: theCoreCustomerAttributes.lastName)
     }
-    
-    // ensure all rows are present
-    guard let theCoreCustomerAttributes = coreCustomerAttributes else {
-        let unknownResourceFault = UnknownResourceFault(message: "Attempt to retrieve customer details failed due to unknown customer.")
-        throw PersistenceExampleError.unknownResource(unknownResourceFault)
-    }
-    
-    // sort the returned email addresses
-    customerEmailAddressAttributesList.sort { (left, right) in
-        left.emailAddress < right.emailAddress
-    }
-    
-    return CustomerAttributes(birthYear: theCoreCustomerAttributes.birthYear,
-                              emailAddresses: customerEmailAddressAttributesList,
-                              firstName: theCoreCustomerAttributes.firstName,
-                              gender: theCoreCustomerAttributes.gender,
-                              lastName: theCoreCustomerAttributes.lastName)
 }

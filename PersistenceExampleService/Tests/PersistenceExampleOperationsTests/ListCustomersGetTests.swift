@@ -19,13 +19,13 @@ import XCTest
 @testable import PersistenceExampleOperations
 import PersistenceExampleModel
 
-class ListCustomersGetTests: XCTestCase {
+class ListCustomersGetTests: EventLoopAwareTestCase {
 
     func testListCustomersGet() {
         let input = ListCustomersGetRequest.__default
-        let operationsContext = createOperationsContext()
+        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
     
-        XCTAssertEqual(try handleListCustomersGet(input: input, context: operationsContext),
+        XCTAssertEqual(try operationsContext.handleListCustomersGet(input: input),
             ListCustomersResponse.__default)
     }
 

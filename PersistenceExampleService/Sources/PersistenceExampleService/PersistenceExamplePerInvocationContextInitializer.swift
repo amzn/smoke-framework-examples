@@ -30,17 +30,15 @@ struct PersistenceExamplePerInvocationContextInitializer: SmokeServerPerInvocati
     let awsClientInvocationTraceContext = AWSClientInvocationTraceContext()
     let handlerSelector: SelectorType
 
-    // TODO: Add properties to be accessed by the operation handlers
-
     /**
      On application startup.
      */
-    init(eventLoop: EventLoop) throws {
+    init(eventLoopGroup: EventLoopGroup) throws {
         CloudwatchStandardErrorLogger.enableLogging()
         
         let environment = EnvironmentVariables.getEnvironment()
         
-        let clientEventLoopProvider = HTTPClient.EventLoopGroupProvider.shared(eventLoop)
+        let clientEventLoopProvider = HTTPClient.EventLoopGroupProvider.shared(eventLoopGroup)
         
         guard let credentialsProvider = AwsContainerRotatingCredentialsProvider.get(
                 fromEnvironment: environment,
