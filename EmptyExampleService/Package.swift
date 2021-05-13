@@ -48,6 +48,7 @@ let package = Package(
             name: "EmptyExampleOperationsHTTP1", dependencies: [
                 .target(name: "EmptyExampleOperations"),
                 .product(name: "SmokeOperationsHTTP1", package: "smoke-framework"),
+                .product(name: "SmokeOperationsHTTP1Server", package: "smoke-framework"),
             ]),
         .target(
             name: "EmptyExampleClient", dependencies: [
