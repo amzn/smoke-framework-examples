@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/amzn/smoke-framework.git",
         "state": {
           "branch": null,
-          "revision": "e2c64dab31a425f18835279cb064c04b91ed1515",
-          "version": "2.7.0"
+          "revision": "dafd6469667a1ef9754f01b9f46daa969e3e2025",
+          "version": "2.9.0"
         }
       },
       {
