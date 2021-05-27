@@ -4,10 +4,8 @@
 //
 
 import Foundation
-import PersistenceExampleModel
 import PersistenceExampleOperations
 import PersistenceExampleOperationsHTTP1
-import SmokeOperationsHTTP1
 import SmokeOperationsHTTP1Server
 import SmokeAWSCore
 import SmokeDynamoDB
@@ -16,19 +14,13 @@ import SmokeAWSHttp
 import AsyncHTTPClient
 import NIO
 
-typealias PersistenceExampleOperationDelegate = JSONPayloadHTTP1OperationDelegate<SmokeInvocationTraceContext>
-
 /**
  Initializer for the PersistenceExampleService.
  */
-struct PersistenceExamplePerInvocationContextInitializer: SmokeServerPerInvocationContextInitializer {
-    typealias SelectorType =
-        StandardSmokeHTTP1HandlerSelector<PersistenceExampleOperationsContext, PersistenceExampleOperationDelegate,
-                                          PersistenceExampleModelOperations>
+struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerInvocationContextInitializerProtocol {
     let dynamodbTableGenerator: AWSDynamoDBCompositePrimaryKeyTableGenerator
     let credentialsProvider: StoppableCredentialsProvider
     let awsClientInvocationTraceContext = AWSClientInvocationTraceContext()
-    let handlerSelector: SelectorType
 
     /**
      On application startup.
@@ -55,11 +47,6 @@ struct PersistenceExamplePerInvocationContextInitializer: SmokeServerPerInvocati
                 credentialsProvider: credentialsProvider,
                 region: region,
                 clientEventLoopProvider: clientEventLoopProvider)
-
-        var selector = SelectorType(defaultOperationDelegate: JSONPayloadHTTP1OperationDelegate())
-        addOperations(selector: &selector)
-
-        self.handlerSelector = selector
     }
     
     func timestampGenerator() -> String {

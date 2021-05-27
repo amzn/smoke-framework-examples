@@ -5,6 +5,7 @@
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },
+  "initializationType": "STREAMLINED",
   "modelOverride" : {
     "namedFieldValuesOverride" : {
       "firstName" : "\"John\"",

@@ -29,7 +29,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.9.0"),
         .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0"),
-        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0"),
+        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.38.40"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         ],
     targets: [

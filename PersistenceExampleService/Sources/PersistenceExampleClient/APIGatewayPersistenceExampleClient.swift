@@ -124,7 +124,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -134,17 +134,18 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func addCustomerEmailAddress(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerEmailAddressIdentity> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
-                                 httpMethod: .PUT,
-                                 requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
-                                 operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
-                                 reporting: self.invocationsReporting.addCustomerEmailAddress,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
+            httpMethod: .PUT,
+            requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
+            reporting: self.invocationsReporting.addCustomerEmailAddress,
                                  errorType: PersistenceExampleError.self)
     }
 
     /**
-     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -154,17 +155,18 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func createCustomerPut(
             input: PersistenceExampleModel.CreateCustomerRequest) -> EventLoopFuture<PersistenceExampleModel.CreateCustomerPut200Response> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
-                                 httpMethod: .PUT,
-                                 requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
-                                 operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
-                                 reporting: self.invocationsReporting.createCustomerPut,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
+            httpMethod: .PUT,
+            requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
+            reporting: self.invocationsReporting.createCustomerPut,
                                  errorType: PersistenceExampleError.self)
     }
 
     /**
-     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -174,17 +176,18 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func getCustomerDetails(
             input: PersistenceExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerAttributes> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
-                                 httpMethod: .GET,
-                                 requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
-                                 operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
-                                 reporting: self.invocationsReporting.getCustomerDetails,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
+            httpMethod: .GET,
+            requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
+            reporting: self.invocationsReporting.getCustomerDetails,
                                  errorType: PersistenceExampleError.self)
     }
 
     /**
-     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.
@@ -194,12 +197,13 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func listCustomersGet(
             input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
-                                 httpMethod: .GET,
-                                 requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
-                                 operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
-                                 reporting: self.invocationsReporting.listCustomersGet,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
+            httpMethod: .GET,
+            requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
+            reporting: self.invocationsReporting.listCustomersGet,
                                  errorType: PersistenceExampleError.self)
     }
 }
