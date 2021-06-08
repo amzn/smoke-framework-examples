@@ -3,26 +3,16 @@
 // EmptyExampleService
 //
 
-import EmptyExampleModel
 import EmptyExampleOperations
 import EmptyExampleOperationsHTTP1
-import SmokeOperationsHTTP1
 import SmokeOperationsHTTP1Server
 import SmokeAWSCore
 import NIO
-
-typealias EmptyExampleOperationDelegate = JSONPayloadHTTP1OperationDelegate<SmokeInvocationTraceContext>
-
+            
 /**
  Initializer for the EmptyExampleService.
  */
-struct EmptyExamplePerInvocationContextInitializer: SmokeServerPerInvocationContextInitializer {
-    typealias SelectorType =
-        StandardSmokeHTTP1HandlerSelector<EmptyExampleOperationsContext, EmptyExampleOperationDelegate,
-                                          EmptyExampleModelOperations>
-
-    let handlerSelector: SelectorType
-
+struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationContextInitializerProtocol {
     // TODO: Add properties to be accessed by the operation handlers
 
     /**
@@ -31,17 +21,14 @@ struct EmptyExamplePerInvocationContextInitializer: SmokeServerPerInvocationCont
     init(eventLoopGroup: EventLoopGroup) throws {
         CloudwatchStandardErrorLogger.enableLogging()
 
-        var selector = SelectorType(defaultOperationDelegate: JSONPayloadHTTP1OperationDelegate())
-        addOperations(selector: &selector)
-
-        self.handlerSelector = selector
+        // TODO: Add additional application initialization
     }
 
     /**
      On invocation.
     */
-    public func getInvocationContext(
-        invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>) -> EmptyExampleOperationsContext {
+    public func getInvocationContext(invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>)
+    -> EmptyExampleOperationsContext {
         return EmptyExampleOperationsContext(logger: invocationReporting.logger)
     }
 

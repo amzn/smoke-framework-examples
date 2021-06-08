@@ -5,7 +5,7 @@ matrix:
       dist: xenial
       sudo: required
       services: docker
-      env: DOCKER_IMAGE_TAG=swift:5.3.1-amazonlinux2 ONLY_RUN_SWIFT_LINT=no USE_APT_GET=no
+      env: DOCKER_IMAGE_TAG=swift:5.4.0-amazonlinux2 ONLY_RUN_SWIFT_LINT=no USE_APT_GET=no
 
     # Use a docker image that contains the SwiftLint executable the verify the code against the linter.
     - os: linux

@@ -124,7 +124,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -134,17 +134,18 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func addCustomerEmailAddress(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<EmptyExampleModel.CustomerEmailAddressIdentity> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
-                                 httpMethod: .PUT,
-                                 requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
-                                 operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
-                                 reporting: self.invocationsReporting.addCustomerEmailAddress,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
+            httpMethod: .PUT,
+            requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
+            reporting: self.invocationsReporting.addCustomerEmailAddress,
                                  errorType: EmptyExampleError.self)
     }
 
     /**
-     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -154,17 +155,18 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func createCustomerPut(
             input: EmptyExampleModel.CreateCustomerRequest) -> EventLoopFuture<EmptyExampleModel.CreateCustomerPut200Response> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
-                                 httpMethod: .PUT,
-                                 requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
-                                 operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
-                                 reporting: self.invocationsReporting.createCustomerPut,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
+            httpMethod: .PUT,
+            requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
+            reporting: self.invocationsReporting.createCustomerPut,
                                  errorType: EmptyExampleError.self)
     }
 
     /**
-     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -174,17 +176,18 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func getCustomerDetails(
             input: EmptyExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<EmptyExampleModel.CustomerAttributes> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
-                                 httpMethod: .GET,
-                                 requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
-                                 operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
-                                 reporting: self.invocationsReporting.getCustomerDetails,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
+            httpMethod: .GET,
+            requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
+            reporting: self.invocationsReporting.getCustomerDetails,
                                  errorType: EmptyExampleError.self)
     }
 
     /**
-     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.
@@ -194,12 +197,13 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func listCustomersGet(
             input: EmptyExampleModel.ListCustomersGetRequest) -> EventLoopFuture<EmptyExampleModel.ListCustomersResponse> {
-        return executeWithOutput(httpClient: httpClient,
-                                 endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
-                                 httpMethod: .GET,
-                                 requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
-                                 operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
-                                 reporting: self.invocationsReporting.listCustomersGet,
+        return executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
+            httpMethod: .GET,
+            requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
+            reporting: self.invocationsReporting.listCustomersGet,
                                  errorType: EmptyExampleError.self)
     }
 }

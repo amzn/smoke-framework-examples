@@ -46,7 +46,7 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
     }
 
     /**
-     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -67,7 +67,7 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
     }
 
     /**
-     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -88,7 +88,7 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
     }
 
     /**
-     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -109,7 +109,7 @@ public struct ThrowingPersistenceExampleClient: PersistenceExampleClientProtocol
     }
 
     /**
-     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.

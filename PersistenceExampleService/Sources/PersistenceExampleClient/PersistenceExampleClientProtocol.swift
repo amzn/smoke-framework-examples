@@ -27,7 +27,7 @@ public protocol PersistenceExampleClientProtocol {
             _ input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse>
 
     /**
-     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -39,7 +39,7 @@ public protocol PersistenceExampleClientProtocol {
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerEmailAddressIdentity>
 
     /**
-     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the CreateCustomerPut operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -51,7 +51,7 @@ public protocol PersistenceExampleClientProtocol {
             input: PersistenceExampleModel.CreateCustomerRequest) -> EventLoopFuture<PersistenceExampleModel.CreateCustomerPut200Response>
 
     /**
-     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the GetCustomerDetails operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -63,7 +63,7 @@ public protocol PersistenceExampleClientProtocol {
             input: PersistenceExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerAttributes>
 
     /**
-     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed with the result at a later time.
+     Invokes the ListCustomersGet operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.

@@ -4,7 +4,7 @@
 </a>
 <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
 <a href="http://swift.org">
-<img src="https://img.shields.io/badge/swift-5.3-orange.svg?style=flat" alt="Swift 5.3 Compatible">
+<img src="https://img.shields.io/badge/swift-5.4-orange.svg?style=flat" alt="Swift 5.4 Compatible">
 </a>
 <a href="https://gitter.im/SmokeServerSide">
 <img src="https://img.shields.io/badge/chat-on%20gitter-ee115e.svg?style=flat" alt="Join the Smoke Server Side community on gitter">
@@ -23,7 +23,7 @@ with the command-
 
 ```bash
 swift run -c release SmokeFrameworkApplicationGenerate \
-  --base-file-path ${workspaceRoot}/smoke-framework-examples/PersistenceExampleService
+  --base-file-path ${workspaceRoot}/smoke-framework-examples/EmptyExampleService
 ```
 
 ## PersistenceExampleService

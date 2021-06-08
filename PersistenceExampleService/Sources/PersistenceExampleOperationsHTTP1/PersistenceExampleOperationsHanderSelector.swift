@@ -15,27 +15,29 @@ import SmokeOperationsHTTP1
 
 extension PersistenceExampleModelOperations: OperationIdentity {}
 
-public func addOperations<SelectorType: SmokeHTTP1HandlerSelector>(selector: inout SelectorType)
-    where SelectorType.ContextType == PersistenceExampleOperationsContext,
-    SelectorType.OperationIdentifer == PersistenceExampleModelOperations {
-    
-    let allowedErrorsForAddCustomerEmailAddress: [(PersistenceExampleErrorTypes, Int)] = [(.customerEmailAddressLimitExceeded, 400), (.customerEmailAddressAlreadyExists, 400), (.unknownResource, 404), (.concurrency, 409)]
-    selector.addHandlerForOperationProvider(.addCustomerEmailAddress, httpMethod: .PUT,
-                                            operationProvider: PersistenceExampleOperationsContext.handleAddCustomerEmailAddress,
-                                            allowedErrors: allowedErrorsForAddCustomerEmailAddress)
-    
-    let allowedErrorsForCreateCustomerPut: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
-    selector.addHandlerForOperationProvider(.createCustomerPut, httpMethod: .PUT,
-                                            operationProvider: PersistenceExampleOperationsContext.handleCreateCustomerPut,
-                                            allowedErrors: allowedErrorsForCreateCustomerPut)
-    
-    let allowedErrorsForGetCustomerDetails: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
-    selector.addHandlerForOperationProvider(.getCustomerDetails, httpMethod: .GET,
-                                            operationProvider: PersistenceExampleOperationsContext.handleGetCustomerDetails,
-                                            allowedErrors: allowedErrorsForGetCustomerDetails)
-    
-    let allowedErrorsForListCustomersGet: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
-    selector.addHandlerForOperationProvider(.listCustomersGet, httpMethod: .GET,
-                                            operationProvider: PersistenceExampleOperationsContext.handleListCustomersGet,
-                                            allowedErrors: allowedErrorsForListCustomersGet)
+public extension PersistenceExampleModelOperations {
+    static func addToSmokeServer<SelectorType: SmokeHTTP1HandlerSelector>(selector: inout SelectorType)
+        where SelectorType.ContextType == PersistenceExampleOperationsContext,
+        SelectorType.OperationIdentifer == PersistenceExampleModelOperations {
+        
+        let allowedErrorsForAddCustomerEmailAddress: [(PersistenceExampleErrorTypes, Int)] = [(.customerEmailAddressLimitExceeded, 400), (.customerEmailAddressAlreadyExists, 400), (.unknownResource, 404), (.concurrency, 409)]
+        selector.addHandlerForOperationProvider(.addCustomerEmailAddress, httpMethod: .PUT,
+                                                operationProvider: PersistenceExampleOperationsContext.handleAddCustomerEmailAddress,
+                                                allowedErrors: allowedErrorsForAddCustomerEmailAddress)
+        
+        let allowedErrorsForCreateCustomerPut: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
+        selector.addHandlerForOperationProvider(.createCustomerPut, httpMethod: .PUT,
+                                                operationProvider: PersistenceExampleOperationsContext.handleCreateCustomerPut,
+                                                allowedErrors: allowedErrorsForCreateCustomerPut)
+        
+        let allowedErrorsForGetCustomerDetails: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
+        selector.addHandlerForOperationProvider(.getCustomerDetails, httpMethod: .GET,
+                                                operationProvider: PersistenceExampleOperationsContext.handleGetCustomerDetails,
+                                                allowedErrors: allowedErrorsForGetCustomerDetails)
+        
+        let allowedErrorsForListCustomersGet: [(PersistenceExampleErrorTypes, Int)] = [(.unknownResource, 404)]
+        selector.addHandlerForOperationProvider(.listCustomersGet, httpMethod: .GET,
+                                                operationProvider: PersistenceExampleOperationsContext.handleListCustomersGet,
+                                                allowedErrors: allowedErrorsForListCustomersGet)
+    }
 }
