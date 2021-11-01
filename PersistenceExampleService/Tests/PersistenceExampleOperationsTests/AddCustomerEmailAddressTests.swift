@@ -258,14 +258,4 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
             XCTFail("Expected error not thrown. Instead \(error).")
         }
     }
-
-    static var allTests = [
-        ("testAddCustomerEmailAddress", testAddCustomerEmailAddress),
-        ("testAddCustomerEmailAddressUpToLimit", testAddCustomerEmailAddressUpToLimit),
-        ("testAddCustomerEmailAddressOverLimit", testAddCustomerEmailAddressOverLimit),
-        ("testAddCustomerEmailAddressAcceptableConcurrency", testAddCustomerEmailAddressAcceptableConcurrency),
-        ("testAddCustomerEmailAddressUnacceptableConcurrency", testAddCustomerEmailAddressUnacceptableConcurrency),
-        ("testAddCustomerEmailAddressUnknownCustomer", testAddCustomerEmailAddressUnknownCustomer),
-        ("testAddCustomerEmailAddressAlreadyRegistered", testAddCustomerEmailAddressAlreadyRegistered),
-        ]
 }

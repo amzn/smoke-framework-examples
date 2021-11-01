@@ -45,7 +45,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     
     public let eventLoopGroup: EventLoopGroup
     public let reporting: InvocationReportingType
-    let stage: String
+    let stage: String?
 
     let operationsReporting: PersistenceExampleOperationsReporting
     let invocationsReporting: PersistenceExampleInvocationsReporting<InvocationReportingType>
@@ -53,7 +53,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     public init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 reporting: InvocationReportingType,
                 endpointHostName: String,
-                stage: String,
+                stage: String? = nil,
                 endpointPort: Int = 443,
                 requiresTLS: Bool? = nil,
                 service: String = "execute-api",
@@ -91,7 +91,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     internal init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 reporting: InvocationReportingType,
                 httpClient: HTTPOperationsClient,
-                stage: String,
+                stage: String?,
                 service: String,
                 target: String?,
                 eventLoopGroup: EventLoopGroup,
@@ -134,14 +134,16 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func addCustomerEmailAddress(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerEmailAddressIdentity> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
             httpMethod: .PUT,
             requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
             operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
             reporting: self.invocationsReporting.addCustomerEmailAddress,
-                                 errorType: PersistenceExampleError.self)
+            errorType: PersistenceExampleError.self)
     }
 
     /**
@@ -155,14 +157,16 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func createCustomerPut(
             input: PersistenceExampleModel.CreateCustomerRequest) -> EventLoopFuture<PersistenceExampleModel.CreateCustomerPut200Response> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.createCustomerPut.operationPath,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.createCustomerPut.operationPath,
             httpMethod: .PUT,
             requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
             operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
             reporting: self.invocationsReporting.createCustomerPut,
-                                 errorType: PersistenceExampleError.self)
+            errorType: PersistenceExampleError.self)
     }
 
     /**
@@ -176,14 +180,16 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func getCustomerDetails(
             input: PersistenceExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerAttributes> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
             httpMethod: .GET,
             requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
             operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
             reporting: self.invocationsReporting.getCustomerDetails,
-                                 errorType: PersistenceExampleError.self)
+            errorType: PersistenceExampleError.self)
     }
 
     /**
@@ -197,13 +203,113 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
      */
     public func listCustomersGet(
             input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + PersistenceExampleModelOperations.listCustomersGet.operationPath,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.listCustomersGet.operationPath,
             httpMethod: .GET,
             requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
             operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
             reporting: self.invocationsReporting.listCustomersGet,
-                                 errorType: PersistenceExampleError.self)
+            errorType: PersistenceExampleError.self)
     }
+
+    #if compiler(>=5.5) && canImport(_Concurrency)
+    /**
+     Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
+     - Returns: The CustomerEmailAddressIdentity object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func addCustomerEmailAddress(
+            input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.addCustomerEmailAddress.operationPath,
+            httpMethod: .PUT,
+            requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.addCustomerEmailAddress.rawValue,
+            reporting: self.invocationsReporting.addCustomerEmailAddress,
+            errorType: PersistenceExampleError.self)
+    }
+
+    /**
+     Invokes the CreateCustomerPut operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated CreateCustomerRequest object being passed to this operation.
+     - Returns: The CreateCustomerPut200Response object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func createCustomerPut(
+            input: PersistenceExampleModel.CreateCustomerRequest) async throws -> PersistenceExampleModel.CreateCustomerPut200Response {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.createCustomerPut.operationPath,
+            httpMethod: .PUT,
+            requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.createCustomerPut.rawValue,
+            reporting: self.invocationsReporting.createCustomerPut,
+            errorType: PersistenceExampleError.self)
+    }
+
+    /**
+     Invokes the GetCustomerDetails operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated GetCustomerDetailsRequest object being passed to this operation.
+     - Returns: The CustomerAttributes object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func getCustomerDetails(
+            input: PersistenceExampleModel.GetCustomerDetailsRequest) async throws -> PersistenceExampleModel.CustomerAttributes {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.getCustomerDetails.operationPath,
+            httpMethod: .GET,
+            requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.getCustomerDetails.rawValue,
+            reporting: self.invocationsReporting.getCustomerDetails,
+            errorType: PersistenceExampleError.self)
+    }
+
+    /**
+     Invokes the ListCustomersGet operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated ListCustomersGetRequest object being passed to this operation.
+     - Returns: The ListCustomersResponse object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func listCustomersGet(
+            input: PersistenceExampleModel.ListCustomersGetRequest) async throws -> PersistenceExampleModel.ListCustomersResponse {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + PersistenceExampleModelOperations.listCustomersGet.operationPath,
+            httpMethod: .GET,
+            requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
+            operation: PersistenceExampleModelOperations.listCustomersGet.rawValue,
+            reporting: self.invocationsReporting.listCustomersGet,
+            errorType: PersistenceExampleError.self)
+    }
+    #endif
 }

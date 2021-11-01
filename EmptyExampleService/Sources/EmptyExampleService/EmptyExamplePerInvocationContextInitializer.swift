@@ -12,6 +12,7 @@ import NIO
 /**
  Initializer for the EmptyExampleService.
  */
+@main
 struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationContextInitializerProtocol {
     // TODO: Add properties to be accessed by the operation handlers
 

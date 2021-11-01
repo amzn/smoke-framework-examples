@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+      
+jobs:
+  Build:
+    name: ${{ matrix.application }} application with Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        swift: ["5.5"]
+        application: ["EmptyExampleService", "PersistenceExampleService"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: marcprux/setup-swift@a990bc57c514a77d232b645843ade099af21aa5e
+        with:
+          swift-version: ${{ matrix.swift }}
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cd ${{ matrix.application }} && swift build -c release
+      - name: Run tests
+        run: cd ${{ matrix.application }} && swift test
+  SwiftLint:
+    name: SwiftLint version 3.2.1 for ${{ matrix.application }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        application: ["EmptyExampleService", "PersistenceExampleService"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: GitHub Action for SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        env:
+          WORKING_DIRECTORY: ${{ matrix.application }}

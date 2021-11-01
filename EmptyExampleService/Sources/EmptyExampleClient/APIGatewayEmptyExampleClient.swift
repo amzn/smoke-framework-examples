@@ -45,7 +45,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     
     public let eventLoopGroup: EventLoopGroup
     public let reporting: InvocationReportingType
-    let stage: String
+    let stage: String?
 
     let operationsReporting: EmptyExampleOperationsReporting
     let invocationsReporting: EmptyExampleInvocationsReporting<InvocationReportingType>
@@ -53,7 +53,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     public init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 reporting: InvocationReportingType,
                 endpointHostName: String,
-                stage: String,
+                stage: String? = nil,
                 endpointPort: Int = 443,
                 requiresTLS: Bool? = nil,
                 service: String = "execute-api",
@@ -91,7 +91,7 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
     internal init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 reporting: InvocationReportingType,
                 httpClient: HTTPOperationsClient,
-                stage: String,
+                stage: String?,
                 service: String,
                 target: String?,
                 eventLoopGroup: EventLoopGroup,
@@ -134,14 +134,16 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func addCustomerEmailAddress(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<EmptyExampleModel.CustomerEmailAddressIdentity> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
             httpMethod: .PUT,
             requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
             operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
             reporting: self.invocationsReporting.addCustomerEmailAddress,
-                                 errorType: EmptyExampleError.self)
+            errorType: EmptyExampleError.self)
     }
 
     /**
@@ -155,14 +157,16 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func createCustomerPut(
             input: EmptyExampleModel.CreateCustomerRequest) -> EventLoopFuture<EmptyExampleModel.CreateCustomerPut200Response> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.createCustomerPut.operationPath,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.createCustomerPut.operationPath,
             httpMethod: .PUT,
             requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
             operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
             reporting: self.invocationsReporting.createCustomerPut,
-                                 errorType: EmptyExampleError.self)
+            errorType: EmptyExampleError.self)
     }
 
     /**
@@ -176,14 +180,16 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func getCustomerDetails(
             input: EmptyExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<EmptyExampleModel.CustomerAttributes> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.getCustomerDetails.operationPath,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.getCustomerDetails.operationPath,
             httpMethod: .GET,
             requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
             operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
             reporting: self.invocationsReporting.getCustomerDetails,
-                                 errorType: EmptyExampleError.self)
+            errorType: EmptyExampleError.self)
     }
 
     /**
@@ -197,13 +203,113 @@ public struct APIGatewayEmptyExampleClient<InvocationReportingType: HTTPClientCo
      */
     public func listCustomersGet(
             input: EmptyExampleModel.ListCustomersGetRequest) -> EventLoopFuture<EmptyExampleModel.ListCustomersResponse> {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
         return executeWithOutput(
             httpClient: httpClient,
-            endpointPath: "/\(stage)" + EmptyExampleModelOperations.listCustomersGet.operationPath,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.listCustomersGet.operationPath,
             httpMethod: .GET,
             requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
             operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
             reporting: self.invocationsReporting.listCustomersGet,
-                                 errorType: EmptyExampleError.self)
+            errorType: EmptyExampleError.self)
     }
+
+    #if compiler(>=5.5) && canImport(_Concurrency)
+    /**
+     Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
+     - Returns: The CustomerEmailAddressIdentity object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func addCustomerEmailAddress(
+            input: EmptyExampleModel.AddCustomerEmailAddressRequest) async throws -> EmptyExampleModel.CustomerEmailAddressIdentity {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.addCustomerEmailAddress.operationPath,
+            httpMethod: .PUT,
+            requestInput: AddCustomerEmailAddressOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.addCustomerEmailAddress.rawValue,
+            reporting: self.invocationsReporting.addCustomerEmailAddress,
+            errorType: EmptyExampleError.self)
+    }
+
+    /**
+     Invokes the CreateCustomerPut operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated CreateCustomerRequest object being passed to this operation.
+     - Returns: The CreateCustomerPut200Response object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func createCustomerPut(
+            input: EmptyExampleModel.CreateCustomerRequest) async throws -> EmptyExampleModel.CreateCustomerPut200Response {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.createCustomerPut.operationPath,
+            httpMethod: .PUT,
+            requestInput: CreateCustomerPutOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.createCustomerPut.rawValue,
+            reporting: self.invocationsReporting.createCustomerPut,
+            errorType: EmptyExampleError.self)
+    }
+
+    /**
+     Invokes the GetCustomerDetails operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated GetCustomerDetailsRequest object being passed to this operation.
+     - Returns: The CustomerAttributes object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func getCustomerDetails(
+            input: EmptyExampleModel.GetCustomerDetailsRequest) async throws -> EmptyExampleModel.CustomerAttributes {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.getCustomerDetails.operationPath,
+            httpMethod: .GET,
+            requestInput: GetCustomerDetailsOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.getCustomerDetails.rawValue,
+            reporting: self.invocationsReporting.getCustomerDetails,
+            errorType: EmptyExampleError.self)
+    }
+
+    /**
+     Invokes the ListCustomersGet operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated ListCustomersGetRequest object being passed to this operation.
+     - Returns: The ListCustomersResponse object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func listCustomersGet(
+            input: EmptyExampleModel.ListCustomersGetRequest) async throws -> EmptyExampleModel.ListCustomersResponse {
+        let stagePrefix: String
+        if let stage = stage { stagePrefix = "/\(stage)"; } else { stagePrefix = ""; }
+        return try await executeWithOutput(
+            httpClient: httpClient,
+            endpointPath: stagePrefix + EmptyExampleModelOperations.listCustomersGet.operationPath,
+            httpMethod: .GET,
+            requestInput: ListCustomersGetOperationHTTPRequestInput(encodable: input),
+            operation: EmptyExampleModelOperations.listCustomersGet.rawValue,
+            reporting: self.invocationsReporting.listCustomersGet,
+            errorType: EmptyExampleError.self)
+    }
+    #endif
 }

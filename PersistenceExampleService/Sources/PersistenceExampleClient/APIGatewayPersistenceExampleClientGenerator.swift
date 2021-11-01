@@ -31,13 +31,13 @@ public struct APIGatewayPersistenceExampleClientGenerator {
     let credentialsProvider: CredentialsProvider
     
     public let eventLoopGroup: EventLoopGroup
-    let stage: String
+    let stage: String?
 
     let operationsReporting: PersistenceExampleOperationsReporting
     
     public init(credentialsProvider: CredentialsProvider, awsRegion: AWSRegion,
                 endpointHostName: String,
-                stage: String,
+                stage: String? = nil,
                 endpointPort: Int = 443,
                 requiresTLS: Bool? = nil,
                 service: String = "execute-api",
