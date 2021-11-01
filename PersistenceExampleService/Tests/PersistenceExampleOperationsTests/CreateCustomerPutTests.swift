@@ -49,8 +49,4 @@ class CreateCustomerPutTests: EventLoopAwareTestCase {
         // verify the row inserted into the database table is as expected
         XCTAssertEqual(customerIdentityRow.rowValue, expectedCustomerIdentityRow)
     }
-
-    static var allTests = [
-        ("testCreateCustomerPut", testCreateCustomerPut),
-    ]
 }

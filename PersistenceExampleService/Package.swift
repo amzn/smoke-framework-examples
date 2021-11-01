@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -56,7 +56,7 @@ let package = Package(
                 .product(name: "SmokeOperationsHTTP1", package: "smoke-framework"),
                 .product(name: "SmokeAWSHttp", package: "smoke-aws"),
             ]),
-        .target(
+        .executableTarget(
             name: "PersistenceExampleService", dependencies: [
                 .target(name: "PersistenceExampleOperationsHTTP1"),
                 .product(name: "SmokeAWSCredentials", package: "smoke-aws-credentials"),

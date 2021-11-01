@@ -12,17 +12,35 @@ import PersistenceExampleModel
 import SmokeAWSCore
 import SmokeHTTPClient
 import NIO
+import SmokeAWSHttp
 
 /**
- Mock Client for the PersistenceExample service by default returns the `__default` property of its return type.
+ Mock Client for the PersistenceExample service.
+ 
+ At initialization, a function override directly returning a result - which can be async for Swift 5.5 or greater - and/or
+ an EventLoopFuture override returning an `EventLoopFuture` that will provide a result at a later time can be provided for each API
+ on this client.
+ 
+ If the function override is provided, the corresponding API on this client will return the result provided by
+ this override or will throw any error thrown by the override.
+ 
+ Otherwise, if the `EventLoopFuture` override is provided, the corresponding API on this client will return the result
+ provided by the `EventLoopFuture` or will throw any error that fails the future. This override is ignored if the first
+ function override is provided.
+ 
+ Otherwise, the API will return the `__default` property of its return type.
  */
-public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol {
+public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol, MockClientProtocol {
     let eventLoop: EventLoop
     let typedErrorProvider: (Swift.Error) -> PersistenceExampleError = { $0.asTypedError() }
     let addCustomerEmailAddressEventLoopFutureAsyncOverride: AddCustomerEmailAddressEventLoopFutureAsyncType?
+    let addCustomerEmailAddressFunctionOverride: AddCustomerEmailAddressFunctionType?
     let createCustomerPutEventLoopFutureAsyncOverride: CreateCustomerPutEventLoopFutureAsyncType?
+    let createCustomerPutFunctionOverride: CreateCustomerPutFunctionType?
     let getCustomerDetailsEventLoopFutureAsyncOverride: GetCustomerDetailsEventLoopFutureAsyncType?
+    let getCustomerDetailsFunctionOverride: GetCustomerDetailsFunctionType?
     let listCustomersGetEventLoopFutureAsyncOverride: ListCustomersGetEventLoopFutureAsyncType?
+    let listCustomersGetFunctionOverride: ListCustomersGetFunctionType?
 
     /**
      Initializer that creates an instance of this clients. The behavior of individual
@@ -31,15 +49,23 @@ public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol {
     public init(
             eventLoop: EventLoop,
             addCustomerEmailAddressEventLoopFutureAsync: AddCustomerEmailAddressEventLoopFutureAsyncType? = nil,
+            addCustomerEmailAddress: AddCustomerEmailAddressFunctionType? = nil,
             createCustomerPutEventLoopFutureAsync: CreateCustomerPutEventLoopFutureAsyncType? = nil,
+            createCustomerPut: CreateCustomerPutFunctionType? = nil,
             getCustomerDetailsEventLoopFutureAsync: GetCustomerDetailsEventLoopFutureAsyncType? = nil,
-            listCustomersGetEventLoopFutureAsync: ListCustomersGetEventLoopFutureAsyncType? = nil) {
+            getCustomerDetails: GetCustomerDetailsFunctionType? = nil,
+            listCustomersGetEventLoopFutureAsync: ListCustomersGetEventLoopFutureAsyncType? = nil,
+            listCustomersGet: ListCustomersGetFunctionType? = nil) {
         self.eventLoop = eventLoop
         
         self.addCustomerEmailAddressEventLoopFutureAsyncOverride = addCustomerEmailAddressEventLoopFutureAsync
+        self.addCustomerEmailAddressFunctionOverride = addCustomerEmailAddress
         self.createCustomerPutEventLoopFutureAsyncOverride = createCustomerPutEventLoopFutureAsync
+        self.createCustomerPutFunctionOverride = createCustomerPut
         self.getCustomerDetailsEventLoopFutureAsyncOverride = getCustomerDetailsEventLoopFutureAsync
+        self.getCustomerDetailsFunctionOverride = getCustomerDetails
         self.listCustomersGetEventLoopFutureAsyncOverride = listCustomersGetEventLoopFutureAsync
+        self.listCustomersGetFunctionOverride = listCustomersGet
     }
 
     /**
@@ -53,16 +79,25 @@ public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol {
      */
     public func addCustomerEmailAddress(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerEmailAddressIdentity> {
-        if let addCustomerEmailAddressEventLoopFutureAsyncOverride = addCustomerEmailAddressEventLoopFutureAsyncOverride {
-            return addCustomerEmailAddressEventLoopFutureAsyncOverride(input)
-        }
-
-        let result = CustomerEmailAddressIdentity.__default
-        
-        let promise = self.eventLoop.makePromise(of: CustomerEmailAddressIdentity.self)
-        promise.succeed(result)
-        
-        return promise.futureResult
+        #if compiler(>=5.5) && canImport(_Concurrency)
+            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
+                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                    input: input,
+                    defaultResult: CustomerEmailAddressIdentity.__default,
+                    eventLoop: self.eventLoop,
+                    functionOverride: self.addCustomerEmailAddressFunctionOverride,
+                    eventLoopFutureFunctionOverride: self.addCustomerEmailAddressEventLoopFutureAsyncOverride)
+            } else {
+                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
+            }
+        #else
+            return mockEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: CustomerEmailAddressIdentity.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.addCustomerEmailAddressFunctionOverride,
+                eventLoopFutureFunctionOverride: self.addCustomerEmailAddressEventLoopFutureAsyncOverride)
+        #endif
     }
 
     /**
@@ -76,16 +111,25 @@ public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol {
      */
     public func createCustomerPut(
             input: PersistenceExampleModel.CreateCustomerRequest) -> EventLoopFuture<PersistenceExampleModel.CreateCustomerPut200Response> {
-        if let createCustomerPutEventLoopFutureAsyncOverride = createCustomerPutEventLoopFutureAsyncOverride {
-            return createCustomerPutEventLoopFutureAsyncOverride(input)
-        }
-
-        let result = CreateCustomerPut200Response.__default
-        
-        let promise = self.eventLoop.makePromise(of: CreateCustomerPut200Response.self)
-        promise.succeed(result)
-        
-        return promise.futureResult
+        #if compiler(>=5.5) && canImport(_Concurrency)
+            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
+                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                    input: input,
+                    defaultResult: CreateCustomerPut200Response.__default,
+                    eventLoop: self.eventLoop,
+                    functionOverride: self.createCustomerPutFunctionOverride,
+                    eventLoopFutureFunctionOverride: self.createCustomerPutEventLoopFutureAsyncOverride)
+            } else {
+                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
+            }
+        #else
+            return mockEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: CreateCustomerPut200Response.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.createCustomerPutFunctionOverride,
+                eventLoopFutureFunctionOverride: self.createCustomerPutEventLoopFutureAsyncOverride)
+        #endif
     }
 
     /**
@@ -99,16 +143,25 @@ public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol {
      */
     public func getCustomerDetails(
             input: PersistenceExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerAttributes> {
-        if let getCustomerDetailsEventLoopFutureAsyncOverride = getCustomerDetailsEventLoopFutureAsyncOverride {
-            return getCustomerDetailsEventLoopFutureAsyncOverride(input)
-        }
-
-        let result = CustomerAttributes.__default
-        
-        let promise = self.eventLoop.makePromise(of: CustomerAttributes.self)
-        promise.succeed(result)
-        
-        return promise.futureResult
+        #if compiler(>=5.5) && canImport(_Concurrency)
+            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
+                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                    input: input,
+                    defaultResult: CustomerAttributes.__default,
+                    eventLoop: self.eventLoop,
+                    functionOverride: self.getCustomerDetailsFunctionOverride,
+                    eventLoopFutureFunctionOverride: self.getCustomerDetailsEventLoopFutureAsyncOverride)
+            } else {
+                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
+            }
+        #else
+            return mockEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: CustomerAttributes.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.getCustomerDetailsFunctionOverride,
+                eventLoopFutureFunctionOverride: self.getCustomerDetailsEventLoopFutureAsyncOverride)
+        #endif
     }
 
     /**
@@ -122,15 +175,106 @@ public struct MockPersistenceExampleClient: PersistenceExampleClientProtocol {
      */
     public func listCustomersGet(
             input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse> {
-        if let listCustomersGetEventLoopFutureAsyncOverride = listCustomersGetEventLoopFutureAsyncOverride {
-            return listCustomersGetEventLoopFutureAsyncOverride(input)
-        }
-
-        let result = ListCustomersResponse.__default
-        
-        let promise = self.eventLoop.makePromise(of: ListCustomersResponse.self)
-        promise.succeed(result)
-        
-        return promise.futureResult
+        #if compiler(>=5.5) && canImport(_Concurrency)
+            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
+                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                    input: input,
+                    defaultResult: ListCustomersResponse.__default,
+                    eventLoop: self.eventLoop,
+                    functionOverride: self.listCustomersGetFunctionOverride,
+                    eventLoopFutureFunctionOverride: self.listCustomersGetEventLoopFutureAsyncOverride)
+            } else {
+                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
+            }
+        #else
+            return mockEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: ListCustomersResponse.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.listCustomersGetFunctionOverride,
+                eventLoopFutureFunctionOverride: self.listCustomersGetEventLoopFutureAsyncOverride)
+        #endif
     }
+
+    #if compiler(>=5.5) && canImport(_Concurrency)
+    /**
+     Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
+     - Returns: The CustomerEmailAddressIdentity object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func addCustomerEmailAddress(
+            input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
+        return try await mockExecuteWithInputWithOutput(
+            input: input,
+            defaultResult: CustomerEmailAddressIdentity.__default,
+            eventLoop: self.eventLoop,
+            functionOverride: self.addCustomerEmailAddressFunctionOverride,
+            eventLoopFutureFunctionOverride: self.addCustomerEmailAddressEventLoopFutureAsyncOverride)
+    }
+
+    /**
+     Invokes the CreateCustomerPut operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated CreateCustomerRequest object being passed to this operation.
+     - Returns: The CreateCustomerPut200Response object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func createCustomerPut(
+            input: PersistenceExampleModel.CreateCustomerRequest) async throws -> PersistenceExampleModel.CreateCustomerPut200Response {
+        return try await mockExecuteWithInputWithOutput(
+            input: input,
+            defaultResult: CreateCustomerPut200Response.__default,
+            eventLoop: self.eventLoop,
+            functionOverride: self.createCustomerPutFunctionOverride,
+            eventLoopFutureFunctionOverride: self.createCustomerPutEventLoopFutureAsyncOverride)
+    }
+
+    /**
+     Invokes the GetCustomerDetails operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated GetCustomerDetailsRequest object being passed to this operation.
+     - Returns: The CustomerAttributes object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func getCustomerDetails(
+            input: PersistenceExampleModel.GetCustomerDetailsRequest) async throws -> PersistenceExampleModel.CustomerAttributes {
+        return try await mockExecuteWithInputWithOutput(
+            input: input,
+            defaultResult: CustomerAttributes.__default,
+            eventLoop: self.eventLoop,
+            functionOverride: self.getCustomerDetailsFunctionOverride,
+            eventLoopFutureFunctionOverride: self.getCustomerDetailsEventLoopFutureAsyncOverride)
+    }
+
+    /**
+     Invokes the ListCustomersGet operation returning aynchronously at a later time once the operation is complete.
+
+     - Parameters:
+         - input: The validated ListCustomersGetRequest object being passed to this operation.
+     - Returns: The ListCustomersResponse object to be passed back from the caller of this async operation.
+         Will be validated before being returned to caller.
+           The possible errors are: unknownResource.
+     */
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func listCustomersGet(
+            input: PersistenceExampleModel.ListCustomersGetRequest) async throws -> PersistenceExampleModel.ListCustomersResponse {
+        return try await mockExecuteWithInputWithOutput(
+            input: input,
+            defaultResult: ListCustomersResponse.__default,
+            eventLoop: self.eventLoop,
+            functionOverride: self.listCustomersGetFunctionOverride,
+            eventLoopFutureFunctionOverride: self.listCustomersGetEventLoopFutureAsyncOverride)
+    }
+    #endif
 }

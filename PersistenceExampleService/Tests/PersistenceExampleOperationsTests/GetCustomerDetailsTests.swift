@@ -70,8 +70,4 @@ class GetCustomerDetailsTests: EventLoopAwareTestCase {
     
         XCTAssertEqual(try operationsContext.handleGetCustomerDetails(input: input), expected)
     }
-
-    static var allTests = [
-        ("testGetCustomerDetails", testGetCustomerDetails),
-    ]
 }

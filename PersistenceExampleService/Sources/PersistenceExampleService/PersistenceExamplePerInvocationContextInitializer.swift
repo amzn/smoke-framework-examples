@@ -17,6 +17,7 @@ import NIO
 /**
  Initializer for the PersistenceExampleService.
  */
+@main
 struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerInvocationContextInitializerProtocol {
     let dynamodbTableGenerator: AWSDynamoDBCompositePrimaryKeyTableGenerator
     let credentialsProvider: StoppableCredentialsProvider
@@ -110,7 +111,7 @@ private struct EnvironmentVariables {
     static func getEnvironment() -> [String: String] {
         #if DEBUG
         let environment = [EnvironmentVariables.dynamoEndpointHostName: "dynamodb.us-west-2.amazonaws.com",
-                           EnvironmentVariables.dynamoTableName: "ServiceStack-PersistenceExampleTable",
+                           EnvironmentVariables.dynamoTableName: "PersistenceExampleTable",
                            EnvironmentVariables.region: "us-west-2",
                            AwsContainerRotatingCredentialsProvider.devIamRoleArnEnvironmentVariable:
                                "arn:aws:iam::000000000000:role/EcsTaskExecutionRole"]

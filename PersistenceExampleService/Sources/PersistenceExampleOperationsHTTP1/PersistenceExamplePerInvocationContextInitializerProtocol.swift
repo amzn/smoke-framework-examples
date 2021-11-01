@@ -5,6 +5,8 @@
 
 import PersistenceExampleModel
 import PersistenceExampleOperations
+import NIO
+import SmokeHTTP1
 import SmokeOperationsHTTP1Server
             
 /**
@@ -12,7 +14,7 @@ import SmokeOperationsHTTP1Server
  */
 public protocol PersistenceExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeServerPerInvocationContextInitializer
 where ContextType == PersistenceExampleOperationsContext, OperationIdentifer == PersistenceExampleModelOperations {
-
+    init(eventLoopGroup: EventLoopGroup) throws
 }
 
 public extension PersistenceExamplePerInvocationContextInitializerProtocol {
@@ -23,5 +25,9 @@ public extension PersistenceExamplePerInvocationContextInitializerProtocol {
 
     var serverName: String {
         return "PersistenceExampleService"
+    }
+
+    static func main() throws {
+        SmokeHTTP1Server.runAsOperationServer(Self.init)
     }
 }
