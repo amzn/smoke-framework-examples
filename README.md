@@ -1,10 +1,10 @@
 <p align="center">
-<a href="https://travis-ci.com/amzn/smoke-framework-examples">
-<img src="https://travis-ci.com/amzn/smoke-framework-examples.svg?branch=smoke-framework-examples-1.x" alt="Build - smoke-framework-examples-1.x Branch">
+<a href="https://github.com/amzn/smoke-framework-examples/actions">
+<img src="https://github.com/amzn/smoke-framework-examples/actions/workflows/swift.yml/badge.svg?branch=main" alt="Build - main Branch">
 </a>
 <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
 <a href="http://swift.org">
-<img src="https://img.shields.io/badge/swift-5.4-orange.svg?style=flat" alt="Swift 5.4 Compatible">
+<img src="https://img.shields.io/badge/swift-5.5-orange.svg?style=flat" alt="Swift 5.5 Compatible">
 </a>
 <a href="https://gitter.im/SmokeServerSide">
 <img src="https://img.shields.io/badge/chat-on%20gitter-ee115e.svg?style=flat" alt="Join the Smoke Server Side community on gitter">
