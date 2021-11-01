@@ -21,9 +21,13 @@ jobs:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v2
       - name: Build
-        run: cd ${{ matrix.application }} && swift build -c release
+        run: swift build -c release
+        env:
+          WORKING_DIRECTORY: ${{ matrix.application }}
       - name: Run tests
-        run: cd ${{ matrix.application }} && swift test
+        run: swift test
+        env:
+          WORKING_DIRECTORY: ${{ matrix.application }}
   SwiftLint:
     name: SwiftLint version 3.2.1 for ${{ matrix.application }}
     strategy:

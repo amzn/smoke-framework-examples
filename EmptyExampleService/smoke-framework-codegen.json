@@ -6,6 +6,8 @@
     "mode" : "allFunctionsWithinContext"
   },
   "initializationType": "STREAMLINED",
+  "testDiscovery": "ENABLED",
+  "mainAnnotation": "ENABLED",
   "modelOverride" : {
     "namedFieldValuesOverride" : {
       "birthYear" : "1985",

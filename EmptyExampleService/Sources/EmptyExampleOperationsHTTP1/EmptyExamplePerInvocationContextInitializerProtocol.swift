@@ -5,6 +5,8 @@
 
 import EmptyExampleModel
 import EmptyExampleOperations
+import NIO
+import SmokeHTTP1
 import SmokeOperationsHTTP1Server
             
 /**
@@ -12,7 +14,7 @@ import SmokeOperationsHTTP1Server
  */
 public protocol EmptyExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeServerPerInvocationContextInitializer
 where ContextType == EmptyExampleOperationsContext, OperationIdentifer == EmptyExampleModelOperations {
-
+    init(eventLoopGroup: EventLoopGroup) throws
 }
 
 public extension EmptyExamplePerInvocationContextInitializerProtocol {
@@ -23,5 +25,9 @@ public extension EmptyExamplePerInvocationContextInitializerProtocol {
 
     var serverName: String {
         return "EmptyExampleService"
+    }
+
+    static func main() throws {
+        SmokeHTTP1Server.runAsOperationServer(Self.init)
     }
 }
