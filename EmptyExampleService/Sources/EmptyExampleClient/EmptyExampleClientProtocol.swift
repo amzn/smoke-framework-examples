@@ -25,7 +25,7 @@ public protocol EmptyExampleClientProtocol {
             _ input: EmptyExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<EmptyExampleModel.CustomerAttributes>
     typealias ListCustomersGetEventLoopFutureAsyncType = (
             _ input: EmptyExampleModel.ListCustomersGetRequest) -> EventLoopFuture<EmptyExampleModel.ListCustomersResponse>
-    #if compiler(>=5.5) && canImport(_Concurrency)
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     typealias AddCustomerEmailAddressFunctionType = (
             _ input: EmptyExampleModel.AddCustomerEmailAddressRequest) async throws -> EmptyExampleModel.CustomerEmailAddressIdentity
     typealias CreateCustomerPutFunctionType = (
@@ -93,7 +93,7 @@ public protocol EmptyExampleClientProtocol {
     func listCustomersGet(
             input: EmptyExampleModel.ListCustomersGetRequest) -> EventLoopFuture<EmptyExampleModel.ListCustomersResponse>
 
-    #if compiler(>=5.5) && canImport(_Concurrency)
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
      Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
 
@@ -103,7 +103,6 @@ public protocol EmptyExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func addCustomerEmailAddress(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) async throws -> EmptyExampleModel.CustomerEmailAddressIdentity
 
@@ -116,7 +115,6 @@ public protocol EmptyExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func createCustomerPut(
             input: EmptyExampleModel.CreateCustomerRequest) async throws -> EmptyExampleModel.CreateCustomerPut200Response
 
@@ -129,7 +127,6 @@ public protocol EmptyExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func getCustomerDetails(
             input: EmptyExampleModel.GetCustomerDetailsRequest) async throws -> EmptyExampleModel.CustomerAttributes
 
@@ -142,7 +139,6 @@ public protocol EmptyExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func listCustomersGet(
             input: EmptyExampleModel.ListCustomersGetRequest) async throws -> EmptyExampleModel.ListCustomersResponse
     #endif

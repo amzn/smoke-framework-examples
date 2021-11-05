@@ -215,7 +215,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
             errorType: PersistenceExampleError.self)
     }
 
-    #if compiler(>=5.5) && canImport(_Concurrency)
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
      Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
 
@@ -225,7 +225,6 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
          Will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func addCustomerEmailAddress(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws -> PersistenceExampleModel.CustomerEmailAddressIdentity {
         let stagePrefix: String
@@ -249,7 +248,6 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func createCustomerPut(
             input: PersistenceExampleModel.CreateCustomerRequest) async throws -> PersistenceExampleModel.CreateCustomerPut200Response {
         let stagePrefix: String
@@ -273,7 +271,6 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func getCustomerDetails(
             input: PersistenceExampleModel.GetCustomerDetailsRequest) async throws -> PersistenceExampleModel.CustomerAttributes {
         let stagePrefix: String
@@ -297,7 +294,6 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func listCustomersGet(
             input: PersistenceExampleModel.ListCustomersGetRequest) async throws -> PersistenceExampleModel.ListCustomersResponse {
         let stagePrefix: String
