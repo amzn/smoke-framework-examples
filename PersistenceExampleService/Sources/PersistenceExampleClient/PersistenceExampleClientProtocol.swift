@@ -25,7 +25,7 @@ public protocol PersistenceExampleClientProtocol {
             _ input: PersistenceExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<PersistenceExampleModel.CustomerAttributes>
     typealias ListCustomersGetEventLoopFutureAsyncType = (
             _ input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse>
-    #if compiler(>=5.5) && canImport(_Concurrency)
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     typealias AddCustomerEmailAddressFunctionType = (
             _ input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws -> PersistenceExampleModel.CustomerEmailAddressIdentity
     typealias CreateCustomerPutFunctionType = (
@@ -93,7 +93,7 @@ public protocol PersistenceExampleClientProtocol {
     func listCustomersGet(
             input: PersistenceExampleModel.ListCustomersGetRequest) -> EventLoopFuture<PersistenceExampleModel.ListCustomersResponse>
 
-    #if compiler(>=5.5) && canImport(_Concurrency)
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
      Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
 
@@ -103,7 +103,6 @@ public protocol PersistenceExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func addCustomerEmailAddress(
             input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws -> PersistenceExampleModel.CustomerEmailAddressIdentity
 
@@ -116,7 +115,6 @@ public protocol PersistenceExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func createCustomerPut(
             input: PersistenceExampleModel.CreateCustomerRequest) async throws -> PersistenceExampleModel.CreateCustomerPut200Response
 
@@ -129,7 +127,6 @@ public protocol PersistenceExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func getCustomerDetails(
             input: PersistenceExampleModel.GetCustomerDetailsRequest) async throws -> PersistenceExampleModel.CustomerAttributes
 
@@ -142,7 +139,6 @@ public protocol PersistenceExampleClientProtocol {
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func listCustomersGet(
             input: PersistenceExampleModel.ListCustomersGetRequest) async throws -> PersistenceExampleModel.ListCustomersResponse
     #endif

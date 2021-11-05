@@ -79,17 +79,13 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
      */
     public func addCustomerEmailAddress(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) -> EventLoopFuture<EmptyExampleModel.CustomerEmailAddressIdentity> {
-        #if compiler(>=5.5) && canImport(_Concurrency)
-            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
-                    input: input,
-                    defaultResult: CustomerEmailAddressIdentity.__default,
-                    eventLoop: self.eventLoop,
-                    functionOverride: self.addCustomerEmailAddressFunctionOverride,
-                    eventLoopFutureFunctionOverride: self.addCustomerEmailAddressEventLoopFutureAsyncOverride)
-            } else {
-                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
-            }
+        #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
+            return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: CustomerEmailAddressIdentity.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.addCustomerEmailAddressFunctionOverride,
+                eventLoopFutureFunctionOverride: self.addCustomerEmailAddressEventLoopFutureAsyncOverride)
         #else
             return mockEventLoopFutureExecuteWithInputWithOutput(
                 input: input,
@@ -111,17 +107,13 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
      */
     public func createCustomerPut(
             input: EmptyExampleModel.CreateCustomerRequest) -> EventLoopFuture<EmptyExampleModel.CreateCustomerPut200Response> {
-        #if compiler(>=5.5) && canImport(_Concurrency)
-            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
-                    input: input,
-                    defaultResult: CreateCustomerPut200Response.__default,
-                    eventLoop: self.eventLoop,
-                    functionOverride: self.createCustomerPutFunctionOverride,
-                    eventLoopFutureFunctionOverride: self.createCustomerPutEventLoopFutureAsyncOverride)
-            } else {
-                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
-            }
+        #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
+            return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: CreateCustomerPut200Response.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.createCustomerPutFunctionOverride,
+                eventLoopFutureFunctionOverride: self.createCustomerPutEventLoopFutureAsyncOverride)
         #else
             return mockEventLoopFutureExecuteWithInputWithOutput(
                 input: input,
@@ -143,17 +135,13 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
      */
     public func getCustomerDetails(
             input: EmptyExampleModel.GetCustomerDetailsRequest) -> EventLoopFuture<EmptyExampleModel.CustomerAttributes> {
-        #if compiler(>=5.5) && canImport(_Concurrency)
-            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
-                    input: input,
-                    defaultResult: CustomerAttributes.__default,
-                    eventLoop: self.eventLoop,
-                    functionOverride: self.getCustomerDetailsFunctionOverride,
-                    eventLoopFutureFunctionOverride: self.getCustomerDetailsEventLoopFutureAsyncOverride)
-            } else {
-                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
-            }
+        #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
+            return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: CustomerAttributes.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.getCustomerDetailsFunctionOverride,
+                eventLoopFutureFunctionOverride: self.getCustomerDetailsEventLoopFutureAsyncOverride)
         #else
             return mockEventLoopFutureExecuteWithInputWithOutput(
                 input: input,
@@ -175,17 +163,13 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
      */
     public func listCustomersGet(
             input: EmptyExampleModel.ListCustomersGetRequest) -> EventLoopFuture<EmptyExampleModel.ListCustomersResponse> {
-        #if compiler(>=5.5) && canImport(_Concurrency)
-            if #available(macOS 12, iOS 15, tvOS 15, watchOS 8, *) {
-                return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
-                    input: input,
-                    defaultResult: ListCustomersResponse.__default,
-                    eventLoop: self.eventLoop,
-                    functionOverride: self.listCustomersGetFunctionOverride,
-                    eventLoopFutureFunctionOverride: self.listCustomersGetEventLoopFutureAsyncOverride)
-            } else {
-                fatalError( "Swift >=5.5 unsupported below (macOS 12, iOS 15, tvOS 15, watchOS 8)")
-            }
+        #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
+            return mockAsyncAwareEventLoopFutureExecuteWithInputWithOutput(
+                input: input,
+                defaultResult: ListCustomersResponse.__default,
+                eventLoop: self.eventLoop,
+                functionOverride: self.listCustomersGetFunctionOverride,
+                eventLoopFutureFunctionOverride: self.listCustomersGetEventLoopFutureAsyncOverride)
         #else
             return mockEventLoopFutureExecuteWithInputWithOutput(
                 input: input,
@@ -196,7 +180,7 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
         #endif
     }
 
-    #if compiler(>=5.5) && canImport(_Concurrency)
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
      Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
 
@@ -206,7 +190,6 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
          Will be validated before being returned to caller.
            The possible errors are: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func addCustomerEmailAddress(
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) async throws -> EmptyExampleModel.CustomerEmailAddressIdentity {
         return try await mockExecuteWithInputWithOutput(
@@ -226,7 +209,6 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func createCustomerPut(
             input: EmptyExampleModel.CreateCustomerRequest) async throws -> EmptyExampleModel.CreateCustomerPut200Response {
         return try await mockExecuteWithInputWithOutput(
@@ -246,7 +228,6 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func getCustomerDetails(
             input: EmptyExampleModel.GetCustomerDetailsRequest) async throws -> EmptyExampleModel.CustomerAttributes {
         return try await mockExecuteWithInputWithOutput(
@@ -266,7 +247,6 @@ public struct MockEmptyExampleClient: EmptyExampleClientProtocol, MockClientProt
          Will be validated before being returned to caller.
            The possible errors are: unknownResource.
      */
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     public func listCustomersGet(
             input: EmptyExampleModel.ListCustomersGetRequest) async throws -> EmptyExampleModel.ListCustomersResponse {
         return try await mockExecuteWithInputWithOutput(
