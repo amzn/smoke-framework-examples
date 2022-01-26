@@ -12,9 +12,9 @@ import SmokeOperationsHTTP1Server
 /**
  Convenience protocol for the initialization of EmptyExampleService.
  */
-public protocol EmptyExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeServerPerInvocationContextInitializer
+public protocol EmptyExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeAsyncServerPerInvocationContextInitializer
 where ContextType == EmptyExampleOperationsContext, OperationIdentifer == EmptyExampleModelOperations {
-    init(eventLoopGroup: EventLoopGroup) throws
+    init(eventLoopGroup: EventLoopGroup) async throws
 }
 
 public extension EmptyExamplePerInvocationContextInitializerProtocol {
@@ -27,7 +27,7 @@ public extension EmptyExamplePerInvocationContextInitializerProtocol {
         return "EmptyExampleService"
     }
 
-    static func main() throws {
-        SmokeHTTP1Server.runAsOperationServer(Self.init)
+    static func main() async throws {
+        await SmokeHTTP1Server.runAsOperationServer(Self.init)
     }
 }

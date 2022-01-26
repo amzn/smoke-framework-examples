@@ -30,7 +30,7 @@ import PersistenceExampleModel
  - Throws: unknownResource.
  */
 extension PersistenceExampleOperationsContext {
-    public func handleListCustomersGet(input: PersistenceExampleModel.ListCustomersGetRequest) throws
+    public func handleListCustomersGet(input: PersistenceExampleModel.ListCustomersGetRequest) async throws
     -> PersistenceExampleModel.ListCustomersResponse {
         // TODO: Implement secondary index to handle listing customers.
         return ListCustomersResponse.__default

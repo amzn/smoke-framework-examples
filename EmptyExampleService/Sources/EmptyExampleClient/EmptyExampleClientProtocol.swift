@@ -95,7 +95,7 @@ public protocol EmptyExampleClientProtocol {
 
     #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
-     Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
+     Invokes the AddCustomerEmailAddress operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -107,7 +107,7 @@ public protocol EmptyExampleClientProtocol {
             input: EmptyExampleModel.AddCustomerEmailAddressRequest) async throws -> EmptyExampleModel.CustomerEmailAddressIdentity
 
     /**
-     Invokes the CreateCustomerPut operation returning aynchronously at a later time once the operation is complete.
+     Invokes the CreateCustomerPut operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -119,7 +119,7 @@ public protocol EmptyExampleClientProtocol {
             input: EmptyExampleModel.CreateCustomerRequest) async throws -> EmptyExampleModel.CreateCustomerPut200Response
 
     /**
-     Invokes the GetCustomerDetails operation returning aynchronously at a later time once the operation is complete.
+     Invokes the GetCustomerDetails operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -131,7 +131,7 @@ public protocol EmptyExampleClientProtocol {
             input: EmptyExampleModel.GetCustomerDetailsRequest) async throws -> EmptyExampleModel.CustomerAttributes
 
     /**
-     Invokes the ListCustomersGet operation returning aynchronously at a later time once the operation is complete.
+     Invokes the ListCustomersGet operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.

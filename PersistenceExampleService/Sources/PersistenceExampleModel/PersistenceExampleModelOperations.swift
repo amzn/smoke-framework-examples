@@ -35,6 +35,19 @@ public enum PersistenceExampleModelOperations: String, Hashable, CustomStringCon
             return "/customer"
         }
     }
+
+    public var allowedErrors: [PersistenceExampleErrorTypes] {
+        switch self {
+        case .addCustomerEmailAddress:
+            return [.concurrency, .customerEmailAddressAlreadyExists, .customerEmailAddressLimitExceeded, .unknownResource]
+        case .createCustomerPut:
+            return [.unknownResource]
+        case .getCustomerDetails:
+            return [.unknownResource]
+        case .listCustomersGet:
+            return [.unknownResource]
+        }
+    }
 }
 
 /**

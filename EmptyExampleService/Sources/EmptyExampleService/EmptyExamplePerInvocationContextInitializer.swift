@@ -19,7 +19,7 @@ struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationCon
     /**
      On application startup.
      */
-    init(eventLoopGroup: EventLoopGroup) throws {
+    init(eventLoopGroup: EventLoopGroup) async throws {
         CloudwatchStandardErrorLogger.enableLogging()
 
         // TODO: Add additional application initialization
@@ -36,7 +36,7 @@ struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationCon
     /**
      On application shutdown.
     */
-    func onShutdown() throws {
+    func onShutdown() async throws {
         
     }
 }

@@ -33,15 +33,15 @@ extension PersistenceExampleModel.CreateCustomerRequest: PersistenceExampleModel
  - Throws: unknownResource.
  */
 extension PersistenceExampleOperationsContext {
-    public func handleCreateCustomerPut(input: PersistenceExampleModel.CreateCustomerRequest) throws
+    public func handleCreateCustomerPut(input: PersistenceExampleModel.CreateCustomerRequest) async throws
     -> PersistenceExampleModel.CreateCustomerPut200Response {
         // create a new customer id
         let customerId = self.idGenerator()
-        let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerId]).dynamodbKey
+        let partitionKey = (Self.customerKeyPrefix + [customerId]).dynamodbKey
         
         let customerEmailAddressSummary = CustomerEmailAddressSummary(
             emailAddresses: [],
-            maximum: PersistenceExampleOperationsContext.defaultCustomerEmailAddressLimit)
+            maximum: Self.defaultCustomerEmailAddressLimit)
         let newCustomerIdentityRow = CustomerIdentityRow(
             customerEmailAddressSummary: customerEmailAddressSummary,
             customerID: customerId,
@@ -52,9 +52,9 @@ extension PersistenceExampleOperationsContext {
         let key = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
         let newDatabaseItem = StandardTypedDatabaseItem.newItem(withKey: key, andValue: newCustomerIdentityRow)
         
-        try self.dynamodbTable.insertItem(newDatabaseItem).wait()
+        try await self.dynamodbTable.insertItem(newDatabaseItem)
         
-        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [customerId]).dynamodbKey
+        let externalCustomerId = (Self.externalCustomerPrefix + [customerId]).dynamodbKey
         
         let response = CreateCustomerPut200Response(xRequestID: self.idGenerator(),
                                                     id: externalCustomerId)

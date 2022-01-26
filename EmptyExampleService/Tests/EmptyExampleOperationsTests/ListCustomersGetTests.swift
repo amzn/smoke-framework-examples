@@ -9,11 +9,11 @@ import EmptyExampleModel
 
 class ListCustomersGetTests: XCTestCase {
 
-    func testListCustomersGet() throws {
+    func testListCustomersGet() async throws {
         let input = ListCustomersGetRequest.__default
         let operationsContext = createOperationsContext()
     
-        let response = try operationsContext.handleListCustomersGet(input: input)
+        let response = try await operationsContext.handleListCustomersGet(input: input)
         XCTAssertEqual(response, ListCustomersResponse.__default)
     }
 }

@@ -12,11 +12,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        swift: ["5.5"]
+        swift: ["5.5.2"]
         application: ["EmptyExampleService", "PersistenceExampleService"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: marcprux/setup-swift@a990bc57c514a77d232b645843ade099af21aa5e
+      - uses: fwal/setup-swift@v1.11.0
         with:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v2

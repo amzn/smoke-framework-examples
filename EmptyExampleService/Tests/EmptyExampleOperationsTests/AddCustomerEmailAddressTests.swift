@@ -9,11 +9,11 @@ import EmptyExampleModel
 
 class AddCustomerEmailAddressTests: XCTestCase {
 
-    func testAddCustomerEmailAddress() throws {
+    func testAddCustomerEmailAddress() async throws {
         let input = AddCustomerEmailAddressRequest.__default
         let operationsContext = createOperationsContext()
     
-        let response = try operationsContext.handleAddCustomerEmailAddress(input: input)
+        let response = try await operationsContext.handleAddCustomerEmailAddress(input: input)
         XCTAssertEqual(response, CustomerEmailAddressIdentity.__default)
     }
 }
