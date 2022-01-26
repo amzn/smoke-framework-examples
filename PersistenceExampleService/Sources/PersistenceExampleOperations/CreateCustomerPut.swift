@@ -37,11 +37,11 @@ extension PersistenceExampleOperationsContext {
     -> PersistenceExampleModel.CreateCustomerPut200Response {
         // create a new customer id
         let customerId = self.idGenerator()
-        let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerId]).dynamodbKey
+        let partitionKey = (Self.customerKeyPrefix + [customerId]).dynamodbKey
         
         let customerEmailAddressSummary = CustomerEmailAddressSummary(
             emailAddresses: [],
-            maximum: PersistenceExampleOperationsContext.defaultCustomerEmailAddressLimit)
+            maximum: Self.defaultCustomerEmailAddressLimit)
         let newCustomerIdentityRow = CustomerIdentityRow(
             customerEmailAddressSummary: customerEmailAddressSummary,
             customerID: customerId,
@@ -54,7 +54,7 @@ extension PersistenceExampleOperationsContext {
         
         try await self.dynamodbTable.insertItem(newDatabaseItem)
         
-        let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [customerId]).dynamodbKey
+        let externalCustomerId = (Self.externalCustomerPrefix + [customerId]).dynamodbKey
         
         let response = CreateCustomerPut200Response(xRequestID: self.idGenerator(),
                                                     id: externalCustomerId)

@@ -49,11 +49,11 @@ extension PersistenceExampleOperationsContext {
     public func handleGetCustomerDetails(input: PersistenceExampleModel.GetCustomerDetailsRequest) async throws
     -> PersistenceExampleModel.CustomerAttributes {
         guard let customerIDKeyPostfix =
-            PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
+            Self.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
                 throw SmokeOperationsError.validationError(reason: "Invalid customer ID '\(input.id)")
         }
         
-        let customerKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerIDKeyPostfix]).dynamodbKey
+        let customerKey = (Self.customerKeyPrefix + [customerIDKeyPostfix]).dynamodbKey
         
         // Query on the customer partition, that will return the customer identity row and any email address rows
         self.logger.debug("Query on customer: \(customerKey)")

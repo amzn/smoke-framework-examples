@@ -40,11 +40,11 @@ private typealias CustomerEmailAddressRowIdentity = (emailAddress: String, rowKe
 extension PersistenceExampleOperationsContext {
     public func handleAddCustomerEmailAddress(input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws
     -> PersistenceExampleModel.CustomerEmailAddressIdentity {
-        guard let customerID = PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
+        guard let customerID = Self.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
             throw SmokeOperationsError.validationError(reason: "Invalid input customer ID '\(input.id)")
         }
         
-        let partitionKey = (PersistenceExampleOperationsContext.customerKeyPrefix + [customerID]).dynamodbKey
+        let partitionKey = (Self.customerKeyPrefix + [customerID]).dynamodbKey
         let customerKey = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
         var customerEmailAddressRowIdentity: CustomerEmailAddressRowIdentity?
         
@@ -123,7 +123,7 @@ extension PersistenceExampleOperationsContext {
         customerKey: StandardCompositePrimaryKey,
         input: PersistenceExampleModel.AddCustomerEmailAddressRequest) async throws
     -> CustomerEmailAddressRowIdentity {
-        let customerEmailAddressID = (PersistenceExampleOperationsContext.customerEmailAddressPrefix + [currentEmailAddress]).dynamodbKey
+        let customerEmailAddressID = (Self.customerEmailAddressPrefix + [currentEmailAddress]).dynamodbKey
 
         let customerEmailAddressKey = StandardCompositePrimaryKey(partitionKey: customerKey.partitionKey,
                                                                        sortKey: customerEmailAddressID)
