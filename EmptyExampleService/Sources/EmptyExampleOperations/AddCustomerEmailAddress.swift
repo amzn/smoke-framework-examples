@@ -17,7 +17,7 @@ import EmptyExampleModel
  - Throws: concurrency, customerEmailAddressAlreadyExists, customerEmailAddressLimitExceeded, unknownResource.
  */
 extension EmptyExampleOperationsContext {
-    public func handleAddCustomerEmailAddress(input: EmptyExampleModel.AddCustomerEmailAddressRequest) throws
+    public func handleAddCustomerEmailAddress(input: EmptyExampleModel.AddCustomerEmailAddressRequest) async throws
     -> EmptyExampleModel.CustomerEmailAddressIdentity {
         return CustomerEmailAddressIdentity.__default
     }

@@ -115,13 +115,33 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
 
     /**
      Gracefully shuts down this client. This function is idempotent and
-     will handle being called multiple times.
+     will handle being called multiple times. Will block until shutdown is complete.
      */
-    public func close() throws {
+    public func syncShutdown() throws {
         if self.ownsHttpClients {
-            try httpClient.close()
+            try self.httpClient.syncShutdown()
         }
     }
+
+    // renamed `syncShutdown` to make it clearer this version of shutdown will block.
+    @available(*, deprecated, renamed: "syncShutdown")
+    public func close() throws {
+        if self.ownsHttpClients {
+            try self.httpClient.close()
+        }
+    }
+
+    /**
+     Gracefully shuts down this client. This function is idempotent and
+     will handle being called multiple times. Will return when shutdown is complete.
+     */
+    #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
+    public func shutdown() async throws {
+        if self.ownsHttpClients {
+            try await self.httpClient.shutdown()
+        }
+    }
+    #endif
 
     /**
      Invokes the AddCustomerEmailAddress operation returning immediately with an `EventLoopFuture` that will be completed at a later time.
@@ -217,7 +237,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
 
     #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
-     Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
+     Invokes the AddCustomerEmailAddress operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -240,7 +260,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     }
 
     /**
-     Invokes the CreateCustomerPut operation returning aynchronously at a later time once the operation is complete.
+     Invokes the CreateCustomerPut operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -263,7 +283,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     }
 
     /**
-     Invokes the GetCustomerDetails operation returning aynchronously at a later time once the operation is complete.
+     Invokes the GetCustomerDetails operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -286,7 +306,7 @@ public struct APIGatewayPersistenceExampleClient<InvocationReportingType: HTTPCl
     }
 
     /**
-     Invokes the ListCustomersGet operation returning aynchronously at a later time once the operation is complete.
+     Invokes the ListCustomersGet operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.

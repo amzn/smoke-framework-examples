@@ -22,7 +22,7 @@ import SmokeDynamoDB
 
 class CreateCustomerPutTests: EventLoopAwareTestCase {
 
-    func testCreateCustomerPut() {
+    func testCreateCustomerPut() async throws {
         let input = CreateCustomerRequest.__default
         let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
@@ -33,7 +33,8 @@ class CreateCustomerPutTests: EventLoopAwareTestCase {
                                                     id: externalCustomerId)
     
         // verify the operation returns what is expected
-        XCTAssertEqual(try operationsContext.handleCreateCustomerPut(input: input), expected)
+        let response = try await operationsContext.handleCreateCustomerPut(input: input)
+        XCTAssertEqual(response, expected)
         
         // get the customer partition from the in memory dynamodb table
         let customerPartition = dynamodbTable.store[internalCustomerId]!

@@ -35,6 +35,19 @@ public enum EmptyExampleModelOperations: String, Hashable, CustomStringConvertib
             return "/customer"
         }
     }
+
+    public var allowedErrors: [EmptyExampleErrorTypes] {
+        switch self {
+        case .addCustomerEmailAddress:
+            return [.concurrency, .customerEmailAddressAlreadyExists, .customerEmailAddressLimitExceeded, .unknownResource]
+        case .createCustomerPut:
+            return [.unknownResource]
+        case .getCustomerDetails:
+            return [.unknownResource]
+        case .listCustomersGet:
+            return [.unknownResource]
+        }
+    }
 }
 
 /**

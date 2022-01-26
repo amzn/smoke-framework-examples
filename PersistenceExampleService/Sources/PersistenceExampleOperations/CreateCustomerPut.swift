@@ -33,7 +33,7 @@ extension PersistenceExampleModel.CreateCustomerRequest: PersistenceExampleModel
  - Throws: unknownResource.
  */
 extension PersistenceExampleOperationsContext {
-    public func handleCreateCustomerPut(input: PersistenceExampleModel.CreateCustomerRequest) throws
+    public func handleCreateCustomerPut(input: PersistenceExampleModel.CreateCustomerRequest) async throws
     -> PersistenceExampleModel.CreateCustomerPut200Response {
         // create a new customer id
         let customerId = self.idGenerator()
@@ -52,7 +52,7 @@ extension PersistenceExampleOperationsContext {
         let key = StandardCompositePrimaryKey(partitionKey: partitionKey, sortKey: partitionKey)
         let newDatabaseItem = StandardTypedDatabaseItem.newItem(withKey: key, andValue: newCustomerIdentityRow)
         
-        try self.dynamodbTable.insertItem(newDatabaseItem).wait()
+        try await self.dynamodbTable.insertItem(newDatabaseItem)
         
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [customerId]).dynamodbKey
         

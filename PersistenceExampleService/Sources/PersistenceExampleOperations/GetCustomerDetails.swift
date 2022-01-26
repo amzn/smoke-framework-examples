@@ -27,8 +27,8 @@ enum CustomerQueryableTypes: PolymorphicOperationReturnType {
     typealias AttributesType = StandardPrimaryKeyAttributes
     
     static var types: [(Codable.Type, PolymorphicOperationReturnOption<StandardPrimaryKeyAttributes, Self>)] = [
-        (CustomerIdentityRow.self, .init( {.customerIdentity($0)} )),
-        (CustomerEmailAddressRow.self, .init( {.customerEmailAddressRow($0)} )),
+        (CustomerIdentityRow.self, .init({.customerIdentity($0)})),
+        (CustomerEmailAddressRow.self, .init({.customerEmailAddressRow($0)}))
         ]
     
     case customerIdentity(StandardTypedDatabaseItem<CustomerIdentityRow>)
@@ -46,7 +46,7 @@ enum CustomerQueryableTypes: PolymorphicOperationReturnType {
  - Throws: unknownResource.
  */
 extension PersistenceExampleOperationsContext {
-    public func handleGetCustomerDetails(input: PersistenceExampleModel.GetCustomerDetailsRequest) throws
+    public func handleGetCustomerDetails(input: PersistenceExampleModel.GetCustomerDetailsRequest) async throws
     -> PersistenceExampleModel.CustomerAttributes {
         guard let customerIDKeyPostfix =
             PersistenceExampleOperationsContext.externalCustomerPrefix.dropAsDynamoDBKeyPrefix(from: input.id) else {
@@ -58,7 +58,7 @@ extension PersistenceExampleOperationsContext {
         // Query on the customer partition, that will return the customer identity row and any email address rows
         self.logger.debug("Query on customer: \(customerKey)")
         let queryItems: [CustomerQueryableTypes] =
-            try self.dynamodbTable.query(forPartitionKey: customerKey, sortKeyCondition: nil).wait()
+            try await self.dynamodbTable.query(forPartitionKey: customerKey, sortKeyCondition: nil)
         
         // iterate through each item returned
         var coreCustomerAttributes: CoreCustomerAttributes?

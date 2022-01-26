@@ -8,6 +8,11 @@
   "initializationType": "STREAMLINED",
   "testDiscovery": "ENABLED",
   "mainAnnotation": "ENABLED",
+  "asyncAwait": {
+    "clientAPIs": "ENABLED",
+    "asyncOperationStubs": "ENABLED",
+    "asyncInitialization": "ENABLED"
+  },
   "modelOverride" : {
     "namedFieldValuesOverride" : {
       "birthYear" : "1985",

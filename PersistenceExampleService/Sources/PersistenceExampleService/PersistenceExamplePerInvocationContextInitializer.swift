@@ -26,7 +26,7 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
     /**
      On application startup.
      */
-    init(eventLoopGroup: EventLoopGroup) throws {
+    init(eventLoopGroup: EventLoopGroup) async throws {
         CloudwatchStandardErrorLogger.enableLogging()
         
         let environment = EnvironmentVariables.getEnvironment()
@@ -91,9 +91,9 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
     /**
      On application shutdown.
     */
-    func onShutdown() throws {
-        try self.dynamodbTableGenerator.close()
-        try self.credentialsProvider.stop()
+    func onShutdown() async throws {
+        try await self.dynamodbTableGenerator.shutdown()
+        try await self.credentialsProvider.shutdown()
     }
 }
 

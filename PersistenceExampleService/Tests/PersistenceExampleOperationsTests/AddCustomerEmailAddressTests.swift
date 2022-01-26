@@ -22,15 +22,16 @@ import SmokeDynamoDB
 
 class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
 
-    func testAddCustomerEmailAddress() throws {
+    func testAddCustomerEmailAddress() async throws {
         let input = AddCustomerEmailAddressRequest.__default
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         
-        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
         let expected = CustomerEmailAddressIdentity(id: AddCustomerEmailAddressRequest.__default.emailAddress)
 
-        XCTAssertEqual(try operationsContext.handleAddCustomerEmailAddress(input: input), expected)
+        let response = try await operationsContext.handleAddCustomerEmailAddress(input: input)
+        XCTAssertEqual(response, expected)
 
         let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBCompositePrimaryKeyTable
 
@@ -47,12 +48,12 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         XCTAssertEqual("me@example.com", customerIdentityRow.rowValue.primaryEmailAddress)
     }
 
-    func testAddCustomerEmailAddressUpToLimit() throws {
+    func testAddCustomerEmailAddressUpToLimit() async throws {
         let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
         
         // create a customer with TestVariables.staticId as its customer ID
-        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
         let idGenerator = {
             UUID().uuidString
@@ -73,7 +74,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
                 notifyOnAllActions: false,
                 notifyOnImportantAction: false)
             
-            if let output = try? operationsContext.handleAddCustomerEmailAddress(input: input) {
+            if let output = try? await operationsContext.handleAddCustomerEmailAddress(input: input) {
                 emailAddresses.append(output.id)
             }
         }
@@ -90,7 +91,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         XCTAssertEqual("me5@example.com", customerIdentityRow.rowValue.primaryEmailAddress)
     }
 
-    func testAddCustomerEmailAddressOverLimit() throws {
+    func testAddCustomerEmailAddressOverLimit() async throws {
         let idGenerator = {
             UUID().uuidString
         }
@@ -104,7 +105,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         
         // create a customer with TestVariables.staticId as its customer ID
         let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
-        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         var emailAddresses: [String] = []
         for index in 0..<20 {
@@ -115,7 +116,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
                 notifyOnAllActions: false,
                 notifyOnImportantAction: false)
             
-            if let output = try? operationsContext.handleAddCustomerEmailAddress(input: input) {
+            if let output = try? await operationsContext.handleAddCustomerEmailAddress(input: input) {
                 emailAddresses.append(output.id)
             }
         }
@@ -128,7 +129,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
                 notifyOnAllActions: false,
                 notifyOnImportantAction: false)
             
-            let _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
+            let _ = try await operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.customerEmailAddressLimitExceeded(_) {
@@ -150,7 +151,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         XCTAssertEqual("me5@example.com", customerIdentityRow.rowValue.primaryEmailAddress)
     }
 
-    func testAddCustomerEmailAddressAcceptableConcurrency() throws {
+    func testAddCustomerEmailAddressAcceptableConcurrency() async throws {
         let input = AddCustomerEmailAddressRequest.__default
         let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
@@ -166,10 +167,11 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         
         // create a customer with TestVariables.staticId as its customer ID
         let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
-        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         let expected = CustomerEmailAddressIdentity(id: AddCustomerEmailAddressRequest.__default.emailAddress)
-        XCTAssertEqual(try operationsContext.handleAddCustomerEmailAddress(input: input), expected)
+        let response = try await operationsContext.handleAddCustomerEmailAddress(input: input)
+        XCTAssertEqual(response, expected)
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
         let customerPartition = dynamodbTable.store[internalCustomerId]!
@@ -184,7 +186,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         XCTAssertEqual(AddCustomerEmailAddressRequest.__default.emailAddress, customerIdentityRow.rowValue.primaryEmailAddress)
     }
 
-    func testAddCustomerEmailAddressUnacceptableConcurrency() throws {
+    func testAddCustomerEmailAddressUnacceptableConcurrency() async throws {
         let input = AddCustomerEmailAddressRequest.__default
         let dynamodbTable = createTable(eventLoop: self.eventLoop)
         let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
@@ -200,10 +202,10 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         
         // create a customer with TestVariables.staticId as its customer ID
         let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
-        _ = try putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         do {
-            _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
+            _ = try await operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.concurrency(_) {
@@ -225,12 +227,12 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         XCTAssertNil(customerIdentityRow.rowValue.primaryEmailAddress)
     }
 
-    func testAddCustomerEmailAddressUnknownCustomer() throws {
+    func testAddCustomerEmailAddressUnknownCustomer() async throws {
         let input = AddCustomerEmailAddressRequest.__default
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
 
         do {
-            _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
+            _ = try await operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.unknownResource {
@@ -240,16 +242,16 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         }
     }
     
-    func testAddCustomerEmailAddressAlreadyRegistered() throws {
+    func testAddCustomerEmailAddressAlreadyRegistered() async throws {
         let input = AddCustomerEmailAddressRequest.__default
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         
-        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
-        _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
+        _ = try await operationsContext.handleAddCustomerEmailAddress(input: input)
         
         do {
-            _ = try operationsContext.handleAddCustomerEmailAddress(input: input)
+            _ = try await operationsContext.handleAddCustomerEmailAddress(input: input)
 
             XCTFail("Expected error not thrown.")
         } catch PersistenceExampleError.customerEmailAddressAlreadyExists {

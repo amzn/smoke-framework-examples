@@ -21,22 +21,22 @@ import PersistenceExampleModel
 
 class GetCustomerDetailsTests: EventLoopAwareTestCase {
 
-    func testGetCustomerDetails() throws {
+    func testGetCustomerDetails() async throws {
         let input = GetCustomerDetailsRequest.__default
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         
-        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
     
-        XCTAssertEqual(try operationsContext.handleGetCustomerDetails(input: input),
-            CustomerAttributes.__default)
+        let response = try await operationsContext.handleGetCustomerDetails(input: input)
+        XCTAssertEqual(response, CustomerAttributes.__default)
     }
     
-    func testGetCustomerDetailsWithEmailAddresses() throws {
+    func testGetCustomerDetailsWithEmailAddresses() async throws {
         let input = GetCustomerDetailsRequest.__default
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
         
-        _ = try operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
+        _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
         let input1 = PersistenceExampleModel.AddCustomerEmailAddressRequest(
             emailAddress: "me1@example.com",
@@ -44,7 +44,7 @@ class GetCustomerDetailsTests: EventLoopAwareTestCase {
             isPrimary: false,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
-        _ = try operationsContext.handleAddCustomerEmailAddress(input: input1)
+        _ = try await operationsContext.handleAddCustomerEmailAddress(input: input1)
         
         let input2 = PersistenceExampleModel.AddCustomerEmailAddressRequest(
             emailAddress: "me2@example.com",
@@ -52,7 +52,7 @@ class GetCustomerDetailsTests: EventLoopAwareTestCase {
             isPrimary: false,
             notifyOnAllActions: false,
             notifyOnImportantAction: false)
-        _ = try operationsContext.handleAddCustomerEmailAddress(input: input2)
+        _ = try await operationsContext.handleAddCustomerEmailAddress(input: input2)
         
         let customerEmailAddressAttributes1 = CustomerEmailAddressAttributes(
             emailAddress: "me1@example.com",
@@ -68,6 +68,7 @@ class GetCustomerDetailsTests: EventLoopAwareTestCase {
                                           gender: CreateCustomerRequest.__default.gender,
                                           lastName: CreateCustomerRequest.__default.lastName)
     
-        XCTAssertEqual(try operationsContext.handleGetCustomerDetails(input: input), expected)
+        let response = try await operationsContext.handleGetCustomerDetails(input: input)
+        XCTAssertEqual(response, expected)
     }
 }

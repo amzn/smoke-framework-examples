@@ -185,7 +185,7 @@ public struct ThrowingEmptyExampleClient: EmptyExampleClientProtocol, MockThrowi
 
     #if (os(Linux) && compiler(>=5.5)) || (!os(Linux) && compiler(>=5.5.2)) && canImport(_Concurrency)
     /**
-     Invokes the AddCustomerEmailAddress operation returning aynchronously at a later time once the operation is complete.
+     Invokes the AddCustomerEmailAddress operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated AddCustomerEmailAddressRequest object being passed to this operation.
@@ -204,7 +204,7 @@ public struct ThrowingEmptyExampleClient: EmptyExampleClientProtocol, MockThrowi
     }
 
     /**
-     Invokes the CreateCustomerPut operation returning aynchronously at a later time once the operation is complete.
+     Invokes the CreateCustomerPut operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated CreateCustomerRequest object being passed to this operation.
@@ -223,7 +223,7 @@ public struct ThrowingEmptyExampleClient: EmptyExampleClientProtocol, MockThrowi
     }
 
     /**
-     Invokes the GetCustomerDetails operation returning aynchronously at a later time once the operation is complete.
+     Invokes the GetCustomerDetails operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated GetCustomerDetailsRequest object being passed to this operation.
@@ -242,7 +242,7 @@ public struct ThrowingEmptyExampleClient: EmptyExampleClientProtocol, MockThrowi
     }
 
     /**
-     Invokes the ListCustomersGet operation returning aynchronously at a later time once the operation is complete.
+     Invokes the ListCustomersGet operation returning asynchronously at a later time once the operation is complete.
 
      - Parameters:
          - input: The validated ListCustomersGetRequest object being passed to this operation.

@@ -12,9 +12,9 @@ import SmokeOperationsHTTP1Server
 /**
  Convenience protocol for the initialization of PersistenceExampleService.
  */
-public protocol PersistenceExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeServerPerInvocationContextInitializer
+public protocol PersistenceExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeAsyncServerPerInvocationContextInitializer
 where ContextType == PersistenceExampleOperationsContext, OperationIdentifer == PersistenceExampleModelOperations {
-    init(eventLoopGroup: EventLoopGroup) throws
+    init(eventLoopGroup: EventLoopGroup) async throws
 }
 
 public extension PersistenceExamplePerInvocationContextInitializerProtocol {
@@ -27,7 +27,7 @@ public extension PersistenceExamplePerInvocationContextInitializerProtocol {
         return "PersistenceExampleService"
     }
 
-    static func main() throws {
-        SmokeHTTP1Server.runAsOperationServer(Self.init)
+    static func main() async throws {
+        await SmokeHTTP1Server.runAsOperationServer(Self.init)
     }
 }

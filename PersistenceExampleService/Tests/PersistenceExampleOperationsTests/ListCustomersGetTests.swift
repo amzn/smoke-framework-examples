@@ -21,11 +21,11 @@ import PersistenceExampleModel
 
 class ListCustomersGetTests: EventLoopAwareTestCase {
 
-    func testListCustomersGet() {
+    func testListCustomersGet() async throws {
         let input = ListCustomersGetRequest.__default
         let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
     
-        XCTAssertEqual(try operationsContext.handleListCustomersGet(input: input),
-            ListCustomersResponse.__default)
+        let response = try await operationsContext.handleListCustomersGet(input: input)
+        XCTAssertEqual(response, ListCustomersResponse.__default)
     }
 }
