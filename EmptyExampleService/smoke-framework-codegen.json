@@ -1,7 +1,8 @@
 {
   "baseName" : "EmptyExample",
-  "modelFilePath" : "Swagger.yaml",
-  "generationType" : "serverUpdate",
+  "modelFilePath" : "OpenAPI30.yaml",
+  "modelFormat" : "OPENAPI3_0",
+  "generationType" : "server",
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },
