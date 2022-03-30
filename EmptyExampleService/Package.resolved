@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-framework-application-generate",
       "state" : {
-        "branch" : "spm_plugin",
-        "revision" : "b679baed07a61c5a7f4d626f15d9fb52ed5e1c45"
+        "revision" : "246eeda2914f088e321232a4b7f8ef3ac1773726",
+        "version" : "3.0.0-beta.1"
       }
     },
     {
