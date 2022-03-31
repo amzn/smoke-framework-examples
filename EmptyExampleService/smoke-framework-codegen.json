@@ -2,7 +2,7 @@
   "baseName" : "EmptyExample",
   "modelFilePath" : "OpenAPI30.yaml",
   "modelFormat" : "OPENAPI3_0",
-  "generationType" : "server",
+  "generationType" : "serverWithPlugin",
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },

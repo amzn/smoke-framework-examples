@@ -1,7 +1,8 @@
 {
   "baseName" : "PersistenceExample",
-  "modelFilePath" : "Swagger.yaml",
-  "generationType" : "serverUpdate",
+  "modelFilePath" : "OpenAPI30.yaml",
+  "modelFormat" : "OPENAPI3_0",
+  "generationType" : "serverUpdateWithPlugin",
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },
@@ -15,11 +16,11 @@
   },
   "modelOverride" : {
     "namedFieldValuesOverride" : {
+      "birthYear" : "1985",
       "firstName" : "\"John\"",
-      "id" : "\"com.mycompany.pe.customer.53E2BFA1-E55C-42FE-8110-77A68C069EF4\"",
-      "emailAddress" : "\"me@example.com\"",
       "lastName" : "\"Smith\"",
-      "birthYear" : "1985"
+      "id" : "\"com.mycompany.pe.customer.53E2BFA1-E55C-42FE-8110-77A68C069EF4\"",
+      "emailAddress" : "\"me@example.com\""
     }
   }
 }
