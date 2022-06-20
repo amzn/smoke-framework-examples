@@ -20,11 +20,11 @@ import XCTest
 import PersistenceExampleModel
 import SmokeDynamoDB
 
-class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
+class AddCustomerEmailAddressTests: XCTestCase {
 
     func testAddCustomerEmailAddress() async throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
+        let operationsContext = createOperationsContext()
         
         _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
         
@@ -36,7 +36,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         let dynamodbTable = operationsContext.dynamodbTable as! InMemoryDynamoDBCompositePrimaryKeyTable
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
-        let customerPartition = dynamodbTable.store[internalCustomerId]!
+        let customerPartition = await dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(2, customerPartition.count) // the email address row plus the customer row
 
@@ -49,8 +49,8 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
     }
 
     func testAddCustomerEmailAddressUpToLimit() async throws {
-        let dynamodbTable = createTable(eventLoop: self.eventLoop)
-        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        let dynamodbTable = createTable()
+        let putOperationContext = createOperationsContext(dynamodbTable: dynamodbTable)
         
         // create a customer with TestVariables.staticId as its customer ID
         _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
@@ -80,7 +80,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         }
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
-        let customerPartition = dynamodbTable.store[internalCustomerId]!
+        let customerPartition = await dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(6, customerPartition.count) // all email address rows plus the customer row
 
@@ -96,7 +96,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
             UUID().uuidString
         }
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
-        let dynamodbTable = createTable(eventLoop: self.eventLoop)
+        let dynamodbTable = createTable()
         let operationsContext = PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
             idGenerator: idGenerator,
@@ -104,7 +104,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
             logger: TestVariables.logger)
         
         // create a customer with TestVariables.staticId as its customer ID
-        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        let putOperationContext = createOperationsContext(dynamodbTable: dynamodbTable)
         _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         var emailAddresses: [String] = []
@@ -139,7 +139,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         }
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
-        let customerPartition = dynamodbTable.store[internalCustomerId]!
+        let customerPartition = await dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(6, customerPartition.count) // maximum email address rows plus the customer row
 
@@ -153,10 +153,9 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
 
     func testAddCustomerEmailAddressAcceptableConcurrency() async throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let dynamodbTable = createTable(eventLoop: self.eventLoop)
+        let dynamodbTable = createTable()
         let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
-            eventLoop: self.eventLoop,
             simulateConcurrencyModifications: 5,
             simulateOnInsertItem: false) // simulate 5 concurrent attempts
         let operationsContext = PersistenceExampleOperationsContext(
@@ -166,7 +165,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
             logger: TestVariables.logger)
         
         // create a customer with TestVariables.staticId as its customer ID
-        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        let putOperationContext = createOperationsContext(dynamodbTable: dynamodbTable)
         _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         let expected = CustomerEmailAddressIdentity(id: AddCustomerEmailAddressRequest.__default.emailAddress)
@@ -174,7 +173,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         XCTAssertEqual(response, expected)
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
-        let customerPartition = dynamodbTable.store[internalCustomerId]!
+        let customerPartition = await dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(2, customerPartition.count) // the email address row plus the customer row
 
@@ -188,10 +187,9 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
 
     func testAddCustomerEmailAddressUnacceptableConcurrency() async throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let dynamodbTable = createTable(eventLoop: self.eventLoop)
+        let dynamodbTable = createTable()
         let dynamodbTableWrapper = SimulateConcurrencyDynamoDBCompositePrimaryKeyTable(
             wrappedDynamoDBTable: dynamodbTable,
-            eventLoop: self.eventLoop,
             simulateConcurrencyModifications: 100,
             simulateOnInsertItem: false)
         let operationsContext = PersistenceExampleOperationsContext(
@@ -201,7 +199,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
             logger: TestVariables.logger)
         
         // create a customer with TestVariables.staticId as its customer ID
-        let putOperationContext = createOperationsContext(eventLoop: self.eventLoop, dynamodbTable: dynamodbTable)
+        let putOperationContext = createOperationsContext(dynamodbTable: dynamodbTable)
         _ = try await putOperationContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
         do {
@@ -215,21 +213,20 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
         }
 
         let internalCustomerId = (PersistenceExampleOperationsContext.customerKeyPrefix + [TestVariables.staticId]).dynamodbKey
-        let customerPartition = dynamodbTable.store[internalCustomerId]!
+        let customerPartition = await dynamodbTable.store[internalCustomerId]!
 
         XCTAssertEqual(1, customerPartition.count) // just the customer row, no email address rows added
 
         let customerIdentityRow = customerPartition[internalCustomerId] as! StandardTypedDatabaseItem<CustomerIdentityRow>
 
-        XCTAssertEqual([],
-                       customerIdentityRow.rowValue.customerEmailAddressSummary.emailAddresses)
+        XCTAssertTrue(customerIdentityRow.rowValue.customerEmailAddressSummary.emailAddresses.isEmpty)
         XCTAssertEqual(5, customerIdentityRow.rowValue.customerEmailAddressSummary.maximum)
         XCTAssertNil(customerIdentityRow.rowValue.primaryEmailAddress)
     }
 
     func testAddCustomerEmailAddressUnknownCustomer() async throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
+        let operationsContext = createOperationsContext()
 
         do {
             _ = try await operationsContext.handleAddCustomerEmailAddress(input: input)
@@ -244,7 +241,7 @@ class AddCustomerEmailAddressTests: EventLoopAwareTestCase {
     
     func testAddCustomerEmailAddressAlreadyRegistered() async throws {
         let input = AddCustomerEmailAddressRequest.__default
-        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
+        let operationsContext = createOperationsContext()
         
         _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
 
