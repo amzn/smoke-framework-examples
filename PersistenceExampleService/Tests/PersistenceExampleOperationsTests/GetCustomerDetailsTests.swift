@@ -19,11 +19,11 @@ import XCTest
 @testable import PersistenceExampleOperations
 import PersistenceExampleModel
 
-class GetCustomerDetailsTests: EventLoopAwareTestCase {
+class GetCustomerDetailsTests: XCTestCase {
 
     func testGetCustomerDetails() async throws {
         let input = GetCustomerDetailsRequest.__default
-        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
+        let operationsContext = createOperationsContext()
         
         _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)
     
@@ -33,7 +33,7 @@ class GetCustomerDetailsTests: EventLoopAwareTestCase {
     
     func testGetCustomerDetailsWithEmailAddresses() async throws {
         let input = GetCustomerDetailsRequest.__default
-        let operationsContext = createOperationsContext(eventLoop: self.eventLoop)
+        let operationsContext = createOperationsContext()
         let externalCustomerId = (PersistenceExampleOperationsContext.externalCustomerPrefix + [TestVariables.staticId]).dynamodbKey
         
         _ = try await operationsContext.handleCreateCustomerPut(input: CreateCustomerRequest.__default)

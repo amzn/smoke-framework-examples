@@ -9,19 +9,18 @@ import PersistenceExampleOperationsHTTP1
 import SmokeOperationsHTTP1Server
 import SmokeAWSCore
 import SmokeDynamoDB
-import SmokeAWSCredentials
-import SmokeAWSHttp
 import AsyncHTTPClient
 import NIO
+import AWSDynamoDB
+import AWSClientRuntime
 
 /**
  Initializer for the PersistenceExampleService.
  */
 @main
 struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerInvocationContextInitializerProtocol {
-    let dynamodbTableGenerator: AWSDynamoDBCompositePrimaryKeyTableGenerator
-    let credentialsProvider: StoppableCredentialsProvider
-    let awsClientInvocationTraceContext = AWSClientInvocationTraceContext()
+    let dynamoDbClient: AWSDynamoDB.DynamoDbClient
+    let dynamodbTableName: String
 
     /**
      On application startup.
@@ -30,24 +29,9 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
         CloudwatchStandardErrorLogger.enableLogging()
         
         let environment = EnvironmentVariables.getEnvironment()
-        
-        let clientEventLoopProvider = HTTPClient.EventLoopGroupProvider.shared(eventLoopGroup)
-        
-        guard let credentialsProvider = AwsContainerRotatingCredentialsProvider.get(
-                fromEnvironment: environment,
-                eventLoopProvider: clientEventLoopProvider) else {
-            throw PersistenceExampleServiceError.unableToObtainCredentialsFromContainerEnvironment
-        }
-        
-        self.credentialsProvider = credentialsProvider
-        
-        let region = try environment.getRegion()
 
-        self.dynamodbTableGenerator = try PersistenceExamplePerInvocationContextInitializer.initializeDynamoDBTableGeneratorFromEnvironment(
-                environment: environment,
-                credentialsProvider: credentialsProvider,
-                region: region,
-                clientEventLoopProvider: clientEventLoopProvider)
+        self.dynamoDbClient = try await AWSDynamoDB.DynamoDbClient()
+        self.dynamodbTableName = try environment.get(EnvironmentVariables.dynamoTableName)
     }
     
     func timestampGenerator() -> String {
@@ -58,28 +42,15 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
         UUID().uuidString
     }
 
-    private static func initializeDynamoDBTableGeneratorFromEnvironment(
-        environment: [String: String],
-        credentialsProvider: CredentialsProvider,
-        region: AWSRegion,
-        clientEventLoopProvider: HTTPClient.EventLoopGroupProvider) throws -> AWSDynamoDBCompositePrimaryKeyTableGenerator {
-        let dynamoEndpointHostName = try environment.get(EnvironmentVariables.dynamoEndpointHostName)
-        let dynamoTableName = try environment.get(EnvironmentVariables.dynamoTableName)
-
-        return AWSDynamoDBCompositePrimaryKeyTableGenerator(
-            credentialsProvider: credentialsProvider,
-            region: region, endpointHostName: dynamoEndpointHostName,
-            tableName: dynamoTableName,
-            eventLoopProvider: clientEventLoopProvider)
-    }
-
     /**
      On invocation.
     */
-    public func getInvocationContext(
-        invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>) -> PersistenceExampleOperationsContext {
-        let awsClientInvocationReporting = invocationReporting.withInvocationTraceContext(traceContext: awsClientInvocationTraceContext)
-        let dynamodbTable = self.dynamodbTableGenerator.with(reporting: awsClientInvocationReporting)
+    public func getInvocationContext(invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>)
+    -> PersistenceExampleOperationsContext {
+        let dynamodbTable = AWSDynamoDBCompositePrimaryKeyTable(
+            dynamoDbClient: self.dynamoDbClient,
+            tableName: self.dynamodbTableName,
+            logger: invocationReporting.logger)
         
         return PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
@@ -92,8 +63,7 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
      On application shutdown.
     */
     func onShutdown() async throws {
-        try await self.dynamodbTableGenerator.shutdown()
-        try await self.credentialsProvider.shutdown()
+        // nothing to do
     }
 }
 
@@ -110,11 +80,7 @@ private struct EnvironmentVariables {
     
     static func getEnvironment() -> [String: String] {
         #if DEBUG
-        let environment = [EnvironmentVariables.dynamoEndpointHostName: "dynamodb.us-west-2.amazonaws.com",
-                           EnvironmentVariables.dynamoTableName: "PersistenceExampleTable",
-                           EnvironmentVariables.region: "us-west-2",
-                           AwsContainerRotatingCredentialsProvider.devIamRoleArnEnvironmentVariable:
-                               "arn:aws:iam::000000000000:role/EcsTaskExecutionRole"]
+        let environment = [EnvironmentVariables.dynamoTableName: "PersistenceExampleTable"]
         #else
         let environment = ProcessInfo.processInfo.environment
         #endif
@@ -131,16 +97,5 @@ private extension Dictionary where Key == String, Value == String {
         }
         
         return value
-    }
-    
-    func getRegion() throws -> AWSRegion {
-        let regionString = try get(EnvironmentVariables.region)
-        
-        guard let region = AWSRegion(rawValue: regionString) else {
-            throw PersistenceExampleServiceError.invalidEnvironmentVariable(reason:
-                "Specified '\(EnvironmentVariables.region)' environment variable '\(regionString)' not a valid region.")
-        }
-        
-        return region
     }
 }

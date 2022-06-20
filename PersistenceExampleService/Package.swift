@@ -28,9 +28,10 @@ let package = Package(
         ],
     dependencies: [
         .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.7.0"),
-        .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0"),
         .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0"),
-        .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "3.1.0"),
+        .package(url: "https://github.com/amzn/smoke-dynamodb.git", branch: "aws_sdk_swift"),
+        .package(url: "https://github.com/awslabs/aws-sdk-swift", from: "0.2.4"),
+        .package(url: "https://github.com/awslabs/smithy-swift.git", from: "0.2.3"),
         .package(url: "https://github.com/amzn/smoke-framework-application-generate", from: "3.0.0-beta.1")
         ],
     targets: [
@@ -69,7 +70,9 @@ let package = Package(
         .executableTarget(
             name: "PersistenceExampleService", dependencies: [
                 .target(name: "PersistenceExampleOperationsHTTP1"),
-                .product(name: "SmokeAWSCredentials", package: "smoke-aws-credentials"),
+                .product(name: "AWSDynamoDB", package: "aws-sdk-swift"),
+                .product(name: "ClientRuntime", package: "smithy-swift"),
+                .product(name: "SmokeAWSCore", package: "smoke-aws")
             ]),
         .testTarget(
             name: "PersistenceExampleOperationsTests", dependencies: [

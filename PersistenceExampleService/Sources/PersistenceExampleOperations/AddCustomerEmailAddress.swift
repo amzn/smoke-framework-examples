@@ -21,7 +21,6 @@ import PersistenceExampleModel
 import SmokeOperations
 import SmokeDynamoDB
 import Logging
-import NIO
 
 extension PersistenceExampleModel.AddCustomerEmailAddressRequest: PersistenceExampleModel.CustomerEmailAddressAttributesShape { }
 
