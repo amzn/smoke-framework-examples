@@ -10,24 +10,6 @@
       }
     },
     {
-      "identity" : "openapikit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattpolzin/OpenAPIKit.git",
-      "state" : {
-        "revision" : "0c668112f9803c1858ed070f9e8ce84922a0b41f",
-        "version" : "3.0.0-alpha.4"
-      }
-    },
-    {
-      "identity" : "service-model-swift-code-generate",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/amzn/service-model-swift-code-generate.git",
-      "state" : {
-        "revision" : "286181816fccc2b6ec92049ba68426d08cbe0059",
-        "version" : "3.0.0-beta.1"
-      }
-    },
-    {
       "identity" : "smoke-aws",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-aws.git",
@@ -43,15 +25,6 @@
       "state" : {
         "revision" : "9b262b5d1c647fd1ab0deef0494461a08003b817",
         "version" : "2.3.0"
-      }
-    },
-    {
-      "identity" : "smoke-aws-generate",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/amzn/smoke-aws-generate.git",
-      "state" : {
-        "revision" : "2d2902403408d4c7a9f6c69c90975cc048759f95",
-        "version" : "3.0.0-beta.1"
       }
     },
     {
@@ -73,39 +46,12 @@
       }
     },
     {
-      "identity" : "smoke-framework-application-generate",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/amzn/smoke-framework-application-generate",
-      "state" : {
-        "revision" : "7be9e3be5880b8f5fe0b17ca2be9f92e66aa101c",
-        "version" : "3.0.0-beta.2"
-      }
-    },
-    {
       "identity" : "smoke-http",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-http.git",
       "state" : {
         "revision" : "6100bbea63e759b6a23e9e43bd08ded034dbeec0",
         "version" : "2.12.1"
-      }
-    },
-    {
-      "identity" : "swaggerparser",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tachyonics/SwaggerParser.git",
-      "state" : {
-        "revision" : "c0eb70485c59a9d7dd6765dcd303b49fdb3040ee",
-        "version" : "0.6.4"
-      }
-    },
-    {
-      "identity" : "swift-argument-parser",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-argument-parser",
-      "state" : {
-        "revision" : "6b2aa2748a7881eebb9f84fb10c01293e15b52ca",
-        "version" : "0.5.0"
       }
     },
     {
@@ -187,15 +133,6 @@
       "state" : {
         "revision" : "f0fbfe17e73f329e13a6133ff5437f7b174049fd",
         "version" : "0.4.1"
-      }
-    },
-    {
-      "identity" : "yams",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jpsim/Yams.git",
-      "state" : {
-        "revision" : "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
-        "version" : "4.0.6"
       }
     }
   ],

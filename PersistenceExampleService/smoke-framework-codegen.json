@@ -2,7 +2,7 @@
   "baseName" : "PersistenceExample",
   "modelFilePath" : "OpenAPI30.yaml",
   "modelFormat" : "OPENAPI3_0",
-  "generationType" : "serverUpdateWithPlugin",
+  "generationType" : "serverUpdate",
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },
