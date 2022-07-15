@@ -3,10 +3,28 @@
     {
       "identity" : "async-http-client",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swift-server/async-http-client.git",
+      "location" : "https://github.com/tachyonics/async-http-client.git",
       "state" : {
-        "revision" : "7a4dfe026f6ee0f8ad741b58df74c60af296365d",
-        "version" : "1.9.0"
+        "branch" : "request_body_known_length",
+        "revision" : "0e2272338465d56ac599c2519c3d6bf24234947f"
+      }
+    },
+    {
+      "identity" : "async-http-middleware-client",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tachyonics/async-http-middleware-client",
+      "state" : {
+        "branch" : "poc",
+        "revision" : "6f0f1db03e9042241a6893efad92552cb9f3ae89"
+      }
+    },
+    {
+      "identity" : "collectionconcurrencykit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/CollectionConcurrencyKit",
+      "state" : {
+        "revision" : "b4f23e24b5a1bff301efc5e70871083ca029ff95",
+        "version" : "0.2.0"
       }
     },
     {
@@ -14,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-aws.git",
       "state" : {
-        "revision" : "59838cf3d823f36681fdd281c799e6d54f968d5e",
-        "version" : "2.42.44"
+        "branch" : "middleware_poc",
+        "revision" : "e1d7adade8ee80a6133498f434e8cc94b7d5aace"
       }
     },
     {
@@ -32,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-dynamodb.git",
       "state" : {
-        "revision" : "3eea222ba8ff58e50e822ab86ed26b6889bcaf41",
-        "version" : "3.1.0"
+        "branch" : "middleware_poc",
+        "revision" : "1c3784f997d317fe3c02b2affb875b826e934753"
       }
     },
     {
@@ -50,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-http.git",
       "state" : {
-        "revision" : "6100bbea63e759b6a23e9e43bd08ded034dbeec0",
-        "version" : "2.12.1"
+        "branch" : "middleware_poc",
+        "revision" : "ffad7307beb5559489261c7cb7966d0d030df00e"
       }
     },
     {
@@ -61,6 +79,15 @@
       "state" : {
         "revision" : "ddb07e896a2a8af79512543b1c7eb9797f8898a5",
         "version" : "1.1.7"
+      }
+    },
+    {
+      "identity" : "swift-http-client-middleware",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tachyonics/swift-http-client-middleware",
+      "state" : {
+        "branch" : "poc",
+        "revision" : "1a8fc2ef087f85f5724a42bd16cf37a4ca900e4b"
       }
     },
     {
