@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-framework.git",
       "state" : {
-        "revision" : "d7bfc24fb6e54fe4d112b36b46e7671577cd63ac",
-        "version" : "2.13.1"
+        "branch" : "middleware_poc",
+        "revision" : "b4e54c83924f57d7940ad72dde17de218d94342f"
       }
     },
     {

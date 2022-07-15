@@ -6,13 +6,14 @@
 import Foundation
 import PersistenceExampleOperations
 import PersistenceExampleOperationsHTTP1
-import SmokeOperationsHTTP1Server
+import SmokeOperationsHTTP1
 import SmokeAWSCore
 import SmokeDynamoDB
 import SmokeAWSCredentials
 import SmokeAWSHttp
 import AsyncHTTPClient
 import NIO
+import Logging
 
 /**
  Initializer for the PersistenceExampleService.
@@ -57,6 +58,10 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
     func idGenerator() -> String {
         UUID().uuidString
     }
+    
+    func mutateRequestMiddleware(middleware: inout MiddlewareStackType) {
+        middleware.finalizePhase.intercept(with: RetriableOutwardsRequestAggregatorMiddleware())
+    }
 
     private static func initializeDynamoDBTableGeneratorFromEnvironment(
         environment: [String: String],
@@ -76,16 +81,16 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
     /**
      On invocation.
     */
-    public func getInvocationContext(
-        invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>) -> PersistenceExampleOperationsContext {
-        let awsClientInvocationReporting = invocationReporting.withInvocationTraceContext(traceContext: awsClientInvocationTraceContext)
-        let dynamodbTable = self.dynamodbTableGenerator.with(reporting: awsClientInvocationReporting)
+    public func getInvocationContext(request: SmokeHTTPServerInvocationRequest) -> PersistenceExampleOperationsContext {
+        // the client should (?) get the logger from a task local
+        let logger = request.logger ?? Logger(label: "RequestLogger")
+        let dynamodbTable = self.dynamodbTableGenerator.with(logger: logger)
         
         return PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
             idGenerator: self.idGenerator,
             timestampGenerator: self.timestampGenerator,
-            logger: invocationReporting.logger)
+            logger: logger)
     }
 
     /**

@@ -7,12 +7,13 @@ import PersistenceExampleModel
 import PersistenceExampleOperations
 import NIO
 import SmokeHTTP1
+import SmokeOperationsHTTP1JSON
 import SmokeOperationsHTTP1Server
             
 /**
  Convenience protocol for the initialization of PersistenceExampleService.
  */
-public protocol PersistenceExamplePerInvocationContextInitializerProtocol: StandardJSONSmokeAsyncServerPerInvocationContextInitializer
+public protocol PersistenceExamplePerInvocationContextInitializerProtocol: JSONSmokeMiddlewareServerPerInvocationContextInitializer
 where ContextType == PersistenceExampleOperationsContext, OperationIdentifer == PersistenceExampleModelOperations {
     init(eventLoopGroup: EventLoopGroup) async throws
 }
