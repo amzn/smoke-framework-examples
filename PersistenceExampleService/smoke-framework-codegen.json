@@ -3,6 +3,9 @@
   "modelFilePath" : "OpenAPI30.yaml",
   "modelFormat" : "OPENAPI3_0",
   "generationType" : "serverUpdate",
+  "clientConfigurationType": "CONFIGURATION_OBJECT",
+  "minimumCompilerSupport": "5.6",
+  "eventLoopFutureClientAPIs": "DISABLED",
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },

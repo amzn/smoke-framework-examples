@@ -89,7 +89,7 @@ public typealias FirstName = String
 /**
  Enumeration restricting the values of the Gender field.
  */
-public enum Gender: String, Codable, CustomStringConvertible {
+public enum Gender: String, Codable, CustomStringConvertible, CaseIterable {
     case female = "FEMALE"
     case male = "MALE"
     case other = "OTHER"
