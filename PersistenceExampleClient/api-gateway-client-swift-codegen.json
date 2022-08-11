@@ -1,0 +1,11 @@
+{
+    "baseName": "PersistenceExample",
+    "modelLocations": {
+        "default": {
+            "modelProductDependency": "ServiceModel",
+            "modelFilePath" : "OpenAPI30.yaml",
+            "packagePath": "../ServiceModel",
+            "versionRequirementType": "path"
+        }        
+    }
+}
