@@ -1,26 +1,26 @@
 //
-// PersistenceExamplePerInvocationContextInitializer.swift
-// PersistenceExampleService
+// NoExistentialTypesExamplePerInvocationContextInitializer.swift
+// NoExistentialTypesExampleService
 //
 
 import Foundation
-import PersistenceExampleOperations
-import PersistenceExampleOperationsHTTP1
+import NoExistentialTypesExampleOperations
+import NoExistentialTypesExampleOperationsHTTP1
 import SmokeOperationsHTTP1Server
 import SmokeAWSCore
 import SmokeDynamoDB
 import SmokeAWSCredentials
 import SmokeAWSHttp
 import AsyncHTTPClient
-import DynamoDBModel
 import SmokeHTTPClient
+import DynamoDBModel
 import NIO
 
 /**
- Initializer for the PersistenceExampleService.
+ Initializer for the NoExistentialTypesExampleService.
  */
 @main
-struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerInvocationContextInitializerProtocol {
+struct NoExistentialTypesExamplePerInvocationContextInitializer: NoExistentialTypesExamplePerInvocationContextInitializerProtocol {
     let dynamodbTableOperationsClient: AWSDynamoDBTableOperationsClient
     let credentialsProvider: StoppableCredentialsProvider
     
@@ -47,7 +47,7 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
         guard let credentialsProvider = AwsContainerRotatingCredentialsProvider.get(
                 fromEnvironment: environment,
                 eventLoopProvider: clientEventLoopProvider) else {
-            throw PersistenceExampleServiceError.unableToObtainCredentialsFromContainerEnvironment
+            throw NoExistentialTypesExampleServiceError.unableToObtainCredentialsFromContainerEnvironment
         }
         
         self.credentialsProvider = credentialsProvider
@@ -106,11 +106,11 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
      On invocation.
     */
     public func getInvocationContext(invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>)
-    -> PersistenceExampleOperationsContext {
+    -> HTTPNoExistentialTypesExampleOperationsContext {
         let dynamodbTable = AWSDynamoDBCompositePrimaryKeyTable(
             operationsClient: self.dynamodbTableOperationsClient, invocationAttributes: invocationReporting)
         
-        return PersistenceExampleOperationsContext(
+        return NoExistentialTypesExampleOperationsContext(
             dynamodbTable: dynamodbTable,
             idGenerator: self.idGenerator,
             timestampGenerator: self.timestampGenerator,
@@ -126,21 +126,19 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
     }
 }
 
-enum PersistenceExampleServiceError: Swift.Error {
+enum NoExistentialTypesExampleServiceError: Swift.Error {
     case unableToObtainCredentialsFromContainerEnvironment
     case missingEnvironmentVariable(reason: String)
     case invalidEnvironmentVariable(reason: String)
 }
 
 private struct EnvironmentVariables {
-    static let dynamoEndpointHostName = "DYNAMO_ENDPOINT_HOST_NAME"
     static let dynamoTableName = "DYNAMO_TABLE_NAME"
     static let region = "REGION"
     
     static func getEnvironment() -> [String: String] {
         #if DEBUG
-        let environment = [EnvironmentVariables.dynamoEndpointHostName: "dynamodb.us-west-2.amazonaws.com",
-                           EnvironmentVariables.dynamoTableName: "PersistenceExampleTable",
+        let environment = [EnvironmentVariables.dynamoTableName: "NoExistentialTypesExampleTable",
                            EnvironmentVariables.region: "us-west-2",
                            AwsContainerRotatingCredentialsProvider.devIamRoleArnEnvironmentVariable:
                                "arn:aws:iam::000000000000:role/EcsTaskExecutionRole"]
@@ -155,7 +153,7 @@ private struct EnvironmentVariables {
 private extension Dictionary where Key == String, Value == String {
     func get(_ key: String) throws -> String {
         guard let value = self[key] else {
-            throw PersistenceExampleServiceError.missingEnvironmentVariable(reason:
+            throw NoExistentialTypesExampleServiceError.missingEnvironmentVariable(reason:
                 "'\(key)' environment variable not specified.")
         }
         
@@ -166,7 +164,7 @@ private extension Dictionary where Key == String, Value == String {
         let regionString = try get(EnvironmentVariables.region)
         
         guard let region = AWSRegion(rawValue: regionString) else {
-            throw PersistenceExampleServiceError.invalidEnvironmentVariable(reason:
+            throw NoExistentialTypesExampleServiceError.invalidEnvironmentVariable(reason:
                 "Specified '\(EnvironmentVariables.region)' environment variable '\(regionString)' not a valid region.")
         }
         

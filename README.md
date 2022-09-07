@@ -37,6 +37,12 @@ swift run -c release SmokeFrameworkApplicationGenerate \
   --base-file-path ${workspaceRoot}/smoke-framework-examples/PersistenceExampleService \
 ```
 
+## NoExistentialTypesExampleService
+
+A variant of `PersistenceExampleService` that uses a generic context. This will mean that at runtime calls from operation
+handlers to the DynamoDB table in the context will directly use the concrete `AWSDynamoDBCompositePrimaryKeyTable`
+type rather than first using an existential type of the `DynamoDBCompositePrimaryKeyTable` protocol (an additional layer of redirection).
+
 ## License
 
 This library is licensed under the Apache 2.0 License.
