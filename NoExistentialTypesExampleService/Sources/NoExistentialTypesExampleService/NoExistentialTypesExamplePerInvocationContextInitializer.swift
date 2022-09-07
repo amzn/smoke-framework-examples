@@ -23,7 +23,6 @@ import NIO
 struct NoExistentialTypesExamplePerInvocationContextInitializer: NoExistentialTypesExamplePerInvocationContextInitializerProtocol {
     let dynamodbTableOperationsClient: AWSDynamoDBTableOperationsClient
     let credentialsProvider: StoppableCredentialsProvider
-    let awsClientInvocationTraceContext = AWSClientInvocationTraceContext()
     
     private static let dynamodbClientConnectionTimeoutSeconds: Int64 = 5
     private static let dynamodbClientReadTimeoutSeconds: Int64 = 3
@@ -95,6 +94,7 @@ struct NoExistentialTypesExamplePerInvocationContextInitializer: NoExistentialTy
             tableName: dynamodbTableName,
             credentialsProvider: credentialsProvider,
             awsRegion: awsRegion,
+            ignoreInvocationEventLoop: true,
             timeoutConfiguration: Self.dynamodbClientTimeoutConfiguration,
             retryConfiguration: retryConfiguration,
             eventLoopProvider: clientEventLoopProvider,
@@ -107,13 +107,8 @@ struct NoExistentialTypesExamplePerInvocationContextInitializer: NoExistentialTy
     */
     public func getInvocationContext(invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>)
     -> HTTPNoExistentialTypesExampleOperationsContext {
-        // TODO: Change when convenience initializer added to AWSDynamoDBCompositePrimaryKeyTable
-        let reporting = StandardHTTPClientCoreInvocationReporting(logger: invocationReporting.logger,
-                                                                  internalRequestId: invocationReporting.internalRequestId,
-                                                                  traceContext: awsClientInvocationTraceContext,
-                                                                  eventLoop: nil,
-                                                                  outwardsRequestAggregator: invocationReporting.outwardsRequestAggregator)
-        let dynamodbTable = AWSDynamoDBCompositePrimaryKeyTable(operationsClient: self.dynamodbTableOperationsClient, reporting: reporting)
+        let dynamodbTable = AWSDynamoDBCompositePrimaryKeyTable(
+            operationsClient: self.dynamodbTableOperationsClient, invocationAttributes: invocationReporting)
         
         return NoExistentialTypesExampleOperationsContext(
             dynamodbTable: dynamodbTable,

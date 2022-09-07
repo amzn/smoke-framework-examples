@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-aws.git",
       "state" : {
-        "revision" : "976f0a74c0b396497f4c1428f39ab5b14b47ceac",
-        "version" : "2.44.61"
+        "revision" : "f1195aca906fd28a799298144635502c32d9af27",
+        "version" : "2.44.62"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-dynamodb.git",
       "state" : {
-        "revision" : "cfa72bbec7ab67da2f827bf6de1bc358114f2e37",
-        "version" : "3.4.4"
+        "revision" : "87050a805ca99d62e18e6dcdee9352d0cacf7ae5",
+        "version" : "3.5.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-framework.git",
       "state" : {
-        "revision" : "671436f7e498613e0e5cb847482a02e80d09b474",
-        "version" : "2.14.0"
+        "revision" : "2083cd4485762825b06f22d8aec3e7b6f35674d0",
+        "version" : "2.15.0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-framework-application-generate",
       "state" : {
-        "branch" : "integration_specific_context_type_names",
-        "revision" : "6e3f4eb6fea60c5991db7183438c5e87166feb4a"
+        "revision" : "7bc9a74b2e7be6d8330bd72c45cb9b7060a6704e",
+        "version" : "3.0.0-beta.5"
       }
     },
     {

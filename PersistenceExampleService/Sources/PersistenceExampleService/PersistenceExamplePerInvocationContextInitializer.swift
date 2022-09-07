@@ -12,6 +12,8 @@ import SmokeDynamoDB
 import SmokeAWSCredentials
 import SmokeAWSHttp
 import AsyncHTTPClient
+import DynamoDBModel
+import SmokeHTTPClient
 import NIO
 
 /**
@@ -19,9 +21,18 @@ import NIO
  */
 @main
 struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerInvocationContextInitializerProtocol {
-    let dynamodbTableGenerator: AWSDynamoDBCompositePrimaryKeyTableGenerator
+    let dynamodbTableOperationsClient: AWSDynamoDBTableOperationsClient
     let credentialsProvider: StoppableCredentialsProvider
-    let awsClientInvocationTraceContext = AWSClientInvocationTraceContext()
+    
+    private static let dynamodbClientConnectionTimeoutSeconds: Int64 = 5
+    private static let dynamodbClientReadTimeoutSeconds: Int64 = 3
+    private static let dynamodbClientBaseRetryIntervalMs: RetryInterval = 100
+    private static let connectionPoolConfiguration = HTTPClient.Configuration.ConnectionPool(
+        idleTimeout: .seconds(60),
+        concurrentHTTP1ConnectionsPerHostSoftLimit: 50)
+    private static let dynamodbClientTimeoutConfiguration = HTTPClient.Configuration.Timeout(
+        connect: .seconds(dynamodbClientConnectionTimeoutSeconds),
+        read: .seconds(dynamodbClientReadTimeoutSeconds))
 
     /**
      On application startup.
@@ -41,12 +52,12 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
         
         self.credentialsProvider = credentialsProvider
         
-        let region = try environment.getRegion()
+        let awsRegion = try environment.getRegion()
 
-        self.dynamodbTableGenerator = try PersistenceExamplePerInvocationContextInitializer.initializeDynamoDBTableGeneratorFromEnvironment(
+        self.dynamodbTableOperationsClient = try Self.initializeDynamoDBTableOperationsClientFromEnvironment(
                 environment: environment,
                 credentialsProvider: credentialsProvider,
-                region: region,
+                awsRegion: awsRegion,
                 clientEventLoopProvider: clientEventLoopProvider)
     }
     
@@ -58,28 +69,46 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
         UUID().uuidString
     }
 
-    private static func initializeDynamoDBTableGeneratorFromEnvironment(
+    private static func initializeDynamoDBTableOperationsClientFromEnvironment(
         environment: [String: String],
         credentialsProvider: CredentialsProvider,
-        region: AWSRegion,
-        clientEventLoopProvider: HTTPClient.EventLoopGroupProvider) throws -> AWSDynamoDBCompositePrimaryKeyTableGenerator {
-        let dynamoEndpointHostName = try environment.get(EnvironmentVariables.dynamoEndpointHostName)
-        let dynamoTableName = try environment.get(EnvironmentVariables.dynamoTableName)
+        awsRegion: AWSRegion,
+        clientEventLoopProvider: HTTPClient.EventLoopGroupProvider) throws
+    -> AWSDynamoDBTableOperationsClient {
+        let dynamodbTableName = try environment.get(EnvironmentVariables.dynamoTableName)
 
-        return AWSDynamoDBCompositePrimaryKeyTableGenerator(
+        // for the DynamoDB clients, only emit the retry count metric
+        let reportingConfiguration = SmokeAWSClientReportingConfiguration<DynamoDBModelOperations>(
+            successCounterMatchingOperations: .none,
+            failure5XXCounterMatchingOperations: .none,
+            failure4XXCounterMatchingOperations: .none,
+            retryCountRecorderMatchingOperations: .all,
+            latencyTimerMatchingOperations: .all)
+
+        let retryConfiguration = HTTPClientRetryConfiguration(numRetries: HTTPClientRetryConfiguration.default.numRetries,
+                                                              baseRetryInterval: Self.dynamodbClientBaseRetryIntervalMs,
+                                                              maxRetryInterval: HTTPClientRetryConfiguration.default.maxRetryInterval,
+                                                              exponentialBackoff: HTTPClientRetryConfiguration.default.exponentialBackoff)
+        
+        return AWSDynamoDBTableOperationsClient(
+            tableName: dynamodbTableName,
             credentialsProvider: credentialsProvider,
-            region: region, endpointHostName: dynamoEndpointHostName,
-            tableName: dynamoTableName,
-            eventLoopProvider: clientEventLoopProvider)
+            awsRegion: awsRegion,
+            ignoreInvocationEventLoop: true,
+            timeoutConfiguration: Self.dynamodbClientTimeoutConfiguration,
+            retryConfiguration: retryConfiguration,
+            eventLoopProvider: clientEventLoopProvider,
+            reportingConfiguration: reportingConfiguration,
+            connectionPoolConfiguration: Self.connectionPoolConfiguration)
     }
 
     /**
      On invocation.
     */
-    public func getInvocationContext(
-        invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>) -> PersistenceExampleOperationsContext {
-        let awsClientInvocationReporting = invocationReporting.withInvocationTraceContext(traceContext: awsClientInvocationTraceContext)
-        let dynamodbTable = self.dynamodbTableGenerator.with(reporting: awsClientInvocationReporting)
+    public func getInvocationContext(invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>)
+    -> PersistenceExampleOperationsContext {
+        let dynamodbTable = AWSDynamoDBCompositePrimaryKeyTable(
+            operationsClient: self.dynamodbTableOperationsClient, invocationAttributes: invocationReporting)
         
         return PersistenceExampleOperationsContext(
             dynamodbTable: dynamodbTable,
@@ -92,7 +121,7 @@ struct PersistenceExamplePerInvocationContextInitializer: PersistenceExamplePerI
      On application shutdown.
     */
     func onShutdown() async throws {
-        try await self.dynamodbTableGenerator.shutdown()
+        try await self.dynamodbTableOperationsClient.shutdown()
         try await self.credentialsProvider.shutdown()
     }
 }

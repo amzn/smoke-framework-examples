@@ -24,10 +24,10 @@ let package = Package(
             targets: ["NoExistentialTypesExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.7.0"),
+        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.14.0"),
         .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0"),
-        .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "3.1.0"),
-        .package(url: "https://github.com/amzn/smoke-framework-application-generate", branch: "integration_specific_context_type_names"),
+        .package(url: "https://github.com/amzn/smoke-dynamodb.git", from: "3.5.0"),
+        .package(url: "https://github.com/amzn/smoke-framework-application-generate", from: "3.0.0-beta.5"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
