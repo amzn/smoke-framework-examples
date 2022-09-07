@@ -16,7 +16,7 @@ jobs:
         application: ["EmptyExampleService", "PersistenceExampleService", "NoExistentialTypesExampleService"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swifti@v1.15.0
+      - uses: swift-actions/setup-swift@v1.15.0
         with:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v2
