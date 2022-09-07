@@ -39,8 +39,9 @@ swift run -c release SmokeFrameworkApplicationGenerate \
 
 ## NoExistentialTypesExampleService
 
-A variant of `PersistenceExampleService` that uses a generic context that will use the concrete `AWSDynamoDBCompositePrimaryKeyTable`
-type at runtime rather than an existential type using the `DynamoDBCompositePrimaryKeyTable` protocol.
+A variant of `PersistenceExampleService` that uses a generic context. This will mean that at runtime, calls from operation
+handlers to the DynamoDB table in the context will directly use the concrete `AWSDynamoDBCompositePrimaryKeyTable`
+type rather than first using an existential type of the `DynamoDBCompositePrimaryKeyTable` protocol (an additional layer of abstraction).
 
 ## License
 
