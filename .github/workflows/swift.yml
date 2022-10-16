@@ -12,11 +12,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        swift: ["5.6.1"]
+        swift: ["5.7"]
         application: ["EmptyExampleService", "PersistenceExampleService", "NoExistentialTypesExampleService"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1.15.0
+      - uses: swift-actions/setup-swift@v1.18.0
         with:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v2
@@ -24,6 +24,21 @@ jobs:
         run: cd ${{ matrix.application }} && swift build -c release
       - name: Run tests
         run: cd ${{ matrix.application }} && swift test
+  NoTestBuild:
+    name: ${{ matrix.application }} application with Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        swift: ["5.7"]
+        application: ["OtherServiceSwiftClient"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: swift-actions/setup-swift@v1.18.0
+        with:
+          swift-version: ${{ matrix.swift }}
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cd ${{ matrix.application }} && swift build -c release
   SwiftLint:
     name: SwiftLint version 3.2.1 for ${{ matrix.application }}
     strategy:

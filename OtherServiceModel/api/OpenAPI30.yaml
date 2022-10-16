@@ -1,0 +1,88 @@
+openapi: 3.0.1
+info:
+  title: OtherService
+  version: 2018-12-19
+servers:
+- url: /
+paths:
+  /customer:
+    get:
+      operationId: ListSubscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListSubscriptionsRequest'
+        required: true
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSubscriptionsResponse'
+        404:
+          description: 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownResourceFault'
+      security:
+      - sigv4: []
+components:
+  schemas:
+    ListSubscriptionsRequest:
+      type: object
+      properties:
+        maximumPageSize:
+          $ref: '#/components/schemas/MaximumPageSize'
+        nextPageToken:
+          $ref: '#/components/schemas/NextPageToken'
+    MaximumPageSize:
+      type: integer
+      format: int32
+    NextPageToken:
+      maxLength: 2048
+      minLength: 1
+      type: string
+    ListSubscriptionsResponse:
+      required:
+      - subscriptions
+      type: object
+      properties:
+        subscriptions:
+          $ref: '#/components/schemas/SubscriptionList'
+        nextPageToken:
+          $ref: '#/components/schemas/NextPageToken'
+    SubscriptionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Subscription'
+    Subscription:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SubscriptionID'
+        description:
+          $ref: '#/components/schemas/Description'
+    SubscriptionID:
+      maxLength: 150
+      minLength: 1
+      type: string
+    Description:
+      type: string
+    UnknownResourceFault:
+      type: object
+      properties:
+        message:
+          $ref: '#/components/schemas/ErrorMessage'
+    ErrorMessage:
+      type: string
+  securitySchemes:
+    sigv4:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: awsSigv4

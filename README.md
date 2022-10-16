@@ -4,7 +4,7 @@
 </a>
 <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
 <a href="http://swift.org">
-<img src="https://img.shields.io/badge/swift-5.6-orange.svg?style=flat" alt="Swift 5.6 Compatible">
+<img src="https://img.shields.io/badge/swift-5.7-orange.svg?style=flat" alt="Swift 5.7 Compatible">
 </a>
 <a href="https://gitter.im/SmokeServerSide">
 <img src="https://img.shields.io/badge/chat-on%20gitter-ee115e.svg?style=flat" alt="Join the Smoke Server Side community on gitter">
@@ -43,6 +43,14 @@ A variant of `PersistenceExampleService` that uses a generic context. This will 
 handlers to the DynamoDB table in the context will directly use the concrete `AWSDynamoDBCompositePrimaryKeyTable`
 type rather than first using an existential type of the `DynamoDBCompositePrimaryKeyTable` protocol (an additional layer of redirection).
 
+## OtherServiceModel
+
+A Swift package wrapper around an Open API 3.0 model. Allows this model to be used by codegen SwiftPM plugins in conjunction with a consuming package.
+
+## OtherServiceSwiftClient
+
+An example of a Swift Client created for an API Gateway-hosted API. Uses the Open API 3.0 model specified in `OtherServiceModel`.
+ 
 ## License
 
 This library is licensed under the Apache 2.0 License.
