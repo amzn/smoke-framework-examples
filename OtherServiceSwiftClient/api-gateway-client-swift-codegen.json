@@ -1,0 +1,10 @@
+{
+  "baseName" : "Other",
+  "modelFormat" : "OPENAPI3_0",
+  "modelLocations" : {
+    "default" : {
+      "modelFilePath" : "OpenAPI30.yaml",
+      "modelProductDependency" : "OtherServiceModel"
+    }
+  }
+}
