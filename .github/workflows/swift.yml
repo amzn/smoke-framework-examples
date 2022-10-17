@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         swift: ["5.7"]
-        application: ["EmptyExampleService", "PersistenceExampleService", "NoExistentialTypesExampleService"]
+        application: ["EmptyExampleService", "PersistenceExampleService", "NoExistentialTypesExampleService", "ClientConsumingSmokeFrameworkService"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: swift-actions/setup-swift@v1.18.0

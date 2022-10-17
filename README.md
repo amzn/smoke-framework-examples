@@ -50,6 +50,10 @@ A Swift package wrapper around an Open API 3.0 model. Allows this model to be us
 ## OtherServiceSwiftClient
 
 An example of a Swift Client created for an API Gateway-hosted API. Uses the Open API 3.0 model specified in `OtherServiceModel`.
+
+## ClientConsumingSmokeFrameworkService
+
+An example of a smoke-framework-based service that uses the `OtherServiceSwiftClient` in one of its operations.
  
 ## License
 

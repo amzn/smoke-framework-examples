@@ -1,0 +1,22 @@
+{
+  "baseName" : "ClientConsumingSmokeFramework",
+  "modelFilePath" : "OpenAPI30.yaml",
+  "modelFormat" : "OPENAPI3_0",
+  "generationType" : "serverWithPlugin",
+  "integrations": {
+      "http": {
+          "contextTypeName": "HTTPClientConsumingSmokeFrameworkOperationsContext"
+      }
+  },
+  "operationStubGenerationRule" : {
+    "mode" : "allFunctionsWithinContext"
+  },
+  "initializationType": "STREAMLINED",
+  "testDiscovery": "ENABLED",
+  "mainAnnotation": "ENABLED",
+  "asyncAwait": {
+    "clientAPIs": "ENABLED",
+    "asyncOperationStubs": "ENABLED",
+    "asyncInitialization": "ENABLED"
+  }
+}

@@ -5,7 +5,7 @@ info:
 servers:
 - url: /
 paths:
-  /customer:
+  /subscriptions:
     get:
       operationId: ListSubscriptions
       requestBody:
