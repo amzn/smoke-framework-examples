@@ -3,6 +3,7 @@
 // ClientConsumingSmokeFrameworkService
 //
 
+import Foundation
 import ClientConsumingSmokeFrameworkOperations
 import ClientConsumingSmokeFrameworkOperationsHTTP1
 import SmokeOperationsHTTP1Server
