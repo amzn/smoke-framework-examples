@@ -44,7 +44,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        application: ["EmptyExampleService", "PersistenceExampleService", "NoExistentialTypesExampleService"]
+        application: ["EmptyExampleService", "PersistenceExampleService", "NoExistentialTypesExampleService", "ClientConsumingSmokeFrameworkService"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
