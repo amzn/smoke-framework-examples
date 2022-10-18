@@ -1,0 +1,44 @@
+openapi: 3.0.1
+info:
+  title: ClientConsumingSmokeFrameworkService
+  version: 2018-12-19
+servers:
+- url: /
+paths:
+  /hasSubscriptions:
+    get:
+      operationId: HasSubscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HasSubscriptionsRequest'
+        required: true
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HasSubscriptionsResponse'
+      security:
+      - sigv4: []
+components:
+  schemas:
+    HasSubscriptionsRequest:
+      type: object
+    HasSubscriptionsResponse:
+      required:
+      - hasSubscriptions
+      type: object
+      properties:
+        hasSubscriptions:
+          $ref: '#/components/schemas/HasSubscriptions'
+    HasSubscriptions:
+      type: boolean
+  securitySchemes:
+    sigv4:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: awsSigv4
