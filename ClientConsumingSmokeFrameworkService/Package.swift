@@ -28,7 +28,7 @@ let package = Package(
         .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0"),
         .package(url: "https://github.com/amzn/smoke-aws-support.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
-        .package(url: "https://github.com/amzn/smoke-framework-application-generate", branch: "smoke_aws_support"),
+        .package(url: "https://github.com/amzn/smoke-framework-application-generate", from: "3.0.0-rc.1"),
         .package(path: "../OtherServiceSwiftClient"),
         ],
     targets: [

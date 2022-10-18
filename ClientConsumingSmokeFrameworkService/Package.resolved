@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amzn/smoke-framework-application-generate",
       "state" : {
-        "branch" : "smoke_aws_support",
-        "revision" : "02ab690a8e2fa97bdc2187a93ee21069ee64e9cb"
+        "revision" : "3c48e9fc9bbcd5d9cfc692665c8f53b03beda41c",
+        "version" : "3.0.0-rc.1"
       }
     },
     {
