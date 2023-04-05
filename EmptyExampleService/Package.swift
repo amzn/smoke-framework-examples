@@ -14,9 +14,6 @@ let package = Package(
             name: "EmptyExampleModel",
             targets: ["EmptyExampleModel"]),
         .library(
-            name: "EmptyExampleClient",
-            targets: ["EmptyExampleClient"]),
-        .library(
             name: "EmptyExampleOperations",
             targets: ["EmptyExampleOperations"]),
         .library(
@@ -27,11 +24,10 @@ let package = Package(
             targets: ["EmptyExampleService"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/amzn/smoke-framework.git", from: "2.7.0"),
+        .package(url: "https://github.com/amzn/smoke-framework.git", branch: "middleware"),
         .package(url: "https://github.com/amzn/smoke-aws-credentials.git", from: "2.0.0"),
-        .package(url: "https://github.com/amzn/smoke-aws.git", from: "2.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
-        .package(url: "https://github.com/amzn/smoke-framework-application-generate", from: "3.0.0-beta.1")
+        .package(url: "https://github.com/amzn/smoke-framework-application-generate", branch: "v3_initializer"),
         ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -56,15 +52,6 @@ let package = Package(
             ],
             plugins: [
                 .plugin(name: "SmokeFrameworkGenerateHttp1", package: "smoke-framework-application-generate")
-            ]),
-        .target(
-            name: "EmptyExampleClient", dependencies: [
-                .target(name: "EmptyExampleModel"),
-                .product(name: "SmokeOperationsHTTP1", package: "smoke-framework"),
-                .product(name: "SmokeAWSHttp", package: "smoke-aws"),
-            ],
-            plugins: [
-                .plugin(name: "SmokeFrameworkGenerateClient", package: "smoke-framework-application-generate")
             ]),
         .executableTarget(
             name: "EmptyExampleService", dependencies: [

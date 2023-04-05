@@ -17,6 +17,7 @@ import EmptyExampleModel
  - Throws: unknownResource.
  */
 extension EmptyExampleOperationsContext {
+    @Sendable
     public func handleGetCustomerDetails(input: EmptyExampleModel.GetCustomerDetailsRequest) async throws
     -> EmptyExampleModel.CustomerAttributes {
         return CustomerAttributes.__default

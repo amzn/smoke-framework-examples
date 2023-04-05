@@ -6,7 +6,7 @@
   "operationStubGenerationRule" : {
     "mode" : "allFunctionsWithinContext"
   },
-  "initializationType": "STREAMLINED",
+  "initializationType": "V3",
   "testDiscovery": "ENABLED",
   "mainAnnotation": "ENABLED",
   "asyncAwait": {

@@ -5,8 +5,10 @@
 
 import EmptyExampleOperations
 import EmptyExampleOperationsHTTP1
+import SmokeOperationsHTTP1
 import SmokeOperationsHTTP1Server
 import SmokeAWSCore
+import Logging
 import NIO
             
 /**
@@ -14,6 +16,8 @@ import NIO
  */
 @main
 struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationContextInitializerProtocol {
+    let serverConfiguration: SmokeServerConfiguration<OperationIdentifer>
+    
     // TODO: Add properties to be accessed by the operation handlers
 
     /**
@@ -21,6 +25,8 @@ struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationCon
      */
     init(eventLoopGroup: EventLoopGroup) async throws {
         CloudwatchStandardErrorLogger.enableLogging()
+        
+        self.serverConfiguration = .init()
 
         // TODO: Add additional application initialization
     }
@@ -28,9 +34,9 @@ struct EmptyExamplePerInvocationContextInitializer: EmptyExamplePerInvocationCon
     /**
      On invocation.
     */
-    public func getInvocationContext(invocationReporting: SmokeServerInvocationReporting<SmokeInvocationTraceContext>)
+    public func getInvocationContext(requestContext: HTTPServerRequestContext<OperationIdentifer>)
     -> EmptyExampleOperationsContext {
-        return EmptyExampleOperationsContext(logger: invocationReporting.logger)
+        return EmptyExampleOperationsContext(logger: requestContext.logger ?? Logger(label: "invocation"))
     }
 
     /**
